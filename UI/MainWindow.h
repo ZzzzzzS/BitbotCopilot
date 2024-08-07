@@ -2,14 +2,15 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "ElaWindow.h"
+#include "HomePage.h"
+#include "ViewDataPage.h"
+#include "PilotPage.h"
+#include "AboutPage.h"
+#include "SettingsPage.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public ElaWindow
 {
     Q_OBJECT
 
@@ -18,6 +19,16 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    void InitWindow();
+    void InitPage();
+    void InitFooter();
+    void InitSignalSlot();
+
+private:
+    HomePage* HomePage__;
+    ViewDataPage* ViewDataPage__;
+    PilotPage* PilotPage__;
+    SettingsPage* SettingsPage__;
+    AboutPage* AboutPage__;
 };
 #endif // MAINWINDOW_H

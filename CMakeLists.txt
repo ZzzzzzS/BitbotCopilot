@@ -13,23 +13,77 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Gamepad Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Gamepad Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
 add_subdirectory(ThirdParty/ElaWidgetTools)
 set(TS_FILES 
-    Res/BITBOT-Frontend-Z_zh_CN.ts)
+    Res/BITBOT-Frontend-Z_zh_CN.ts
+    Res/UI.qrc
+    )
+
+set(UI_WIDGETS
+    UI/widget/MetaRTDView.cpp
+    UI/widget/MetaRTDView.h
+    UI/widget/RTDKernelStates.cpp
+    UI/widget/RTDKernelStates.h
+    UI/widget/RTDKernelStates.ui
+    UI/widget/RTDRobotStates.cpp
+    UI/widget/RTDRobotStates.h
+    UI/widget/RTDRobotStates.ui
+    UI/widget/RTDKeyboardStatus.cpp
+    UI/widget/RTDKeyboardStatus.h
+    UI/widget/RTDKeyboardStatus.ui
+    UI/widget/RTDGamepadStatus.cpp
+    UI/widget/RTDGamepadStatus.h
+    UI/widget/RTDGamepadStatus.ui
+    UI/widget/RTDDeviceInfo.cpp
+    UI/widget/RTDDeviceInfo.h
+    UI/widget/RTDDeviceInfo.ui
+)
 
 set(UI_FILES 
     UI/MainWindow.cpp
     UI/MainWindow.h
-    UI/MainWindow.ui
+    UI/AboutPage.cpp
+    UI/AboutPage.h
+    UI/HomePage.cpp
+    UI/HomePage.h
+    UI/PilotPage.cpp
+    UI/PilotPage.h
+    UI/ViewDataPage.cpp
+    UI/ViewDataPage.h
+    UI/ViewDataPage.ui
+
+    UI/AboutPage.cpp
+    UI/AboutPage.h
+    UI/SettingsPage.cpp
+    UI/SettingsPage.h
+
+    ${UI_WIDGETS}
 )
+
+set(COM_FILES
+    Communication/BitbotTcpProtocalV1.h
+    Communication/BitbotTcpProtocalV1.cpp
+    Communication/MetaCommunication.hpp
+)
+
+set(UTIL_FILES
+    Utils/GamepadDriver/ZQGamepad.cpp
+    Utils/GamepadDriver/ZQGamepad.h
+    Utils/GamepadDriver/ZGamepad_XInput.hpp
+)
+
 
 set(PROJECT_SOURCES
         main.cpp
         ${UI_FILES}
         ${TS_FILES}
+        ${UTIL_FILES}
+        ${COM_FILES}
 )
+
+include_directories(./ThirdParty/ElaWidgetTools/include)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BITBOT-Frontend-Z
@@ -59,11 +113,12 @@ else()
 endif()
 
 target_link_libraries(BITBOT-Frontend-Z PRIVATE
+                     elawidgettools
                      Qt${QT_VERSION_MAJOR}::Widgets 
                      Qt${QT_VERSION_MAJOR}::WebSockets
-                     Qt${QT_VERSION_MAJOR}::Gamepad 
                      Qt${QT_VERSION_MAJOR}::Network
-                     elawidgettools)
+                     XInput
+                     )
 
 
 

@@ -79,4 +79,4 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     D3D11
     DXGI
 )
-message(${CMAKE_INSTALL_PREFIX})
+

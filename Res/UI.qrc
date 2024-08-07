@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/include">
+        <file>Font/ElaAwesome.ttf</file>
+    </qresource>
+    <qresource prefix="/UI">
+        <file>Image/logo.png</file>
+        <file>Image/Home_Background.png</file>
+        <file>Image/lmy_bitbot_logo.png</file>
+        <file>Image/zzslogo.jpg</file>
+        <file>Image/github.png</file>
+        <file>Image/attach_bitbot.png</file>
+        <file>Image/launch_bitbot.png</file>
+        <file>Image/view_data.png</file>
+        <file>Image/keyboard_icon.png</file>
+        <file>Image/joystick_icon.png</file>
+        <file>Image/gamepad_icon.png</file>
+        <file>Image/gamepad_dark.png</file>
+        <file>Image/robot_state.png</file>
+        <file>Image/kernel_stop_icon.png</file>
+        <file>Image/kernel_power_on_icon.png</file>
+        <file>Image/kernel_poweron_finished_icon.png</file>
+        <file>Image/kernel_idle_icon.png</file>
+        <file>Image/disconnected_icon.png</file>
+		<file>Image/error_state_icon.png</file>
+    </qresource>
+</RCC>
