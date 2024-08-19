@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QObject>
+#include <QSet>
+#include <QMap>
 
 namespace zzs
 {
@@ -38,16 +40,19 @@ enum class Q_XSX_JOYSTICK_ENUM
     TriggerRight,//19
 };
 
-class ZQGamepad  : public QObject
+class ZQGamepad : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-    ZQGamepad(uint cps=125,QObject* parent = nullptr);
-	~ZQGamepad();
+    ZQGamepad(uint cps = 125, QObject* parent = nullptr);
+    ~ZQGamepad();
 
-	void start();
-	bool SetRumble(int id, quint16 LeftMotor, quint16 RightMotor, quint32 Duration);
+    void start();
+    bool SetRumble(int id, quint16 LeftMotor, quint16 RightMotor, quint32 Duration);
+    size_t CountConnectedGamepad();
+    QSet<size_t> getAvailableGamepadID();
+    QString name(const Q_XSX_JOYSTICK_ENUM& key);
 
 signals:
     void ConnectionChanged(int id, bool Connected);
@@ -62,5 +67,8 @@ private:
     void JoystickMoveCallback(std::vector<std::tuple<UINT, INT, FLOAT>> states);*/
     zzs::ZGAMEPAD_XINPUT* GamepadBackendXInput;
 #endif // QT_OS_WIN
+
+    void InitButtonNameMap();
+    QMap<Q_XSX_JOYSTICK_ENUM, QString> GamepadButtonNameMap;
 
 };

@@ -20,6 +20,7 @@ namespace zzs
 			CONNECTED,
 			ERROR
 		};
+		Q_ENUM(CONNECTION_STATUS);
 	public:
 		META_COMMUNICATION(QObject* parent = nullptr)
 			:ConnectionState__(CONNECTION_STATUS::CONNECTED),
@@ -36,7 +37,7 @@ namespace zzs
 
 
 	signals:
-		void ConnectionStateChanged(META_COMMUNICATION::CONNECTION_STATUS);
+		void ConnectionStateChanged(int);
 		void ReceivedPDO(QVariantList);
 
 	protected:

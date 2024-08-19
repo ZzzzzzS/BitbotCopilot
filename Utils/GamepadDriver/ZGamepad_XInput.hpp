@@ -199,7 +199,7 @@ namespace zzs
                     {
                         if (auto err = std::abs(CurrentJoystickStates[j] - this->LastJoystickStates__[i][j]); err > JOYSTICK_RESOLUTION)
                         {
-                            ChangedJoystickGroup.emplace_back(static_cast<UINT>(i), static_cast<INT>(j), CurrentJoystickStates[j]);
+                            ChangedJoystickGroup.emplace_back(static_cast<UINT>(i), static_cast<INT>(j+14), CurrentJoystickStates[j]);
                         }
                     }
                     this->LastJoystickStates__[i] = CurrentJoystickStates;

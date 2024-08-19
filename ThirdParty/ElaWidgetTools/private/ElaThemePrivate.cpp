@@ -3,7 +3,7 @@
 using namespace ElaThemeType;
 
 ElaThemePrivate::ElaThemePrivate(QObject* parent)
-    : QObject{parent}
+    : QObject{ parent }
 {
 }
 
@@ -158,9 +158,9 @@ void ElaThemePrivate::_initThemeColor()
     _darkThemeColorList[MessageButtonTextPress] = QColor(0xA1, 0xA2, 0xA2);
 
     //ElaNavigationBar
-    _lightThemeColorList[NavigationBaseStart] = QColor(0xF3, 0xF2, 0xF9);
+    _lightThemeColorList[NavigationBaseStart] = QColor(0xF3, 0xF3, 0xF9);
     _darkThemeColorList[NavigationBaseStart] = QColor(0x1A, 0x1A, 0x1A);
-    _lightThemeColorList[NavigationBaseEnd] = QColor(0xF4, 0xF1, 0xF8);
+    _lightThemeColorList[NavigationBaseEnd] = QColor(0xF3, 0xF3, 0xF9);
     _darkThemeColorList[NavigationBaseEnd] = QColor(0x1A, 0x1A, 0x1A);
     _lightThemeColorList[NavigationHover] = QColor(0xE9, 0xE9, 0xF0);
     _darkThemeColorList[NavigationHover] = QColor(0x27, 0x27, 0x27);
@@ -366,9 +366,9 @@ void ElaThemePrivate::_initThemeColor()
     _darkThemeColorList[WindowText] = Qt::white;
     _lightThemeColorList[WindowTextDisable] = Qt::gray;
     _darkThemeColorList[WindowTextDisable] = Qt::gray;
-    _lightThemeColorList[WindowBaseStart] = QColor(0xF2, 0xF2, 0xF9);
+    _lightThemeColorList[WindowBaseStart] = QColor(0xF8, 0xF9, 0xFC);
     _darkThemeColorList[WindowBaseStart] = QColor(0x1A, 0x1A, 0x1A);
-    _lightThemeColorList[WindowBaseEnd] = QColor(0xF9, 0xEF, 0xF6);
+    _lightThemeColorList[WindowBaseEnd] = QColor(0xF8, 0xF9, 0xFC);
     _darkThemeColorList[WindowBaseEnd] = QColor(0x1A, 0x1A, 0x1A);
     _lightThemeColorList[WindowDockWidgetResizeHandle] = QColor(0x0E, 0x6F, 0xC3);
     _darkThemeColorList[WindowDockWidgetResizeHandle] = QColor(0x4C, 0xA0, 0xE0);

@@ -3,6 +3,7 @@
 #include <QStyleOption>
 #include <QPainter>
 #include <ElaTheme.h>
+#include <QGraphicsDropShadowEffect>
 
 MetaRTDView::MetaRTDView(RTDViewType type,QWidget *parent)
 	: QWidget(parent),
@@ -33,7 +34,13 @@ MetaRTDView::MetaRTDView(RTDViewType type,QWidget *parent)
     
     this->ThemeChangedSlot(eTheme->getThemeMode());
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &MetaRTDView::ThemeChangedSlot);
+
     
+    /*QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect(this);
+    effect->setOffset(3);
+    effect->setBlurRadius(20);
+    effect->setColor(QColor("#444440"));*/
+    //this->setGraphicsEffect(effect);
 }
 
 MetaRTDView::~MetaRTDView()
@@ -45,6 +52,11 @@ void MetaRTDView::paintEvent(QPaintEvent * event)
     opt.init(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+
+    
+    p.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing | QPainter::TextAntialiasing);
+    // 高性能阴影
+    eTheme->drawEffectShadow(&p, rect(), 3, 10);
 }
 
 void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)
@@ -54,9 +66,8 @@ void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)
     {
         styleSheet= QString::fromUtf8(R"(
        #MetaBackground {
-            background-color: rgba(255, 255, 255, 70); 
+            background-color: rgba(255, 255, 255, 100); 
             border-radius: 10px; 
-             border: 2px solid rgb(230,230,230);
         }
         )");
     }
@@ -66,7 +77,6 @@ void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)
        #MetaBackground {
             background-color: rgba(80, 80, 80, 70); 
             border-radius: 10px; 
-             border: 2px solid rgb(23,23,23);
         }
         )");
     }

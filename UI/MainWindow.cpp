@@ -2,7 +2,7 @@
 #include "ElaWindow.h"
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent)
 {
     this->InitWindow();
@@ -44,7 +44,7 @@ void MainWindow::InitFooter()
 {
     //init about me
     this->AboutPage__ = new AboutPage(this);
-    this->addFooterNode(tr("About"), this->AboutPage__,QString("About"), 0, ElaIconType::CircleUser);
+    this->addFooterNode(tr("About"), this->AboutPage__, QString("About"), 0, ElaIconType::CircleUser);
 
     //init settings
     this->SettingsPage__ = new SettingsPage(this);
@@ -55,7 +55,7 @@ void MainWindow::InitSignalSlot()
 {
     QObject::connect(this->HomePage__, &HomePage::AttachBitbotSignal, this, [this]() {
         this->navigation(this->PilotPage__->property("ElaPageKey").toString());
-    });
+        });
 
     /*QObject::connect(this->HomePage__, &HomePage::LaunchBitbotSignal, this, [this]() {
         this->navigation(this->PilotPage__->property("ElaPageKey").toString());
@@ -63,5 +63,5 @@ void MainWindow::InitSignalSlot()
 
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
-    });
+        });
 }

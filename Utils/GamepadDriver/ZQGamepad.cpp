@@ -4,9 +4,9 @@
 #include "ZGamepad_XInput.hpp"
 #endif // QT_OS_WIN
 
-ZQGamepad::ZQGamepad(uint cps,QObject* parent)
+ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 	:QObject(parent)
-	
+
 {
 	qRegisterMetaType<Q_XSX_JOYSTICK_ENUM>("Q_XSX_JOYSTICK_ENUM");
 #ifdef Q_OS_WIN
@@ -30,7 +30,7 @@ ZQGamepad::ZQGamepad(uint cps,QObject* parent)
 			emit this->ConnectionChanged(id, states);
 		}
 	);
-	
+
 #endif // QT_OS_WIN
 }
 
@@ -48,9 +48,74 @@ void ZQGamepad::start()
 #endif // QT_OS_WIN
 }
 
+size_t ZQGamepad::CountConnectedGamepad()
+{
+#ifdef Q_OS_WIN
+	auto set = this->GamepadBackendXInput->getAvailableGamepadID();
+	return set.size();
+#endif
+}
+
+QSet<size_t> ZQGamepad::getAvailableGamepadID()
+{
+#ifdef Q_OS_WIN
+	auto stdset = this->GamepadBackendXInput->getAvailableGamepadID();
+	QSet<size_t> Gamepads;
+	for (auto& i : stdset)
+	{
+		Gamepads.insert(static_cast<size_t>(i));
+	}
+	return Gamepads;
+#endif
+}
+
 bool ZQGamepad::SetRumble(int id, quint16 LeftMotor, quint16 RightMotor, quint32 Duration)
 {
 #ifdef Q_OS_WIN
 	return this->GamepadBackendXInput->setRumble(id, LeftMotor, RightMotor, Duration);
 #endif // QT_OS_WIN
+}
+
+
+void ZQGamepad::InitButtonNameMap()
+{
+	//TODO: set the button name with respected to json settings.
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::Button_A, QString("GAMEPAD_A"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::Button_B, QString("GAMEPAD_B"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::Button_X, QString("GAMEPAD_X"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::Button_Y, QString("GAMEPAD_Y"));
+
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonLeftBumper, QString("GAMEPAD_LB"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonRightBumper, QString("GAMEPAD_RB"));
+
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonSwitch, QString("GAMEPAD_SWITCH"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonMenu, QString("GAMEPAD_MENU"));
+
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonLeftStick, QString("GAMEPAD_L_STICK"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonRightStick, QString("GAMEPAD_R_STICK"));
+
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonPadUp, QString("GAMEPAD_PAD_UP"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonPadDown, QString("GAMEPAD_PAD_DOWN"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonPadLeft, QString("GAMEPAD_PAD_LEFT"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonPadRight, QString("GAMEPAD_PAD_RIGHT"));
+
+
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftX, QString("GAMEPAD_LX"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftY, QString("GAMEPAD_LY"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightX, QString("GAMEPAD_RX"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightY, QString("GAMEPAD_RY"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerLeft, QString("GAMEPAD_LT"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerRight, QString("GAMEPAD_RT"));
+}
+
+QString ZQGamepad::name(const Q_XSX_JOYSTICK_ENUM& key)
+{
+	if (this->GamepadButtonNameMap.contains(key))
+	{
+		return this->GamepadButtonNameMap[key];
+	}
+	else
+	{
+		return QString("GAMEPAD_UNDEFINED");
+	}
 }

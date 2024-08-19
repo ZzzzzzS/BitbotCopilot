@@ -30,7 +30,7 @@ ElaNavigationBar::ElaNavigationBar(QWidget* parent)
     setFixedWidth(300);
     d->_windowLinearGradient = new QLinearGradient(0, 0, width(), height());
     d->_windowLinearGradient->setColorAt(0, ElaThemeColor(ElaThemeType::Light, NavigationBaseStart));
-    d->_windowLinearGradient->setColorAt(1, ElaThemeColor(ElaThemeType::Light, NavigationBaseEnd));
+    d->_windowLinearGradient->setColorAt(1, ElaThemeColor(ElaThemeType::Light, NavigationBaseStart));
 
     d->_navigationModel = new ElaNavigationModel(this);
     d->_navigationView = new ElaNavigationView(this);

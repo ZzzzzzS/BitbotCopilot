@@ -133,3 +133,9 @@ build/
 out/
 CMakePresets.json
 CMakeUserPresets.json
+CMakeCache.txt
+CMakeFiles/CMakeConfigureLog.yaml
+CMakeFiles/
+build.ninja
+cmake_install.cmake
+ThirdParty/ElaWidgetTools/cmake_install.cmake

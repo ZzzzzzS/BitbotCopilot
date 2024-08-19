@@ -9,7 +9,8 @@
 zzs::BITBOT_TCP_PROTOCAL_V1::BITBOT_TCP_PROTOCAL_V1(const QJsonObject& cfg, QObject* parent)
 	:META_COMMUNICATION(parent)
 {
-	qRegisterMetaType<QAbstractSocket::SocketError>();
+	qRegisterMetaType<QAbstractSocket::SocketError>("SOCKET_ERROR");
+	qRegisterMetaType<zzs::META_COMMUNICATION::CONNECTION_STATUS>("CONN_STATUS");
 	this->SDOManager__ = new QNetworkAccessManager(this);
 	this->PDOManager__ = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
 	this->RefreshTimer__->setInterval(100);
@@ -25,8 +26,12 @@ zzs::BITBOT_TCP_PROTOCAL_V1::~BITBOT_TCP_PROTOCAL_V1()
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint timeout)
 {
-	if (this->PDOManager__->state() != QAbstractSocket::UnconnectedState)
+	if (this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING || this->PDODataConnection__==CONNECTION_STATUS::CONNECTED)
+	{
+		qDebug() << this->PDOManager__->state();
 		return false;
+	}
+
 	if (this->StateListConnection__ == CONNECTION_STATUS::CONNECTING ||
 		this->ControlListConnection__ == CONNECTION_STATUS::CONNECTING ||
 		this->PDOHeaderConnection__ == CONNECTION_STATUS::CONNECTING ||
@@ -145,6 +150,8 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 		qDebug() << "websocket error:" << error;
 		this->RefreshTimer__->stop();
 		this->PDODataConnection__ = CONNECTION_STATUS::ERROR;
+		//this->PDOManager__->abort();
+		//this->PDOManager__->close();
 		this->CheckConnection();
 	});
 	QObject::connect(this->PDOManager__, &QWebSocket::textMessageReceived, this, [this](QString Message) {
@@ -170,7 +177,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Disconnect()
 	this->ControlListConnection__ = CONNECTION_STATUS::DISCONNECT;
 	this->PDOHeaderConnection__ = CONNECTION_STATUS::DISCONNECT;
 	this->CheckConnection();
-	return false;
+	return true;
 }
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPairs)
@@ -312,7 +319,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::CheckConnection()
 		)
 	{
 		this->AlreadSentErrorMessage__ = false;
-		emit this->ConnectionStateChanged(META_COMMUNICATION::CONNECTION_STATUS::CONNECTED);
+		emit this->ConnectionStateChanged(static_cast<int>(META_COMMUNICATION::CONNECTION_STATUS::CONNECTED));
 		return true;
 	}
 	else if (
@@ -333,8 +340,9 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::CheckConnection()
 	{
 		if (!this->AlreadSentErrorMessage__)
 		{
-			emit this->ConnectionStateChanged(META_COMMUNICATION::CONNECTION_STATUS::ERROR);
 			this->AlreadSentErrorMessage__ = true;
+			this->PDOManager__->abort();
+			emit this->ConnectionStateChanged(static_cast<int>(META_COMMUNICATION::CONNECTION_STATUS::ERROR));
 		}
 		return false;
 	}
@@ -346,7 +354,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::CheckConnection()
 		)
 	{
 		this->AlreadSentErrorMessage__ = false;
-		emit this->ConnectionStateChanged(META_COMMUNICATION::CONNECTION_STATUS::DISCONNECT);
+		emit this->ConnectionStateChanged(static_cast<int>(META_COMMUNICATION::CONNECTION_STATUS::DISCONNECT));
 		return false;
 	}
 	else

@@ -38,7 +38,7 @@ ElaWindow::ElaWindow(QWidget* parent)
 
     d->_windowLinearGradient = new QLinearGradient(0, 0, width(), height());
     d->_windowLinearGradient->setColorAt(0, ElaThemeColor(ElaThemeType::Light, WindowBaseStart));
-    d->_windowLinearGradient->setColorAt(1, ElaThemeColor(ElaThemeType::Light, WindowBaseEnd));
+    d->_windowLinearGradient->setColorAt(1, ElaThemeColor(ElaThemeType::Light, WindowBaseStart));
     // 自定义AppBar
     d->_appBar = new ElaAppBar(this);
     connect(d->_appBar, &ElaAppBar::routeBackButtonClicked, this, []() {

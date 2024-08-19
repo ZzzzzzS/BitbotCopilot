@@ -43,7 +43,7 @@ namespace zzs
 		bool getKernelHeader(QVector<QString>& Headers);
 		bool getExtraHeader(QVector<QString>& Headers);
 		bool getDeviceHeader(QVector<ABSTRACT_DEVICE_HEADER>& Headers);
-		
+
 
 	private:
 		bool RequestPDO() final;
@@ -52,7 +52,7 @@ namespace zzs
 		bool ParseControlList(const QByteArray& array);
 		bool ParsePDOHeader(const QByteArray& array);
 		bool ParsePDOData(const QByteArray& array);
-		
+
 	private:
 		QVector<QString> PDODataHeaders__;
 		QMap<int, QString> StateList__;
@@ -65,7 +65,7 @@ namespace zzs
 		QUrl RequestPDOUrl;
 		QVariantList PDOData__;
 
-		QNetworkAccessManager* SDOManager__=nullptr;
+		QNetworkAccessManager* SDOManager__ = nullptr;
 		QWebSocket* PDOManager__ = nullptr;
 
 		QNetworkReply* StateListReply__ = nullptr;

@@ -4,6 +4,7 @@
 #include <QLocale>
 #include <QTranslator>
 #include "ElaApplication.h"
+#include "ElaWidget.h"
 
 int main(int argc, char* argv[])
 {
@@ -26,6 +27,9 @@ int main(int argc, char* argv[])
             break;
         }
     }
+    //ElaWidget bbb;
+    //bbb.show();
+
     MainWindow w;
     w.show();
 

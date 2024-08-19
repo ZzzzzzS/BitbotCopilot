@@ -7,6 +7,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
 	connectedDeviceCount(ConnectedDevice)
 {
 	ui->setupUi(this);
+	this->ui->label_ConnectedDevice->setText(QString::number(connectedDeviceCount));
 	if (eTheme->getThemeMode() == ElaThemeType::Light)
 	{
 		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65));
@@ -105,6 +106,7 @@ void RTDGamepadStatus::DeviceConnectionChanged(int id, bool connected)
 	}
 	this->ui->label_ConnectedDevice->setPalette(pe);
 	this->ui->label_dev_cnt->setPalette(pe);
+	this->ui->label_ConnectedDevice->setText(QString::number(connectedDeviceCount));
 }
 
 void RTDGamepadStatus::JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float value)

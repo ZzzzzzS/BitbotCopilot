@@ -17,20 +17,21 @@ class RTDDeviceInfo : public MetaRTDView
 	Q_OBJECT
 
 public:
-	RTDDeviceInfo(QWidget *parent = nullptr);
+	RTDDeviceInfo(QWidget* parent = nullptr);
 	~RTDDeviceInfo();
 
-	bool setHeaders(const QString& DeviceType ,const QVector<QString>& DeviceList, const QVector<QString>& DeviceSensors);
+	bool setHeaders(const QString& DeviceType, const QVector<QString>& DeviceList, const QVector<QString>& DeviceSensors);
 	bool setHeaders(const QVector<QString>& UserDataHeader);
 
 public: //slots
 	void UpdateDeviceInfo(QVariantList data);
+	size_t getHeaderSize();
 
 private:
 	void ThemeChanged(ElaThemeType::ThemeMode mode);
-	Ui::RTDDeviceInfoClass *ui;
-	bool isDeviceInfo__=false;
-	bool isUserExtraData__=false;
+	Ui::RTDDeviceInfoClass* ui;
+	bool isDeviceInfo__ = false;
+	bool isUserExtraData__ = false;
 	QVector<QString> VerticalHeader;
 	QVector<QString> HorizentalHeader;
 	size_t RowLength = 0;

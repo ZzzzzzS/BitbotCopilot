@@ -1,7 +1,7 @@
 #include "RTDDeviceInfo.h"
 
-RTDDeviceInfo::RTDDeviceInfo(QWidget *parent)
-	: MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW,parent)
+RTDDeviceInfo::RTDDeviceInfo(QWidget* parent)
+	: MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW, parent)
 	, ui(new Ui::RTDDeviceInfoClass())
 {
 	ui->setupUi(this);
@@ -20,15 +20,17 @@ bool RTDDeviceInfo::setHeaders(const QString& DeviceType, const QVector<QString>
 {
 	if (this->isDeviceInfo__ == true || this->isUserExtraData__ == true)
 		return false;
-	
+
+
+	this->ui->label_DeviceName->setText(DeviceType);
 	this->isDeviceInfo__ = true;
-	this->VerticalHeader = DeviceList;
-	this->HorizentalHeader = DeviceSensors;
-	this->RowLength = DeviceSensors.size();
-	this->RowNumber = DeviceList.size();
+	this->VerticalHeader = DeviceSensors;
+	this->HorizentalHeader = DeviceList;
+	this->RowLength = DeviceList.size();
+	this->RowNumber =  DeviceSensors.size();
 	this->ui->CentralWidget->setRowCount(this->RowNumber);
 	this->ui->CentralWidget->setColumnCount(this->RowLength);
-	
+
 	this->ui->CentralWidget->setVerticalHeaderLabels(this->VerticalHeader.toList());
 	this->ui->CentralWidget->setHorizontalHeaderLabels(this->HorizentalHeader.toList());
 	this->TableItem.clear();
@@ -50,6 +52,7 @@ bool RTDDeviceInfo::setHeaders(const QVector<QString>& UserDataHeader)
 	if (this->isDeviceInfo__ == true || this->isUserExtraData__ == true)
 		return false;
 
+	this->ui->label_DeviceName->setText(tr("User Info"));
 	this->HorizentalHeader = UserDataHeader;
 	this->RowLength = UserDataHeader.size();
 	this->RowNumber = 1;
@@ -109,11 +112,16 @@ void RTDDeviceInfo::UpdateDeviceInfo(QVariantList data)
 			}
 			else
 			{
-				item = QString("N/A");
+				item = QString("0");
 			}
 			this->TableItem[i * RowLength + j]->setText(item);
 		}
 	}
+}
+
+size_t RTDDeviceInfo::getHeaderSize()
+{
+	return this->RowLength * this->RowNumber;
 }
 
 void RTDDeviceInfo::ThemeChanged(ElaThemeType::ThemeMode mode)
