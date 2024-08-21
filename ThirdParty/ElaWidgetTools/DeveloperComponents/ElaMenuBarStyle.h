@@ -17,8 +17,7 @@ public:
 
 private:
     ElaThemeType::ThemeMode _themeMode;
-    int _menuBarItemMargin{5};
-    int _menuBarHeight{28};
+    int _menuBarItemMargin{0};
 };
 
 #endif // ELAMENUBARSTYLE_H

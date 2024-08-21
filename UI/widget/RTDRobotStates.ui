@@ -32,7 +32,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_icon">
+      <widget class="ElaText" name="label_icon">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>

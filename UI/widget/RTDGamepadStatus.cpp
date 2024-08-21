@@ -1,8 +1,8 @@
 #include "RTDGamepadStatus.h"
 #include <QPalette>
 
-RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
-	: MetaRTDView(MetaRTDView::RTDViewType::SMALL_WINDOW,parent)
+RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice, QWidget* parent)
+	: MetaRTDView(MetaRTDView::RTDViewType::SMALL_WINDOW, parent)
 	, ui(new Ui::RTDGamepadStatusClass()),
 	connectedDeviceCount(ConnectedDevice)
 {
@@ -10,7 +10,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
 	this->ui->label_ConnectedDevice->setText(QString::number(connectedDeviceCount));
 	if (eTheme->getThemeMode() == ElaThemeType::Light)
 	{
-		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65));
+		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65, Qt::SmoothTransformation));
 		QPalette pe = this->ui->label_status->palette();
 		pe.setColor(QPalette::WindowText, Qt::black);
 		if (this->connectedDeviceCount == 1)
@@ -26,7 +26,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
 	}
 	else
 	{
-		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65));
+		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65, Qt::SmoothTransformation));
 		QPalette pe = this->ui->label_status->palette();
 		pe.setColor(QPalette::WindowText, Qt::white);
 		if (this->connectedDeviceCount == 1)
@@ -43,7 +43,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
 	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mod) {
 		if (mod == ElaThemeType::Light)
 		{
-			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65));
+			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65, Qt::SmoothTransformation));
 			QPalette pe = this->ui->label_status->palette();
 			pe.setColor(QPalette::WindowText, Qt::black);
 			if (this->connectedDeviceCount == 1)
@@ -59,7 +59,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice,QWidget *parent)
 		}
 		else
 		{
-			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65));
+			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65, Qt::SmoothTransformation));
 			QPalette pe = this->ui->label_status->palette();
 			pe.setColor(QPalette::WindowText, Qt::white);
 			if (this->connectedDeviceCount == 1)
@@ -87,7 +87,7 @@ void RTDGamepadStatus::DeviceConnectionChanged(int id, bool connected)
 		this->connectedDeviceCount++;
 	else
 		this->connectedDeviceCount--;
-	
+
 	QPalette pe = this->ui->label_status->palette();
 	if (this->connectedDeviceCount == 1)
 	{

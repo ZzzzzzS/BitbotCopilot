@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 
 #include "ElaAppBar.h"
+#include "ElaCentralStackedWidget.h"
 #include "ElaEventBus.h"
 #include "ElaMenu.h"
 #include "ElaNavigationBar.h"
@@ -25,7 +26,7 @@ Q_PROPERTY_CREATE_Q_CPP(ElaWindow, int, ThemeChangeTime)
 Q_PROPERTY_CREATE_Q_CPP(ElaWindow, ElaNavigationType::NavigationDisplayMode, NavigationBarDisplayMode)
 
 ElaWindow::ElaWindow(QWidget* parent)
-    : QMainWindow{parent}, d_ptr(new ElaWindowPrivate())
+    : QMainWindow{ parent }, d_ptr(new ElaWindowPrivate())
 {
     Q_D(ElaWindow);
     d->q_ptr = this;
@@ -43,14 +44,14 @@ ElaWindow::ElaWindow(QWidget* parent)
     d->_appBar = new ElaAppBar(this);
     connect(d->_appBar, &ElaAppBar::routeBackButtonClicked, this, []() {
         ElaNavigationRouter::getInstance()->navigationRouteBack();
-    });
+        });
     connect(d->_appBar, &ElaAppBar::closeButtonClicked, this, &ElaWindow::closeButtonClicked);
     // 导航栏
     d->_navigationBar = new ElaNavigationBar(this);
     // 返回按钮状态变更
     connect(ElaNavigationRouter::getInstance(), &ElaNavigationRouter::navigationRouterStateChanged, this, [d](bool isEnable) {
         d->_appBar->setRouteBackButtonEnable(isEnable);
-    });
+        });
 
     // 转发用户卡片点击信号
     connect(d->_navigationBar, &ElaNavigationBar::userInfoCardClicked, this, &ElaWindow::userInfoCardClicked);
@@ -62,14 +63,14 @@ ElaWindow::ElaWindow(QWidget* parent)
     connect(d->_navigationBar, &ElaNavigationBar::navigationNodeAdded, d, &ElaWindowPrivate::onNavigationNodeAdded);
 
     // 中心堆栈窗口
-    d->_centerStackedWidget = new QStackedWidget(this);
-    d->_centerStackedWidget->setContentsMargins(0, 10, 0, 0);
+    d->_centerStackedWidget = new ElaCentralStackedWidget(this);
+    d->_centerStackedWidget->setContentsMargins(0, 0, 0, 0);
     QWidget* centralWidget = new QWidget(this);
     d->_centerLayout = new QHBoxLayout(centralWidget);
+    d->_centerLayout->setSpacing(0);
     d->_centerLayout->addWidget(d->_navigationBar);
     d->_centerLayout->addWidget(d->_centerStackedWidget);
-    int contentMargin = d->_contentsMargins;
-    d->_centerLayout->setContentsMargins(contentMargin, contentMargin, contentMargin, contentMargin);
+    d->_centerLayout->setContentsMargins(d->_contentsMargins, 0, 0, 0);
 
     // 事件总线
     d->_focusEvent = new ElaEvent("WMWindowClicked", "onWMWindowClickedEvent", d);
@@ -94,7 +95,7 @@ ElaWindow::ElaWindow(QWidget* parent)
         QPalette palette = this->palette();
         palette.setBrush(QPalette::Window, *d->_windowLinearGradient);
         this->setPalette(palette);
-    });
+        });
 }
 
 ElaWindow::~ElaWindow()
@@ -252,6 +253,30 @@ ElaAppBarType::ButtonFlags ElaWindow::getWindowButtonFlags() const
     return d_ptr->_appBar->getWindowButtonFlags();
 }
 
+void ElaWindow::setCustomWidget(QWidget* widget)
+{
+    Q_D(ElaWindow);
+    d->_appBar->setCustomWidget(widget);
+}
+
+QWidget* ElaWindow::getCustomWidget() const
+{
+    Q_D(const ElaWindow);
+    return d->_appBar->getCustomWidget();
+}
+
+void ElaWindow::setCustomWidgetMaximumWidth(int width)
+{
+    Q_D(ElaWindow);
+    d->_appBar->setCustomWidgetMaximumWidth(width);
+}
+
+int ElaWindow::getCustomWidgetMaximumWidth() const
+{
+    Q_D(const ElaWindow);
+    return d->_appBar->getCustomWidgetMaximumWidth();
+}
+
 void ElaWindow::setIsDefaultClosed(bool isDefaultClosed)
 {
     Q_D(ElaWindow);
@@ -290,7 +315,7 @@ bool ElaWindow::eventFilter(QObject* watched, QEvent* event)
 void ElaWindow::resizeEvent(QResizeEvent* event)
 {
     Q_D(ElaWindow);
-    d->_windowLinearGradient->setFinalStop(width() < 1050 ? 1050 : width(), height());
+    d->_windowLinearGradient->setFinalStop(width(), height());
     QWidget::resizeEvent(event);
 }
 
