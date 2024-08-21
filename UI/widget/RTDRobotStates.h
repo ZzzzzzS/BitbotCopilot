@@ -17,6 +17,7 @@ public:
 	~RTDRobotStates();
 	void SetHeaderList(const QMap<int, QString>& header);
 	void UpdateStates(QVariant v);
+	void ResetUI();
 
 private:
 	Ui::RTDRobotStatesClass *ui;

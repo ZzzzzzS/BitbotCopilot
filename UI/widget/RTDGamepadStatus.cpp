@@ -111,7 +111,7 @@ void RTDGamepadStatus::DeviceConnectionChanged(int id, bool connected)
 
 void RTDGamepadStatus::JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float value)
 {
-	QString v = QString::number(value);
+	QString v = QString::number(value, 'g', 3);
 	switch (axis)
 	{
 	case Q_XSX_JOYSTICK_ENUM::JoystickLeftX:
@@ -135,4 +135,8 @@ void RTDGamepadStatus::JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float val
 	default:
 		break;
 	}
+}
+
+void RTDGamepadStatus::ResetUI()
+{
 }

@@ -10,6 +10,7 @@
 #include "widget/RTDGamepadStatus.h"
 #include "widget/RTDKeyboardStatus.h"
 #include "widget/RTDDeviceInfo.h"
+#include "widget/RTDConnection.h"
 #include "../Communication/BitbotTcpProtocalV1.h"
 #include "../Communication/MetaCommunication.hpp"
 #include "../Utils/GamepadDriver/ZQGamepad.h"
@@ -40,6 +41,8 @@ private:
 	void ProcessConnectionError();
 	void ProcessPDO(QVariantList PDOInfo);
 
+	void removeAllwidget(QLayout* lay);
+
 protected:
 	void keyPressEvent(QKeyEvent* event);
 	void keyReleaseEvent(QKeyEvent* event);
@@ -52,27 +55,29 @@ private:
 	bool connected__ = false;
 private:
 	QVBoxLayout* CentralLayout__ = nullptr;
+	QVBoxLayout* ConnectedComponentLayout__ = nullptr;
 	QWidget* CentralWidget__ = nullptr;
 
 	ElaScrollPageArea* ConnectionAreaUI__ = nullptr;
 	ElaSpinBox* SpinBox_Port__ = nullptr;
 	ElaLineEdit* LineEdit_IP__ = nullptr;
 	ElaPushButton* PushButton_Connect__ = nullptr;
-	QString IP = QString("172.17.50.219");
+	QString IP = QString("127.0.0.1");
 	uint16_t port = 12888;
 
+	RTDConnection* BackendConnectionUI__ = nullptr;
 	RTDKernelStates* KernelStatusUI__ = nullptr;
 	RTDRobotStates* RobotStateUI__ = nullptr;
 	RTDKeyboardStatus* KeyboardEventUI__ = nullptr;
 	RTDGamepadStatus* GamepadStatusUI__ = nullptr;
-	QMap<QString, RTDDeviceInfo*> DeviceListsUI__;
+	QSpacerItem* horizontalSpacer = nullptr;
+	QVector<RTDDeviceInfo*> DeviceListsUI__;
 	RTDDeviceInfo* UserInfoUI__ = nullptr;
 
 	QVector<QString> AllHeaders;
 	QVector<QString> KernelHeaders;
-	QVector<QVector<QString>> DeviceHeaders;
-	QVector<QVector<QString>> DeviceSensorNames;
-	QVector<QString> DeviceTypes;
+	QVector<zzs::BITBOT_TCP_PROTOCAL_V1::ABSTRACT_DEVICE_HEADER> DeviceHeaders;
+
 	QVector<QString> ExtraHeader;
 
 	QMap<int, QString> StateLists;

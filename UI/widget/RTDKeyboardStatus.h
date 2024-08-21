@@ -17,6 +17,7 @@ class RTDKeyboardStatus : public MetaRTDView
 public:
 	RTDKeyboardStatus(QWidget *parent = nullptr);
 	~RTDKeyboardStatus();
+	void ResetUI();
 public: //slot
 	void ButtonClicked(QString Button, bool Press);
 

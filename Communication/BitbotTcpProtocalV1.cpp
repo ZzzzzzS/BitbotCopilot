@@ -5,6 +5,7 @@
 #include <QString>
 #include <iostream>
 #include <QJsonDocument>
+#include <QTimer>
 
 zzs::BITBOT_TCP_PROTOCAL_V1::BITBOT_TCP_PROTOCAL_V1(const QJsonObject& cfg, QObject* parent)
 	:META_COMMUNICATION(parent)
@@ -239,13 +240,13 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPair
 	QByteArray UserCmdParser = QJsonDocument(events).toJson(QJsonDocument::Compact);
 	json.insert("data", QJsonValue(QString(UserCmdParser))); //magical again!
 
-	QByteArray send_stream = QJsonDocument(json).toJson(QJsonDocument::Compact);
-	qDebug() << "user cmd stream:" << send_stream;
+	this->UserCommandArray = QJsonDocument(json).toJson(QJsonDocument::Compact);
 
-	if (this->PDOManager__->sendBinaryMessage(send_stream) > 0)
+	QTimer::singleShot(0,this, [this]() {
+		this->PDOManager__->sendBinaryMessage(this->UserCommandArray);
+		});
+
 		return true;
-	else
-		return false;
 }
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::getStateList(QMap<int, QString>& States)
@@ -299,6 +300,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::getDeviceHeader(QVector<ABSTRACT_DEVICE_HEADER
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::RequestPDO()
 {
+	
 	if(this->PDODataConnection__!=CONNECTION_STATUS::CONNECTED)
 		return false;
 	else
@@ -506,7 +508,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::ParsePDOData(const QByteArray& array)
 		}
 		
 		QString DataString = root_obj["data"].toString();
-		qDebug() << "received data string" << DataString;
+		//qDebug() << "received data string" << DataString;
 
 		QJsonParseError err2;
 		QJsonObject RealPayload = QJsonDocument::fromJson(DataString.toLatin1(), &err2).object();

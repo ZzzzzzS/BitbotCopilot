@@ -21,6 +21,8 @@
         <file>Image/kernel_poweron_finished_icon.png</file>
         <file>Image/kernel_idle_icon.png</file>
         <file>Image/disconnected_icon.png</file>
-		<file>Image/error_state_icon.png</file>
+        <file>Image/error_state_icon.png</file>
+        <file>Image/play_icon.png</file>
+        <file>Image/stop_icon.png</file>
     </qresource>
 </RCC>

@@ -6,8 +6,7 @@ RTDRobotStates::RTDRobotStates(QWidget *parent)
 	, ui(new Ui::RTDRobotStatesClass())
 {
 	ui->setupUi(this);
-	this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/disconnected_icon.png").scaledToHeight(this->icon_height));
-	this->ui->Label_CurrentState->setText("Disconnected");
+	this->ResetUI();
 }
 
 RTDRobotStates::~RTDRobotStates()
@@ -53,4 +52,10 @@ void RTDRobotStates::UpdateStates(QVariant v)
 	}
 
 	this->ui->Label_CurrentState->setText(this->states[s]);
+}
+
+void RTDRobotStates::ResetUI()
+{
+	this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/disconnected_icon.png").scaledToHeight(this->icon_height));
+	this->ui->Label_CurrentState->setText("Disconnected");
 }

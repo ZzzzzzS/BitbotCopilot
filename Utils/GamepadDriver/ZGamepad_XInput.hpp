@@ -250,10 +250,10 @@ namespace zzs
 
         std::array<FLOAT, JOYSTICK_NUM> ScaleRemoveDeathZone(const XINPUT_GAMEPAD& GamepadState)
         {
-            auto [lx, ly] = this->RemoveJoystickDeadZone(GamepadState.sThumbLX, GamepadState.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-            auto [rx, ry] = this->RemoveJoystickDeadZone(GamepadState.sThumbRX, GamepadState.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
-            auto lt = this->RemoveTriggerDeadZone(GamepadState.bLeftTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
-            auto rt = this->RemoveTriggerDeadZone(GamepadState.bRightTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
+            auto [lx, ly] = this->RemoveJoystickDeadZone(GamepadState.sThumbLX, GamepadState.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE/4);
+            auto [rx, ry] = this->RemoveJoystickDeadZone(GamepadState.sThumbRX, GamepadState.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE/4);
+            auto lt = this->RemoveTriggerDeadZone(GamepadState.bLeftTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/4);
+            auto rt = this->RemoveTriggerDeadZone(GamepadState.bRightTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/4);
             std::array<FLOAT, JOYSTICK_NUM> arr = { lx,ly,rx,ry,lt,rt };
             return arr;
         }

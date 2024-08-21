@@ -76,5 +76,7 @@ namespace zzs
 		CONNECTION_STATUS PDOHeaderConnection__ = CONNECTION_STATUS::DISCONNECT;
 		CONNECTION_STATUS PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
 		bool AlreadSentErrorMessage__ = false;
+
+		QByteArray UserCommandArray;
 	};
 };

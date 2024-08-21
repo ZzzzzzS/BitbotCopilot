@@ -56,7 +56,7 @@ public:
 
 signals:
     void ConnectionChanged(int id, bool Connected);
-    void ButtonClicked(int id, Q_XSX_JOYSTICK_ENUM button, bool ButtonState);
+    void ButtonClicked(int id, Q_XSX_JOYSTICK_ENUM button, int ButtonState);
     void JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float value);
 
 private:

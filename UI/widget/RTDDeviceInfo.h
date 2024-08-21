@@ -22,10 +22,12 @@ public:
 
 	bool setHeaders(const QString& DeviceType, const QVector<QString>& DeviceList, const QVector<QString>& DeviceSensors);
 	bool setHeaders(const QVector<QString>& UserDataHeader);
+	QString DeviceTypeName();
 
 public: //slots
 	void UpdateDeviceInfo(QVariantList data);
 	size_t getHeaderSize();
+	void ResetUI();
 
 private:
 	void ThemeChanged(ElaThemeType::ThemeMode mode);
@@ -37,4 +39,5 @@ private:
 	size_t RowLength = 0;
 	size_t RowNumber = 0;
 	QVector<QTableWidgetItem*> TableItem;
+	QString DeviceTypeName__;
 };

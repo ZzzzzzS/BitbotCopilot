@@ -23,7 +23,7 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent* event);
-
+	virtual void ResetUI() =0;
 
 private:
 	void ThemeChangedSlot(ElaThemeType::ThemeMode mode);

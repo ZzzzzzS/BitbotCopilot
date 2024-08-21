@@ -22,11 +22,23 @@ RTDKeyboardStatus::~RTDKeyboardStatus()
 	delete ui;
 }
 
+void RTDKeyboardStatus::ResetUI()
+{
+    for (auto i : this->ActionHistoryWidgets)
+    {
+        this->CentralLayout->removeWidget(i);
+        delete i;
+    }
+    this->ActionHistoryWidgets.clear();
+}
+
 void RTDKeyboardStatus::ButtonClicked(QString Button, bool Press)
 {
     ElaScrollPageArea* new_area = this->AppendAction(Button, Press);
     this->ActionHistoryWidgets.push_back(new_area);
-    this->CentralLayout->addWidget(new_area);
+    //this->CentralLayout->addWidget(new_area);
+    this->CentralLayout->insertWidget(0, new_area);
+    this->ui->scrollArea->ensureWidgetVisible(new_area);
 }
 
 void RTDKeyboardStatus::ScrollAreaThemeChangedSlot(ElaThemeType::ThemeMode mode)
@@ -66,7 +78,7 @@ ElaScrollPageArea* RTDKeyboardStatus::AppendAction(const QString& Button, bool P
     NewActionWidget->setFixedWidth(160);
 
     QFont font;
-    font.setPointSize(8);
+    font.setPointSize(7);
 
     ElaText* ButtonLabel = new ElaText(NewActionWidget);
     ButtonLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);

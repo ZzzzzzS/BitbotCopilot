@@ -19,6 +19,7 @@ public:
 public: //slots
 	void DeviceConnectionChanged(int id, bool connected);
 	void JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float value);
+	void ResetUI();
 
 private:
 	Ui::RTDGamepadStatusClass *ui;

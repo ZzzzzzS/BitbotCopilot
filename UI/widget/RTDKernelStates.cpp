@@ -29,3 +29,13 @@ void RTDKernelStates::UpdateKernelStatus(const QString& Headers, const QVariantL
 	QString p = QString::number(percentage) + "%";
 	this->ui->Label_Percentage->setText(p);
 }
+
+void RTDKernelStates::ResetUI()
+{
+	QVariantList Info;
+	Info.push_back(0);
+	Info.push_back(0);
+	Info.push_back(0);
+	Info.push_back(0);
+	this->UpdateKernelStatus("N/A", Info);
+}

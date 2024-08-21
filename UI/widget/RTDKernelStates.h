@@ -16,6 +16,7 @@ public:
 	~RTDKernelStates();
 
 	void UpdateKernelStatus(const QString& Headers, const QVariantList& Info);
+	void ResetUI();
 
 private:
 	Ui::RTDKernelStatesClass *ui;
