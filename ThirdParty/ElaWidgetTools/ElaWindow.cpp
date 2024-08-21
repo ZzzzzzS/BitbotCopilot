@@ -30,7 +30,7 @@ ElaWindow::ElaWindow(QWidget* parent)
     Q_D(ElaWindow);
     d->q_ptr = this;
     setProperty("ElaBaseClassName", "ElaWindow");
-    resize(1020, 680); // 默认宽高
+    resize(1366, 768); // 默认宽高
 
     d->_pThemeChangeTime = 700;
     d->_pNavigationBarDisplayMode = ElaNavigationType::NavigationDisplayMode::Auto;
@@ -290,7 +290,7 @@ bool ElaWindow::eventFilter(QObject* watched, QEvent* event)
 void ElaWindow::resizeEvent(QResizeEvent* event)
 {
     Q_D(ElaWindow);
-    d->_windowLinearGradient->setFinalStop(width(), height());
+    d->_windowLinearGradient->setFinalStop(width() < 1050 ? 1050 : width(), height());
     QWidget::resizeEvent(event);
 }
 

@@ -8,6 +8,7 @@
 #include "PilotPage.h"
 #include "AboutPage.h"
 #include "SettingsPage.h"
+#include <QResizeEvent>
 
 
 class MainWindow : public ElaWindow
@@ -23,6 +24,7 @@ private:
     void InitPage();
     void InitFooter();
     void InitSignalSlot();
+    void resizeEvent(QResizeEvent* event);
 
 private:
     HomePage* HomePage__;

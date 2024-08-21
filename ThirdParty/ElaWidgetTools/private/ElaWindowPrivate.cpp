@@ -240,19 +240,19 @@ void ElaWindowPrivate::_doNavigationDisplayModeChange()
     {
         _resetWindowLayout(false);
         int width = q->centralWidget()->width();
-        if (width >= 850 && _currentNavigationBarDisplayMode != ElaNavigationType::Maximal)
+        if (width >= 1360 && _currentNavigationBarDisplayMode != ElaNavigationType::Maximal)
         {
             _navigationBar->setDisplayMode(ElaNavigationType::Maximal);
             _currentNavigationBarDisplayMode = ElaNavigationType::Maximal;
             _appBar->setWindowButtonFlag(ElaAppBarType::NavigationButtonHint, false);
         }
-        else if (width >= 550 && width < 850 && _currentNavigationBarDisplayMode != ElaNavigationType::Compact)
+        else if (width >= 1100 && width < 1360 && _currentNavigationBarDisplayMode != ElaNavigationType::Compact)
         {
             _navigationBar->setDisplayMode(ElaNavigationType::Compact);
             _currentNavigationBarDisplayMode = ElaNavigationType::Compact;
             _appBar->setWindowButtonFlag(ElaAppBarType::NavigationButtonHint, false);
         }
-        else if (width < 550 && _currentNavigationBarDisplayMode != ElaNavigationType::Minimal)
+        else if (width < 1100 && _currentNavigationBarDisplayMode != ElaNavigationType::Minimal)
         {
             _navigationBar->setDisplayMode(ElaNavigationType::Minimal);
             _currentNavigationBarDisplayMode = ElaNavigationType::Minimal;

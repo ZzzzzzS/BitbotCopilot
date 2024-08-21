@@ -21,6 +21,8 @@ MainWindow::~MainWindow()
 void MainWindow::InitWindow()
 {
     this->resize(1366, 768);
+    this->setMinimumWidth(700);
+
     setUserInfoCardPixmap(QPixmap(":/UI/Image/logo.png"));
     setUserInfoCardTitle("BITBOT Copilot");
     setUserInfoCardSubTitle("BIT Humanoid Group");
@@ -64,4 +66,21 @@ void MainWindow::InitSignalSlot()
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
         });
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    /*if (this->width() < 1360)
+        this->setIsNavigationBarEnable(false);
+    else
+        this->setIsNavigationBarEnable(true);*/
+    this->setMinimumWidth(1050);
+    if (this->width() < 1050)
+    {
+        this->resize(1050, this->height());
+        return;
+    }
+        
+
+    ElaWindow::resizeEvent(event);
 }
