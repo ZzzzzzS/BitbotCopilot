@@ -24,5 +24,7 @@
         <file>Image/error_state_icon.png</file>
         <file>Image/play_icon.png</file>
         <file>Image/stop_icon.png</file>
+        <file>Image/backend_icon.png</file>
+        <file>Image/frontend_icon.png</file>
     </qresource>
 </RCC>

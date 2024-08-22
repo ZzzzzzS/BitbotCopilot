@@ -59,6 +59,18 @@ void PilotPage::InitConnectionWidget()
     horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
     auto horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
+    ElaText* icon = new ElaText(this->ConnectionAreaUI__);
+    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png").scaledToWidth(40, Qt::SmoothTransformation));
+    ElaText* name = new ElaText(this->ConnectionAreaUI__);
+    name->setText(tr("Frontend Manager"));
+    QFont namefont;
+    namefont.setPixelSize(18);
+    name->setFont(namefont);
+    //name->setFont(font);
+    horizontalLayout_3->addWidget(icon);
+    horizontalLayout_3->addWidget(name);
+
+
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
     auto horizontalLayout_2 = new QHBoxLayout();
@@ -164,8 +176,20 @@ void PilotPage::InitConnectionWidget()
         }
      },Qt::QueuedConnection);
 
+    /////////////////backend///////////////////////////////////
+    this->BackendManagerUI__ = new BackendManager(this->CentralWidget__);
+    QSpacerItem* l_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem* r_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QHBoxLayout* hor_box = new QHBoxLayout();
+    hor_box->addSpacerItem(l_space);
+    hor_box->addWidget(this->BackendManagerUI__);
+    hor_box->addSpacerItem(r_space);
+
     this->CentralLayout__ = new QVBoxLayout(this->CentralWidget__);
     this->CentralLayout__->addWidget(this->ConnectionAreaUI__);
+    this->CentralLayout__->addLayout(hor_box);
+    QSpacerItem* B_space = new QSpacerItem(20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    this->CentralLayout__->addSpacerItem(B_space);
 }
 
 void PilotPage::InitCommHandle()
@@ -260,7 +284,8 @@ void PilotPage::DrawConnectedUI()
         hor_box->addLayout(this->ConnectedComponentLayout__);
         hor_box->addSpacerItem(r_space);
 
-        this->CentralLayout__->addLayout(hor_box);
+        //this->CentralLayout__->addLayout(hor_box);
+        this->CentralLayout__->insertLayout(1, hor_box);
     }
     
    
@@ -327,6 +352,7 @@ void PilotPage::DrawConnectedUI()
     QVBoxLayout* DeviceLayout = new QVBoxLayout();
     QMap<QString, QVector<QString>> DeviceSensors;
     QMap<QString, QVector<QString>> DeviceTypeList;
+
     for (auto& i : this->DeviceHeaders)
     {
         if (!DeviceSensors.contains(i.DeviceTypeName))
@@ -340,7 +366,6 @@ void PilotPage::DrawConnectedUI()
         }
         DeviceTypeList[i.DeviceTypeName].push_back(i.DeviceName);
     }
-
 
     QMap<QString, QVector<QString>>::const_iterator i = DeviceSensors.constBegin();
     size_t cnt = 0;

@@ -6,7 +6,7 @@
 #include "ElaLineEdit.h"
 
 ElaLineEditPrivate::ElaLineEditPrivate(QObject* parent)
-    : QObject{parent}
+    : QObject{ parent }
 {
 }
 

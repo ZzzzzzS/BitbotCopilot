@@ -42,6 +42,9 @@ set(UI_WIDGETS
     UI/widget/RTDConnection.cpp
     UI/widget/RTDConnection.h
     UI/widget/RTDConnection.ui
+    UI/widget/BackendManager.cpp
+    UI/widget/BackendManager.h
+    UI/widget/BackendManager.ui
 )
 
 set(UI_FILES 

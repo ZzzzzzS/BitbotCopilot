@@ -11,6 +11,7 @@
 #include "widget/RTDKeyboardStatus.h"
 #include "widget/RTDDeviceInfo.h"
 #include "widget/RTDConnection.h"
+#include "widget/BackendManager.h"
 #include "../Communication/BitbotTcpProtocalV1.h"
 #include "../Communication/MetaCommunication.hpp"
 #include "../Utils/GamepadDriver/ZQGamepad.h"
@@ -62,9 +63,10 @@ private:
 	ElaSpinBox* SpinBox_Port__ = nullptr;
 	ElaLineEdit* LineEdit_IP__ = nullptr;
 	ElaPushButton* PushButton_Connect__ = nullptr;
-	QString IP = QString("127.0.0.1");
+	QString IP = QString("192.168.8.112");
 	uint16_t port = 12888;
 
+	BackendManager* BackendManagerUI__ = nullptr;
 	RTDConnection* BackendConnectionUI__ = nullptr;
 	RTDKernelStates* KernelStatusUI__ = nullptr;
 	RTDRobotStates* RobotStateUI__ = nullptr;
