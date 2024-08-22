@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <iostream>
 #include <QMetaType>
+#include "../Utils/Settings/SettingsHandler.h"
 
 
 
@@ -43,6 +44,7 @@ PilotPage::~PilotPage()
 
 void PilotPage::InitConnectionWidget()
 {
+    std::tie(this->IP, this->port) = ZSet->getIPAndPort();
 
     this->ConnectionAreaUI__ = new ElaScrollPageArea(this->CentralWidget__);
     this->ConnectionAreaUI__->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Fixed);
@@ -136,7 +138,7 @@ void PilotPage::InitConnectionWidget()
 
     horizontalLayout_3->addLayout(horizontalLayout_2);
 
-    auto horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    auto horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     horizontalLayout_3->addItem(horizontalSpacer_3);
 

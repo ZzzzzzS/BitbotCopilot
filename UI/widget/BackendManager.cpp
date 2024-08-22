@@ -9,14 +9,23 @@
 #include <QDebug>
 #include "ElaTheme.h"
 #include <QPixmap>
+#include "../../Utils/Settings/SettingsHandler.h"
+#include <tuple>
 
-QString Cmd = "ssh";
 
 BackendManager::BackendManager(QWidget* parent)
     : MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW,parent)
     , ui(new Ui::BackendManager)
 {
     ui->setupUi(this);
+
+    std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
+    this->isRemote = ZSet->isBackendRemote();
+    if (this->isRemote)
+    {
+        std::tie(this->UserName, this->IP) = ZSet->getRemoteBackendUserNameAndIP();
+    }
+
     this->BackendProcess__ = new QProcess(this);
     this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png").scaledToWidth(40, Qt::SmoothTransformation));
     this->ui->textEdit_BackendInfo->setReadOnly(true);
@@ -73,13 +82,14 @@ BackendManager::BackendManager(QWidget* parent)
 
     QObject::connect(this->BackendProcess__, &QProcess::readyReadStandardError, this, [this]() {
         QByteArray err_msg = this->BackendProcess__->readAllStandardError();
-        this->ui->textEdit_BackendInfo->append(QString("[WARNING]") + QString(err_msg));
+        this->ui->textEdit_BackendInfo->append(QString("[WARNING] ") + QString(err_msg));
         });
     
     QObject::connect(this->ui->textEdit_BackendInfo, &QTextEdit::textChanged, this, [this]() {
         this->ui->textEdit_BackendInfo->moveCursor(QTextCursor::End);
         });
-   
+  
+    
 
     QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, [this]() {
         if (this->ui->pushButton_connect->text() == tr("Connect"))
@@ -87,9 +97,25 @@ BackendManager::BackendManager(QWidget* parent)
             this->ui->textEdit_BackendInfo->clear();
             this->ui->pushButton_connect->setText(tr("Connecting"));
             this->ui->pushButton_connect->setEnabled(false);
+            //QStringList args;
+            //args.push_back("bitbot@192.168.8.112");
+            //args.push_back("/home/bitbot/cetc_robot_ganzhi_v2/build/bin/main_app");
+
+            QString Cmd;
             QStringList args;
-            args.push_back("bitbot@192.168.8.112");
-            args.push_back("/home/bitbot/cetc_robot_ganzhi_v2/build/bin/main_app");
+            if (!this->isRemote)
+            {
+                Cmd = this->ExecPath + "/" + this->ExecName;  //FIXME: fix local run issue!
+            }
+            else
+            {
+                Cmd = "ssh";
+                args.push_back(this->UserName + "@" + this->IP);
+                args.push_back("cd");
+                args.push_back(this->ExecPath + ";");
+                args.push_back("./" + this->ExecName);
+            }
+
             this->BackendProcess__->start(Cmd, args);
         }
         else if (this->ui->pushButton_connect->text() == tr("Stop"))
@@ -97,11 +123,13 @@ BackendManager::BackendManager(QWidget* parent)
             this->ui->pushButton_connect->setText(tr("Force Stop"));
             this->ui->pushButton_connect->setEnabled(true);
             //this->BackendProcess__->terminate();
-            QStringList args;
+            /*QStringList args;
             args.append("bitbot@192.168.8.112");
             args.append("pkill");
             args.append("main_app");
-            QProcess::execute("ssh", args);
+            QProcess::execute("ssh", args);*/
+
+            this->TerminateBackend();
         }
         else if (this->ui->pushButton_connect->text() == tr("Connecting"))
         {
@@ -126,6 +154,10 @@ BackendManager::BackendManager(QWidget* parent)
 BackendManager::~BackendManager()
 {
     this->BackendProcess__->disconnect();
+    if (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning)
+    {
+        this->TerminateBackend();
+    }
     delete ui;
 }
 
@@ -182,4 +214,41 @@ void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
     }
 
     //this->setStyleSheet(styleSheet);
+}
+
+void BackendManager::closeEvent(QCloseEvent* event)
+{
+    if (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning)
+    {
+        int button = QMessageBox::warning(this, tr("Backend is Still Running"), tr("Backend is still running, would you like to terminate it now?"), QMessageBox::Yes, QMessageBox::No);
+        if (button == QMessageBox::Yes)
+        {
+            this->TerminateBackend();
+        }
+        else
+        {
+            int button = QMessageBox::warning(this, tr("Unmanaged Backend is Danger!"), tr("The backend is still running and can only be killed by task manager, do you really want to close the window with backend running still?"), QMessageBox::Yes, QMessageBox::No);
+            if (button == QMessageBox::No)
+            {
+                event->ignore();
+            }
+        }
+    }
+}
+
+void BackendManager::TerminateBackend()
+{
+    if (this->isRemote)
+    {
+        QString Cmd = "ssh";
+        QStringList args;
+        args.append(this->UserName + "@" + this->IP);
+        args.append("pkill");
+        args.append(this->ExecName);
+        QProcess::execute(Cmd, args);
+    }
+    else
+    {
+        this->BackendProcess__->terminate();
+    }
 }

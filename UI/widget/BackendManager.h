@@ -27,8 +27,15 @@ signals:
 
 private:
     void ThemeChanged(ElaThemeType::ThemeMode themeMode);
+    void closeEvent(QCloseEvent* event);
+    void TerminateBackend();
 private:
+    bool isRemote = false;
     Ui::BackendManager* ui;
     QProcess* BackendProcess__;
+    QString UserName;
+    QString IP;
+    QString ExecPath;
+    QString ExecName;
 
 };

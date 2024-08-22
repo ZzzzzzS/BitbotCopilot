@@ -15,6 +15,7 @@ endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
+
 add_subdirectory(ThirdParty/ElaWidgetTools)
 set(TS_FILES 
     Res/BITBOT-Frontend-Z_zh_CN.ts
@@ -78,6 +79,8 @@ set(UTIL_FILES
     Utils/GamepadDriver/ZQGamepad.cpp
     Utils/GamepadDriver/ZQGamepad.h
     Utils/GamepadDriver/ZGamepad_XInput.hpp
+    Utils/Settings/SettingsHandler.cpp
+    Utils/Settings/SettingsHandler.h
 )
 
 
@@ -91,10 +94,14 @@ set(PROJECT_SOURCES
 
 include_directories(./ThirdParty/ElaWidgetTools/include)
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
+
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BITBOT-Frontend-Z
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${app_icon_resource_windows}
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET BITBOT-Frontend-Z APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -112,6 +119,7 @@ else()
     else()
         add_executable(BITBOT-Frontend-Z
             ${PROJECT_SOURCES}
+            ${app_icon_resource_windows}
         )
     endif()
 

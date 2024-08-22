@@ -5,6 +5,7 @@
 #include <QTranslator>
 #include "ElaApplication.h"
 #include "ElaWidget.h"
+#include "QSplashScreen"
 
 int main(int argc, char* argv[])
 {
@@ -17,6 +18,12 @@ int main(int argc, char* argv[])
 #endif
 
     QApplication a(argc, argv);
+
+    a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
+    QSplashScreen screen(QPixmap(":/logo/Image/splash_Screen.png"));
+    //screen.show();
+    a.processEvents();
+
     eApp->init();
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -32,6 +39,7 @@ int main(int argc, char* argv[])
 
     MainWindow w;
     w.show();
+    //screen.finish(&w);
 
     return a.exec();
 }
