@@ -6,6 +6,9 @@
 #include "ElaApplication.h"
 #include "ElaWidget.h"
 #include "QSplashScreen"
+#include "UI/widget/CustomSplashScreen.h"
+
+#include<windows.h>
 
 int main(int argc, char* argv[])
 {
@@ -20,9 +23,12 @@ int main(int argc, char* argv[])
     QApplication a(argc, argv);
 
     a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
-    QSplashScreen screen(QPixmap(":/logo/Image/splash_Screen.png"));
-    //screen.show();
+
+    CustomSplashScreen screen(QPixmap(":/logo/Image/Splash_Screen.png"));
+    screen.show();
+
     a.processEvents();
+    Sleep(1000);
 
     eApp->init();
     QTranslator translator;
@@ -34,12 +40,10 @@ int main(int argc, char* argv[])
             break;
         }
     }
-    //ElaWidget bbb;
-    //bbb.show();
 
     MainWindow w;
     w.show();
-    //screen.finish(&w);
+    screen.finish(&w);
 
     return a.exec();
 }

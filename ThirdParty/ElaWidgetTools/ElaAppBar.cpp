@@ -101,6 +101,7 @@ ElaAppBar::ElaAppBar(QWidget* parent)
     else
     {
         d->_iconLabel->setPixmap(parent->windowIcon().pixmap(18, 18));
+        d->_iconLabel->setVisible(false);
     }
     connect(parent, &QWidget::windowIconChanged, this, [=](const QIcon& icon) {
         d->_iconLabel->setPixmap(icon.pixmap(18, 18));

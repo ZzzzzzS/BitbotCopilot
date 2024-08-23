@@ -29,7 +29,8 @@
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>
-        <file>Image/splash_Screen.png</file>
         <file>Image/ProgramIcon.ico</file>
+        <file>Image/Splash_Screen.png</file>
+        <file>Image/Splash_Screen.svg</file>
     </qresource>
 </RCC>

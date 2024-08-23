@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     this->InitSignalSlot();
 
-    //this->moveToCenter();
+    this->moveToCenter();
 }
 
 MainWindow::~MainWindow()

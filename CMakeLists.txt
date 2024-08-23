@@ -13,8 +13,8 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg)
 
 add_subdirectory(ThirdParty/ElaWidgetTools)
 set(TS_FILES 
@@ -46,6 +46,8 @@ set(UI_WIDGETS
     UI/widget/BackendManager.cpp
     UI/widget/BackendManager.h
     UI/widget/BackendManager.ui
+    UI/widget/CustomSplashScreen.cpp
+    UI/widget/CustomSplashScreen.h
 )
 
 set(UI_FILES 
@@ -131,6 +133,7 @@ target_link_libraries(BITBOT-Frontend-Z PRIVATE
                      Qt${QT_VERSION_MAJOR}::Widgets 
                      Qt${QT_VERSION_MAJOR}::WebSockets
                      Qt${QT_VERSION_MAJOR}::Network
+                     Qt${QT_VERSION_MAJOR}::Svg
                      XInput
                      )
 
