@@ -14,6 +14,7 @@ public:
 signals:
 	void AttachBitbotSignal();
 	void LaunchBitbotSignal();
+	void AutoRunBitbotSignal();
 	void ViewDataSignal();
 
 private:
@@ -23,6 +24,7 @@ private:
 private:
 	ElaReminderCard* AttachBitbotCard;
 	ElaReminderCard* LaunchBitbotCard;
+	ElaReminderCard* AutoRunBitbotCard;
 	ElaReminderCard* DataViewerCard;
 
 	ElaAcrylicUrlCard* UrlCard2;

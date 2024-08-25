@@ -20,6 +20,7 @@
 #include <QVariantList>
 #include <QMap>
 #include <QVBoxLayout>
+#include <QGraphicsBlurEffect>
 
 
 class PilotPage : public ElaScrollPage
@@ -29,6 +30,8 @@ class PilotPage : public ElaScrollPage
 public:
 	PilotPage(QWidget* parent = nullptr);
 	~PilotPage();
+
+	bool RunNewBitbot(bool LaunchBackend, bool dryrun);
 
 private:
 	void InitConnectionWidget();
@@ -44,10 +47,14 @@ private:
 
 	void removeAllwidget(QLayout* lay);
 
+	void ConnectionButtonClickedSlot();
+
 protected:
 	void keyPressEvent(QKeyEvent* event);
 	void keyReleaseEvent(QKeyEvent* event);
-
+	void showEvent(QShowEvent* event);
+	void focusInEvent(QFocusEvent* event);
+	void focusOutEvent(QFocusEvent* event);
 
 private:
 	ZQGamepad* GamepadHandle__;
@@ -55,6 +62,7 @@ private:
 	QThread* CommThread__;
 	bool connected__ = false;
 private:
+	QGraphicsBlurEffect* blureffect__ = nullptr;
 	QVBoxLayout* CentralLayout__ = nullptr;
 	QVBoxLayout* ConnectedComponentLayout__ = nullptr;
 	QWidget* CentralWidget__ = nullptr;

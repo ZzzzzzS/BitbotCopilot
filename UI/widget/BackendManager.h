@@ -19,6 +19,8 @@ public:
     BackendManager(QWidget* parent = nullptr);
     ~BackendManager();
     void ResetUI();
+    bool isRunning();
+    bool StartBackend();
 
 signals:
     void ProcessStarted();
@@ -29,13 +31,13 @@ private:
     void ThemeChanged(ElaThemeType::ThemeMode themeMode);
     void closeEvent(QCloseEvent* event);
     void TerminateBackend();
+    void ConnectionButtonClickedSlot();
 private:
     bool isRemote = false;
-    Ui::BackendManager* ui;
     QProcess* BackendProcess__;
     QString UserName;
     QString IP;
     QString ExecPath;
     QString ExecName;
-
+    Ui::BackendManager* ui;
 };

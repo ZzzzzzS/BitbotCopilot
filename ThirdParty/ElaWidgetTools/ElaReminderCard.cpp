@@ -18,7 +18,7 @@ Q_PROPERTY_CREATE_Q_CPP(ElaReminderCard, int, CardPixmapBorderRadius)
 Q_PROPERTY_CREATE_Q_CPP(ElaReminderCard, ElaCardPixType::PixMode, CardPixMode);
 
 ElaReminderCard::ElaReminderCard(QWidget* parent)
-    : QPushButton{parent}, d_ptr(new ElaReminderCardPrivate())
+    : QPushButton{ parent }, d_ptr(new ElaReminderCardPrivate())
 {
     Q_D(ElaReminderCard);
     d->q_ptr = this;

@@ -17,6 +17,9 @@
 #include <iostream>
 #include <QMetaType>
 #include "../Utils/Settings/SettingsHandler.h"
+#include <QTimer>
+#include "widget/CustomImageLabel.hpp"
+#include "QGraphicsBlurEffect"
 
 
 
@@ -33,12 +36,48 @@ PilotPage::PilotPage(QWidget* parent)
     this->InitConnectionWidget();
 
     this->ProcessDisconnetced();
+    
+    this->blureffect__ = new QGraphicsBlurEffect(this);
+    blureffect__->setBlurRadius(5);	//数值越大，越模糊
 }
 
 PilotPage::~PilotPage()
 {
     this->CommThread__->quit();
     this->CommThread__->wait();
+}
+
+bool PilotPage::RunNewBitbot(bool LaunchBackend, bool dryrun)
+{
+    bool check_result = false;
+    check_result = !this->connected__ && this->PushButton_Connect__->isEnabled();
+    if (LaunchBackend)
+        check_result = check_result && (!this->BackendManagerUI__->isRunning());
+
+
+    if (!dryrun)
+    {
+        if (!check_result)
+            return false;
+        
+        if (LaunchBackend)
+        {
+            this->BackendManagerUI__->StartBackend();
+            this->PushButton_Connect__->setEnabled(false);
+            QTimer::singleShot(2000, this, [this]() {
+                std::tie(this->IP, this->port) = ZSet->getIPAndPort();
+                this->LineEdit_IP__->setText(this->IP);
+                this->SpinBox_Port__->setValue(this->port);
+                this->ConnectionButtonClickedSlot();
+             });
+        }
+        else
+        {
+            this->ConnectionButtonClickedSlot();
+        }
+        
+    }
+    return check_result;
 }
 
 
@@ -61,8 +100,9 @@ void PilotPage::InitConnectionWidget()
     horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
     auto horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    ElaText* icon = new ElaText(this->ConnectionAreaUI__);
-    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png").scaledToWidth(40, Qt::SmoothTransformation));
+    CustomImageLabel* icon = new CustomImageLabel(this->ConnectionAreaUI__);
+    icon->setFixedSize(40, 40);
+    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"));
     ElaText* name = new ElaText(this->ConnectionAreaUI__);
     name->setText(tr("Frontend Manager"));
     QFont namefont;
@@ -145,38 +185,7 @@ void PilotPage::InitConnectionWidget()
 
     gridLayout->addLayout(horizontalLayout_3, 0, 0, 1, 1);
 
-    QObject::connect(this->PushButton_Connect__, &ElaPushButton::clicked, this, [this]() {
-        this->IP = this->LineEdit_IP__->text();
-        this->port = this->SpinBox_Port__->value();
-        
-        if (this->PushButton_Connect__->text() == tr("connect"))
-        {
-            if (bool ok = this->CommHandle__->Connect(IP, port, 3000); ok == false)
-            {
-                QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
-            }
-            else
-            {
-                this->PushButton_Connect__->setText(tr("connecting"));
-                this->PushButton_Connect__->setEnabled(false);
-            }
-        }
-        else if (this->PushButton_Connect__->text() == tr("disconnect"))
-        {
-            if (!this->CommHandle__->Disconnect())
-            {
-                QMessageBox::warning(this, tr("Disconnect Failed"), tr("Failed to disconnect to Bitbot, try again later"), QMessageBox::Ok);
-            }
-        }
-        else if (this->PushButton_Connect__->text() == tr("connecting"))
-        {
-            QMessageBox::warning(this, tr("System is Busy"), tr("System is busy, connect/disconnect request will be ignored"));
-        }
-        else
-        {
-            QMessageBox::critical(this, tr("Catastrophic Failure"), tr("Unknown Button Status"), QMessageBox::Ok);
-        }
-     },Qt::QueuedConnection);
+    QObject::connect(this->PushButton_Connect__, &ElaPushButton::clicked, this, &PilotPage::ConnectionButtonClickedSlot,Qt::QueuedConnection);
 
     /////////////////backend///////////////////////////////////
     this->BackendManagerUI__ = new BackendManager(this->CentralWidget__);
@@ -594,6 +603,40 @@ void PilotPage::removeAllwidget(QLayout* lay)
      }
 }
 
+void PilotPage::ConnectionButtonClickedSlot()
+{
+    this->IP = this->LineEdit_IP__->text();
+    this->port = this->SpinBox_Port__->value();
+
+    if (this->PushButton_Connect__->text() == tr("connect"))
+    {
+        if (bool ok = this->CommHandle__->Connect(IP, port, 3000); ok == false)
+        {
+            QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
+        }
+        else
+        {
+            this->PushButton_Connect__->setText(tr("connecting"));
+            this->PushButton_Connect__->setEnabled(false);
+        }
+    }
+    else if (this->PushButton_Connect__->text() == tr("disconnect"))
+    {
+        if (!this->CommHandle__->Disconnect())
+        {
+            QMessageBox::warning(this, tr("Disconnect Failed"), tr("Failed to disconnect to Bitbot, try again later"), QMessageBox::Ok);
+        }
+    }
+    else if (this->PushButton_Connect__->text() == tr("connecting"))
+    {
+        QMessageBox::warning(this, tr("System is Busy"), tr("System is busy, connect/disconnect request will be ignored"));
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("Catastrophic Failure"), tr("Unknown Button Status"), QMessageBox::Ok);
+    }
+}
+
 void PilotPage::keyPressEvent(QKeyEvent* event)
 {
     if (!this->connected__)
@@ -632,5 +675,26 @@ void PilotPage::keyReleaseEvent(QKeyEvent* event)
     {
         this->KeyboardEventUI__->ButtonClicked(key, false);
     }
+}
+
+void PilotPage::showEvent(QShowEvent* event)
+{
+    ElaScrollPage::showEvent(event);
+    this->setFocus();
+    this->BackendManagerUI__->ResetUI();
+}
+
+void PilotPage::focusInEvent(QFocusEvent* event)
+{
+    /*this->setGraphicsEffect(nullptr);
+    qDebug() << "forces in";*/
+}
+
+void PilotPage::focusOutEvent(QFocusEvent* event)
+{
+    //this->blureffect__ = new QGraphicsBlurEffect(this);
+    //blureffect__->setBlurRadius(5);	//数值越大，越模糊
+    //this->setGraphicsEffect(this->blureffect__);
+    //qDebug() << "focus out";
 }
 

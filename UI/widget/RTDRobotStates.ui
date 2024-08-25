@@ -32,12 +32,18 @@
       </widget>
      </item>
      <item>
-      <widget class="ElaText" name="label_icon">
+      <widget class="CustomImageLabel" name="label_icon">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>65</height>
+        </size>
        </property>
        <property name="text">
         <string/>
@@ -100,6 +106,11 @@
    <class>ElaText</class>
    <extends>QLabel</extends>
    <header>ElaText.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustomImageLabel</class>
+   <extends>QLabel</extends>
+   <header>CustomImageLabel.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

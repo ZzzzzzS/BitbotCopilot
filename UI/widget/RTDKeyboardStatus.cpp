@@ -10,7 +10,7 @@ RTDKeyboardStatus::RTDKeyboardStatus(QWidget *parent)
 	ui->setupUi(this);
     this->ScrollAreaThemeChangedSlot(eTheme->getThemeMode());
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &RTDKeyboardStatus::ScrollAreaThemeChangedSlot);
-
+    this->ui->label->setPixmap(QPixmap(":/UI/Image/keyboard_icon.png"), 70, 70);
     this->CentralWidget = this->ui->scrollAreaWidgetContents;
     this->CentralLayout = new QVBoxLayout(this->CentralWidget);
     this->CentralLayout->setContentsMargins(0, 0, 1, 1);

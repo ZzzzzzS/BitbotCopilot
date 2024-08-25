@@ -32,23 +32,29 @@
       </widget>
      </item>
      <item>
-      <widget class="ElaText" name="label">
+      <widget class="CustomImageLabel" name="label">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>65</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
-         <height>60</height>
+         <height>70</height>
         </size>
        </property>
        <property name="baseSize">
         <size>
          <width>0</width>
-         <height>80</height>
+         <height>65</height>
         </size>
        </property>
        <property name="text">
@@ -83,7 +89,7 @@
           <x>0</x>
           <y>0</y>
           <width>178</width>
-          <height>94</height>
+          <height>84</height>
          </rect>
         </property>
        </widget>
@@ -111,6 +117,11 @@
    <extends>QScrollArea</extends>
    <header>ElaScrollArea.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomImageLabel</class>
+   <extends>QLabel</extends>
+   <header>CustomImageLabel.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

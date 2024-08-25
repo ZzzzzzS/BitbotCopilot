@@ -43,6 +43,11 @@ std::tuple<QString, QString> SettingsHandler::getBackendPathAndName()
     return std::make_tuple(Path, Exec);
 }
 
+bool SettingsHandler::isVIP()
+{
+    return this->WRSettings("COMMON/VIP", false).toBool();
+}
+
 bool SettingsHandler::isBackendRemote()
 {
     QString protocal = this->WRSettings("BACKEND/PROTOCAL", "ssh").toString();

@@ -1,4 +1,4 @@
-#include "UI/MainWindow.h"
+﻿#include "UI/MainWindow.h"
 
 #include <QApplication>
 #include <QLocale>
@@ -7,6 +7,7 @@
 #include "ElaWidget.h"
 #include "QSplashScreen"
 #include "UI/widget/CustomSplashScreen.h"
+#include "Utils/Settings/SettingsHandler.h"
 
 #include<windows.h>
 
@@ -28,13 +29,22 @@ int main(int argc, char* argv[])
     screen.show();
 
     a.processEvents();
-    Sleep(1000);
+
+    //dknt的提议
+    if (ZSet->isVIP())
+    {
+        Sleep(1000); //这个地方先这样，让用户能充分看到我们的启动界面，等以后加钱再改
+    }
+    else
+    {
+        Sleep(3000);
+    }
 
     eApp->init();
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString& locale : uiLanguages) {
-        const QString baseName = "BITBOT-Frontend-Z_" + QLocale(locale).name();
+        const QString baseName = "BitbotCopilot_" + QLocale(locale).name();
         if (translator.load(":/i18n/" + baseName)) {
             a.installTranslator(&translator);
             break;
@@ -44,6 +54,7 @@ int main(int argc, char* argv[])
     MainWindow w;
     w.show();
     screen.finish(&w);
+    
 
     return a.exec();
 }

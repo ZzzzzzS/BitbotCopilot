@@ -10,7 +10,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice, QWidget* parent)
 	this->ui->label_ConnectedDevice->setText(QString::number(connectedDeviceCount));
 	if (eTheme->getThemeMode() == ElaThemeType::Light)
 	{
-		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65, Qt::SmoothTransformation));
+		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png"),65,65);
 		QPalette pe = this->ui->label_status->palette();
 		pe.setColor(QPalette::WindowText, Qt::black);
 		if (this->connectedDeviceCount == 1)
@@ -26,7 +26,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice, QWidget* parent)
 	}
 	else
 	{
-		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65, Qt::SmoothTransformation));
+		this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png"), 65, 65);
 		QPalette pe = this->ui->label_status->palette();
 		pe.setColor(QPalette::WindowText, Qt::white);
 		if (this->connectedDeviceCount == 1)
@@ -43,7 +43,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice, QWidget* parent)
 	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mod) {
 		if (mod == ElaThemeType::Light)
 		{
-			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png").scaledToHeight(65, Qt::SmoothTransformation));
+			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_icon.png"), 65, 65);
 			QPalette pe = this->ui->label_status->palette();
 			pe.setColor(QPalette::WindowText, Qt::black);
 			if (this->connectedDeviceCount == 1)
@@ -59,7 +59,7 @@ RTDGamepadStatus::RTDGamepadStatus(int ConnectedDevice, QWidget* parent)
 		}
 		else
 		{
-			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png").scaledToHeight(65, Qt::SmoothTransformation));
+			this->ui->label_gamepad->setPixmap(QPixmap(":/UI/Image/gamepad_dark.png"), 65, 65);
 			QPalette pe = this->ui->label_status->palette();
 			pe.setColor(QPalette::WindowText, Qt::white);
 			if (this->connectedDeviceCount == 1)

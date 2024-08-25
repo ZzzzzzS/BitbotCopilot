@@ -28,17 +28,23 @@ HomePage::HomePage(QWidget* parent)
     this->AttachBitbotCard = new ElaReminderCard(this);
     QObject::connect(this->AttachBitbotCard, &ElaReminderCard::clicked, this, [=]() { emit this->AttachBitbotSignal(); });
     this->AttachBitbotCard->setTitle(tr("Attach to Bitbot Task"));
-    this->AttachBitbotCard->setSubTitle(tr("attach Bitbot Copilot to an Bitbot backend instance"));
+    this->AttachBitbotCard->setSubTitle(tr("Attach Bitbot Copilot to an Bitbot backend instance"));
     this->AttachBitbotCard->setCardPixmap(QPixmap(":/UI/Image/attach_bitbot.png"));
 
     this->LaunchBitbotCard = new ElaReminderCard(this);
-    QObject::connect(this->LaunchBitbotCard, &ElaReminderCard::clicked, this, [=]() {
-        QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
-    });
     QObject::connect(this->LaunchBitbotCard, &ElaReminderCard::clicked, this, [=]() { emit this->LaunchBitbotSignal(); });
     this->LaunchBitbotCard->setTitle(tr("Launch New Bitbot Task"));
     this->LaunchBitbotCard->setSubTitle(tr("Launch a new Bitbot backend"));
     this->LaunchBitbotCard->setCardPixmap(QPixmap(":/UI/Image/launch_bitbot.png"));
+
+    this->AutoRunBitbotCard = new ElaReminderCard(this);
+    QObject::connect(this->AutoRunBitbotCard, &ElaReminderCard::clicked, this, [=]() { emit this->AutoRunBitbotSignal(); });
+    this->AutoRunBitbotCard->setTitle(tr("Auto Run Bitbot"));
+    this->AutoRunBitbotCard->setSubTitle(tr("Launch and perform initialization with one click"));
+    this->AutoRunBitbotCard->setCardPixmap(QPixmap(":/UI/Image/auto_launch.png"));
+    QObject::connect(this->AutoRunBitbotCard, &ElaReminderCard::clicked, this, [=]() {
+        QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
+    });
 
     this->DataViewerCard = new ElaReminderCard(this);
     QObject::connect(this->DataViewerCard, &ElaReminderCard::clicked, this, [=]() { emit this->ViewDataSignal(); });
@@ -51,6 +57,7 @@ HomePage::HomePage(QWidget* parent)
     flowLayout->setIsAnimation(true);
     flowLayout->addWidget(this->AttachBitbotCard);
     flowLayout->addWidget(this->LaunchBitbotCard);
+    flowLayout->addWidget(this->AutoRunBitbotCard);
     flowLayout->addWidget(this->DataViewerCard);
 
 

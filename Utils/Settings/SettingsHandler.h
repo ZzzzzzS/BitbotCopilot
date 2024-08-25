@@ -18,6 +18,7 @@ public:
 	~SettingsHandler();
 	std::tuple<QString, uint16_t> getIPAndPort();
 	std::tuple<QString, QString> getBackendPathAndName();
+	bool isVIP();
 	bool isBackendRemote();
 	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
 private:

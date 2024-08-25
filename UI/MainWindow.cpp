@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "ElaWindow.h"
 #include <QDebug>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent)
@@ -56,12 +57,32 @@ void MainWindow::InitFooter()
 void MainWindow::InitSignalSlot()
 {
     QObject::connect(this->HomePage__, &HomePage::AttachBitbotSignal, this, [this]() {
-        this->navigation(this->PilotPage__->property("ElaPageKey").toString());
-        });
+        if (this->PilotPage__->RunNewBitbot(false, true))
+        {
+            this->navigation(this->PilotPage__->property("ElaPageKey").toString());
+            qApp->processEvents();
+            this->PilotPage__->RunNewBitbot(false, false);
+        }
+        else
+        {
+            QMessageBox::warning(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
+        }
+    });
+    
 
-    /*QObject::connect(this->HomePage__, &HomePage::LaunchBitbotSignal, this, [this]() {
-        this->navigation(this->PilotPage__->property("ElaPageKey").toString());
-    });*/
+
+    QObject::connect(this->HomePage__, &HomePage::LaunchBitbotSignal, this, [this]() {
+        if (this->PilotPage__->RunNewBitbot(true, true))
+        {
+            this->navigation(this->PilotPage__->property("ElaPageKey").toString());
+            qApp->processEvents();
+            this->PilotPage__->RunNewBitbot(true, false);
+        }
+        else
+        {
+            QMessageBox::warning(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
+        }
+    });
 
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());

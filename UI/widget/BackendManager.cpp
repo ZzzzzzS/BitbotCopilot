@@ -18,7 +18,7 @@ BackendManager::BackendManager(QWidget* parent)
     , ui(new Ui::BackendManager)
 {
     ui->setupUi(this);
-
+    
     std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
     this->isRemote = ZSet->isBackendRemote();
     if (this->isRemote)
@@ -27,7 +27,7 @@ BackendManager::BackendManager(QWidget* parent)
     }
 
     this->BackendProcess__ = new QProcess(this);
-    this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png").scaledToWidth(40, Qt::SmoothTransformation));
+    this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png"), 40, 40);
     this->ui->textEdit_BackendInfo->setReadOnly(true);
     QObject::connect(this->BackendProcess__, &QProcess::stateChanged, this, [this](QProcess::ProcessState newState) {
         switch (newState)
@@ -91,60 +91,7 @@ BackendManager::BackendManager(QWidget* parent)
   
     
 
-    QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, [this]() {
-        if (this->ui->pushButton_connect->text() == tr("Connect"))
-        {
-            this->ui->textEdit_BackendInfo->clear();
-            this->ui->pushButton_connect->setText(tr("Connecting"));
-            this->ui->pushButton_connect->setEnabled(false);
-            //QStringList args;
-            //args.push_back("bitbot@192.168.8.112");
-            //args.push_back("/home/bitbot/cetc_robot_ganzhi_v2/build/bin/main_app");
-
-            QString Cmd;
-            QStringList args;
-            if (!this->isRemote)
-            {
-                Cmd = this->ExecPath + "/" + this->ExecName;  //FIXME: fix local run issue!
-            }
-            else
-            {
-                Cmd = "ssh";
-                args.push_back(this->UserName + "@" + this->IP);
-                args.push_back("cd");
-                args.push_back(this->ExecPath + ";");
-                args.push_back("./" + this->ExecName);
-            }
-
-            this->BackendProcess__->start(Cmd, args);
-        }
-        else if (this->ui->pushButton_connect->text() == tr("Stop"))
-        {
-            this->ui->pushButton_connect->setText(tr("Force Stop"));
-            this->ui->pushButton_connect->setEnabled(true);
-            //this->BackendProcess__->terminate();
-            /*QStringList args;
-            args.append("bitbot@192.168.8.112");
-            args.append("pkill");
-            args.append("main_app");
-            QProcess::execute("ssh", args);*/
-
-            this->TerminateBackend();
-        }
-        else if (this->ui->pushButton_connect->text() == tr("Connecting"))
-        {
-
-        }
-        else if (this->ui->pushButton_connect->text() == tr("Force Stop"))
-        {
-            this->ui->pushButton_connect->setEnabled(true);
-            this->BackendProcess__->kill();
-        }
-        else
-        {
-            qDebug() << "backend: unknown button status";
-        }
-        });
+    QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, &BackendManager::ConnectionButtonClickedSlot);
 
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &BackendManager::ThemeChanged);
     this->ThemeChanged(eTheme->getThemeMode());
@@ -163,7 +110,23 @@ BackendManager::~BackendManager()
 
 void BackendManager::ResetUI()
 {
+    if(!this->isRunning())
+        this->ui->textEdit_BackendInfo->clear();
+}
 
+bool BackendManager::isRunning()
+{
+    return (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning);
+}
+
+bool BackendManager::StartBackend()
+{
+    if ((this->BackendProcess__->state() != QProcess::ProcessState::NotRunning))
+        return false;
+    
+    this->ConnectionButtonClickedSlot();
+    qApp->processEvents();
+    return true;
 }
 
 void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
@@ -250,5 +213,62 @@ void BackendManager::TerminateBackend()
     else
     {
         this->BackendProcess__->terminate();
+    }
+}
+
+void BackendManager::ConnectionButtonClickedSlot()
+{
+    if (this->ui->pushButton_connect->text() == tr("Connect"))
+    {
+        this->ui->textEdit_BackendInfo->clear();
+        this->ui->pushButton_connect->setText(tr("Connecting"));
+        this->ui->pushButton_connect->setEnabled(false);
+        //QStringList args;
+        //args.push_back("bitbot@192.168.8.112");
+        //args.push_back("/home/bitbot/cetc_robot_ganzhi_v2/build/bin/main_app");
+
+        QString Cmd;
+        QStringList args;
+        if (!this->isRemote)
+        {
+            Cmd = this->ExecPath + "/" + this->ExecName;  //FIXME: fix local run issue!
+        }
+        else
+        {
+            //Cmd = "wsl";
+            Cmd = "ssh";
+            args.push_back(this->UserName + "@" + this->IP);
+            args.push_back("cd");
+            args.push_back(this->ExecPath + ";");
+            args.push_back("./" + this->ExecName);
+        }
+
+        this->BackendProcess__->start(Cmd, args);
+    }
+    else if (this->ui->pushButton_connect->text() == tr("Stop"))
+    {
+        this->ui->pushButton_connect->setText(tr("Force Stop"));
+        this->ui->pushButton_connect->setEnabled(true);
+        //this->BackendProcess__->terminate();
+        /*QStringList args;
+        args.append("bitbot@192.168.8.112");
+        args.append("pkill");
+        args.append("main_app");
+        QProcess::execute("ssh", args);*/
+
+        this->TerminateBackend();
+    }
+    else if (this->ui->pushButton_connect->text() == tr("Connecting"))
+    {
+
+    }
+    else if (this->ui->pushButton_connect->text() == tr("Force Stop"))
+    {
+        this->ui->pushButton_connect->setEnabled(true);
+        this->BackendProcess__->kill();
+    }
+    else
+    {
+        qDebug() << "backend: unknown button status";
     }
 }

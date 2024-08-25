@@ -11,4 +11,5 @@ public:
 	~CustomSplashScreen();
 private:
 	void drawContents(QPainter* painter);
+	bool first_draw = true;
 };
