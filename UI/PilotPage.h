@@ -65,6 +65,8 @@ private:
 	QThread* CommThread__;
 	bool connected__ = false;
 private:
+	bool SurpressConnectionError__ = false;
+
 	QGraphicsBlurEffect* blureffect__ = nullptr;
 	QVBoxLayout* CentralLayout__ = nullptr;
 	QVBoxLayout* ConnectedComponentLayout__ = nullptr;

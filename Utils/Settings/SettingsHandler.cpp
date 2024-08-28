@@ -93,6 +93,7 @@ AutoRunCmdList SettingsHandler::getAutoRunCommandList()
         cmd_list.push_back(t);
     }
     this->settings__->endArray();
+    cmd_list.back().WaitTime = 1000;
     return cmd_list;
 
 }

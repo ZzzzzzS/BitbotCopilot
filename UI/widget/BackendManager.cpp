@@ -203,10 +203,10 @@ void BackendManager::TerminateBackend()
 {
     if (this->isRemote)
     {
-        QString Cmd = "wsl";
+        QString Cmd = "ssh";
         QStringList args;
-        //args.append("-o ConnectTimeout=2");
-        //args.append(this->UserName + "@" + this->IP);
+        args.append("-o ConnectTimeout=2");
+        args.append(this->UserName + "@" + this->IP);
         args.append("pkill");
         args.append(this->ExecName);
         QProcess::execute(Cmd, args);
@@ -236,10 +236,10 @@ void BackendManager::ConnectionButtonClickedSlot()
         }
         else
         {
-            Cmd = "wsl";
-            //Cmd = "ssh";
-            //args.append("-o ConnectTimeout=2");
-            //args.append(this->UserName + "@" + this->IP);
+            //Cmd = "wsl";
+            Cmd = "ssh";
+            args.append("-o ConnectTimeout=2");
+            args.append(this->UserName + "@" + this->IP);
             args.append("pkill");
             args.append(this->ExecName+";");
             args.append("cd");

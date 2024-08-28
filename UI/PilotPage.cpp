@@ -101,14 +101,16 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
         | Qt::WindowMinMaxButtonsHint
         | Qt::WindowContextHelpButtonHint));
     QPushButton* cancel_button = new QPushButton(this->AutoRunDiag__);
-    cancel_button->setEnabled(false); //取消的逻辑太复杂了，暂时先不让取消了
+    cancel_button->setText(tr("cancel"));
+    //cancel_button->setEnabled(false); //取消的逻辑太复杂了，暂时先不让取消了
     this->AutoRunDiag__->setCancelButton(cancel_button);
     this->AutoRunDiag__->show();
     
-    QObject::connect(this->AutoRunDiag__, &QProgressDialog::canceled, this, [this]() {
+    QObject::connect(cancel_button, &QPushButton::clicked, this, [this]() {
         qDebug() << "auto run cancel button clicked";
-        //this->CancelAutoRunSlot();
+        this->CancelAutoRunSlot();
         });
+
     
 
     this->AutoRunRefreshTimer__->start();
@@ -554,7 +556,10 @@ void PilotPage::ProcessConnectionError()
 {
     this->connected__ = false;
     this->DrawDisconnectedUI();
-    QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
+    if (this->SurpressConnectionError__)
+        this->SurpressConnectionError__ = false;
+    else
+        QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
 }
 
 void PilotPage::ProcessPDO(QVariantList PDOInfo)
@@ -680,8 +685,12 @@ void PilotPage::keyPressEvent(QKeyEvent* event)
     QString key = event->text();
     qDebug() << key << " is pressed";
 
+
     if (!this->KeyEventMap.contains(key))
         return;
+
+    if (key == " ")
+        this->SurpressConnectionError__ = true;
 
     QVariantMap map;
     map.insert(this->KeyEventMap[key], QVariant(1));
@@ -702,6 +711,9 @@ void PilotPage::keyReleaseEvent(QKeyEvent* event)
 
     if (!this->KeyEventMap.contains(key))
         return;
+
+    if (key == " ")
+        this->SurpressConnectionError__ = true;
 
     QVariantMap map;
     map.insert(this->KeyEventMap[key], QVariant(2));
@@ -822,6 +834,7 @@ void PilotPage::CancelAutoRunSlot()
     }
     if (this->connected__)
     {
+        this->SurpressConnectionError__ = true;
         this->AutoRunSimClickButton(" ");
     }
     else
