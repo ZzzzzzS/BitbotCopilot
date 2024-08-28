@@ -12,6 +12,7 @@
 #include <QNetworkRequest>
 #include <QWebSocket>
 #include <QByteArray>
+#include <QNetworkProxy>
 
 #include "MetaCommunication.hpp"
 

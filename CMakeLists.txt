@@ -19,7 +19,6 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools Web
 add_subdirectory(ThirdParty/ElaWidgetTools)
 set(TS_FILES 
     Res/Translation/BitbotCopilot_zh_CN.ts
-    Res/UI.qrc
     )
 
 set(UI_WIDGETS
@@ -93,6 +92,7 @@ set(PROJECT_SOURCES
         ${TS_FILES}
         ${UTIL_FILES}
         ${COM_FILES}
+        Res/UI.qrc
 )
 
 include_directories(./ThirdParty/ElaWidgetTools/include)

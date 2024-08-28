@@ -42,9 +42,9 @@ HomePage::HomePage(QWidget* parent)
     this->AutoRunBitbotCard->setTitle(tr("Auto Run Bitbot"));
     this->AutoRunBitbotCard->setSubTitle(tr("Launch and perform initialization with one click"));
     this->AutoRunBitbotCard->setCardPixmap(QPixmap(":/UI/Image/auto_launch.png"));
-    QObject::connect(this->AutoRunBitbotCard, &ElaReminderCard::clicked, this, [=]() {
+    /*QObject::connect(this->AutoRunBitbotCard, &ElaReminderCard::clicked, this, [=]() {
         QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
-    });
+    });*/
 
     this->DataViewerCard = new ElaReminderCard(this);
     QObject::connect(this->DataViewerCard, &ElaReminderCard::clicked, this, [=]() { emit this->ViewDataSignal(); });

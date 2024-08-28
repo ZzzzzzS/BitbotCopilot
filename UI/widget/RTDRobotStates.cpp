@@ -19,6 +19,11 @@ void RTDRobotStates::SetHeaderList(const QMap<int, QString>& header)
 	this->states = header;
 }
 
+QString RTDRobotStates::CurrentState()
+{
+	return this->ui->Label_CurrentState->text();
+}
+
 void RTDRobotStates::UpdateStates(QVariant v)
 {
 	int s = v.toInt();

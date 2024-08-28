@@ -45,7 +45,7 @@ std::tuple<QString, QString> SettingsHandler::getBackendPathAndName()
 
 bool SettingsHandler::isVIP()
 {
-    return this->WRSettings("COMMON/VIP", false).toBool();
+    return this->WRSettings("COMMON/VIP", true).toBool();
 }
 
 bool SettingsHandler::isBackendRemote()
@@ -70,6 +70,31 @@ std::tuple<QString, QString> SettingsHandler::getRemoteBackendUserNameAndIP()
     QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
     QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot").toString();
     return std::make_tuple(UserName, IP);
+}
+
+AutoRunCmdList SettingsHandler::getAutoRunCommandList()
+{
+    size_t cmd_num = this->settings__->beginReadArray("AUTORUNCOMMAND");
+    if (cmd_num <= 0)
+    {
+        this->settings__->endArray();
+        return AutoRunCmdList();
+    }
+        
+
+    AutoRunCmdList cmd_list;
+    for (size_t i = 0; i < cmd_num; i++)
+    {
+        this->settings__->setArrayIndex(i);
+        AutoRunCommand_t t;
+        t.KeyName = this->settings__->value("KEY_NAME", " ").toString();
+        t.WaitTime = this->settings__->value("DURATION", 30000).toInt();
+        t.WaitUntil = this->settings__->value("WAIT_UNTIL", "NAN").toString();
+        cmd_list.push_back(t);
+    }
+    this->settings__->endArray();
+    return cmd_list;
+
 }
 
 QVariant SettingsHandler::WRSettings(QString key, QVariant default_value)

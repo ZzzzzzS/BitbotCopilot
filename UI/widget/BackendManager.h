@@ -21,6 +21,7 @@ public:
     void ResetUI();
     bool isRunning();
     bool StartBackend();
+    void TerminateBackend();
 
 signals:
     void ProcessStarted();
@@ -30,7 +31,6 @@ signals:
 private:
     void ThemeChanged(ElaThemeType::ThemeMode themeMode);
     void closeEvent(QCloseEvent* event);
-    void TerminateBackend();
     void ConnectionButtonClickedSlot();
 private:
     bool isRemote = false;

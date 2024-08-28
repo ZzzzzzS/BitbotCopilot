@@ -12,8 +12,11 @@ zzs::BITBOT_TCP_PROTOCAL_V1::BITBOT_TCP_PROTOCAL_V1(const QJsonObject& cfg, QObj
 {
 	qRegisterMetaType<QAbstractSocket::SocketError>("SOCKET_ERROR");
 	qRegisterMetaType<zzs::META_COMMUNICATION::CONNECTION_STATUS>("CONN_STATUS");
+	auto WSSProxyManager = QNetworkProxy(QNetworkProxy::ProxyType::NoProxy);
 	this->SDOManager__ = new QNetworkAccessManager(this);
+	this->SDOManager__->setProxy(WSSProxyManager);
 	this->PDOManager__ = new QWebSocket(QString(), QWebSocketProtocol::VersionLatest, this);
+	this->PDOManager__->setProxy(WSSProxyManager);
 	this->RefreshTimer__->setInterval(100);
 	QObject::connect(this->RefreshTimer__, &QTimer::timeout, this, [this]() {
 		this->RequestPDO();

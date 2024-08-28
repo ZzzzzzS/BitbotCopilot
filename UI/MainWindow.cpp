@@ -84,6 +84,22 @@ void MainWindow::InitSignalSlot()
         }
     });
 
+    QObject::connect(this->HomePage__, &HomePage::AutoRunBitbotSignal, this, [this]() {
+        if (this->PilotPage__->AutoInitBitbot(true))
+        {
+            this->navigation(this->PilotPage__->property("ElaPageKey").toString());
+            qApp->processEvents();
+            this->PilotPage__->AutoInitBitbot(false);
+            qApp->processEvents();
+        }
+        else
+        {
+            QMessageBox::warning(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto run new bitbot task, nav deck is already running or launch list is not configured."));
+        }
+    });
+
+    
+
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
         });

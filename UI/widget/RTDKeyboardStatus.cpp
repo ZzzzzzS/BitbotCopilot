@@ -82,7 +82,13 @@ ElaScrollPageArea* RTDKeyboardStatus::AppendAction(const QString& Button, bool P
 
     ElaText* ButtonLabel = new ElaText(NewActionWidget);
     ButtonLabel->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    ButtonLabel->setText(Button);
+
+    QString Button_;
+    if (Button == QString(" "))
+        Button_ = QString("Space");
+    else
+        Button_ = Button;
+    ButtonLabel->setText(Button_);
     ButtonLabel->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
     ButtonLabel->setFont(font);
 

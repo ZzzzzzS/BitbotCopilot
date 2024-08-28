@@ -42,13 +42,16 @@ int main(int argc, char* argv[])
 
     eApp->init();
     QTranslator translator;
-    const QStringList uiLanguages = QLocale::system().uiLanguages();
-    for (const QString& locale : uiLanguages) {
-        const QString baseName = "BitbotCopilot_" + QLocale(locale).name();
-        if (translator.load(":/i18n/" + baseName)) {
-            a.installTranslator(&translator);
-            break;
-        }
+    //const QStringList uiLanguages = QLocale::system().uiLanguages();
+    //for (const QString& locale : uiLanguages) {
+    //    const QString baseName = "BitbotCopilot_" + QLocale(locale).name();
+    //    if (translator.load(":/i18n/" + baseName)) {
+    //        a.installTranslator(&translator);
+    //        break;
+    //    }
+    //}
+    if (translator.load(":/BitbotCopilot_zh_CN.qm")) {
+        a.installTranslator(&translator);
     }
 
     MainWindow w;

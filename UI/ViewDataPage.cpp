@@ -8,11 +8,12 @@ ViewDataPage::ViewDataPage(QWidget *parent)
 	//ui->setupUi(this);
 
 	QWidget* centralWidget = new QWidget(this);
-	centralWidget->setWindowTitle("ElaTabWidget");
+	centralWidget->setWindowTitle(tr(" Data Viewer"));
+	this->setPageTitleSpacing(10);
 	QVBoxLayout* centerVLayout = new QVBoxLayout(centralWidget);
 	centerVLayout->setContentsMargins(0, 0, 0, 0);
 
-	this->addCentralWidget(centralWidget, true, true, 0);
+	this->addCentralWidget(centralWidget, true, true, 0); 
 }
 
 ViewDataPage::~ViewDataPage()

@@ -28,6 +28,7 @@ PilotPage::PilotPage(QWidget* parent)
     qRegisterMetaType<zzs::META_COMMUNICATION::CONNECTION_STATUS>("CONN_STATUS");
     this->InitCommHandle();
     this->InitUserInput();
+    this->InitAutoRun();
 
     this->CentralWidget__ = new QWidget(this);
     this->CentralWidget__->setWindowTitle(" Bitbot Nav Deck");
@@ -78,6 +79,40 @@ bool PilotPage::RunNewBitbot(bool LaunchBackend, bool dryrun)
         
     }
     return check_result;
+}
+
+bool PilotPage::AutoInitBitbot(bool dryrun)
+{
+    bool AllowRun = false;
+    AllowRun = this->RunNewBitbot(true, true) && this->AutoRunCmdList.size() != 0;
+    if (!AllowRun) return false;
+    if (dryrun) return AllowRun;
+
+    this->RunNewBitbot(true, false);
+    this->AutoRunCurrentCmdIdx = -1;
+    this->AutoRunNextCmdCycleRemain__ = 4000 / this->AUTORUN_REFRESH_INTERVEL; //首个指令延时4秒再执行
+    this->AutoRunDiag__ = new QProgressDialog(tr("Launching new Bitbot backend..."), tr("Cancel"), 0, 0, this);
+    this->AutoRunDiag__->setAutoClose(false);
+    //this->AutoRunDiag__->setBar(new ElaProgressBar(this->AutoRunDiag__));
+    this->AutoRunDiag__->setAttribute(Qt::WA_DeleteOnClose);
+    this->AutoRunDiag__->setAttribute(Qt::WA_ShowModal);
+    this->AutoRunDiag__->setWindowFlags(this->AutoRunDiag__->windowFlags() & ~(
+        Qt::WindowCloseButtonHint 
+        | Qt::WindowMinMaxButtonsHint
+        | Qt::WindowContextHelpButtonHint));
+    QPushButton* cancel_button = new QPushButton(this->AutoRunDiag__);
+    cancel_button->setEnabled(false); //取消的逻辑太复杂了，暂时先不让取消了
+    this->AutoRunDiag__->setCancelButton(cancel_button);
+    this->AutoRunDiag__->show();
+    
+    QObject::connect(this->AutoRunDiag__, &QProgressDialog::canceled, this, [this]() {
+        qDebug() << "auto run cancel button clicked";
+        //this->CancelAutoRunSlot();
+        });
+    
+
+    this->AutoRunRefreshTimer__->start();
+    return true;
 }
 
 
@@ -696,5 +731,142 @@ void PilotPage::focusOutEvent(QFocusEvent* event)
     //blureffect__->setBlurRadius(5);	//数值越大，越模糊
     //this->setGraphicsEffect(this->blureffect__);
     //qDebug() << "focus out";
+}
+
+void PilotPage::InitAutoRun()
+{
+    this->AutoRunCmdList = ZSet->getAutoRunCommandList();
+    this->AutoRunRefreshTimer__ = new QTimer(this);
+    this->AutoRunRefreshTimer__->setInterval(this->AUTORUN_REFRESH_INTERVEL);
+    QObject::connect(this->AutoRunRefreshTimer__, &QTimer::timeout, this, &PilotPage::AutoRunRefreshSlot);
+}
+
+void PilotPage::AutoRunRefreshSlot()
+{
+
+    if (!this->connected__)
+    {
+        if (this->AutoRunNextCmdCycleRemain__ == 0 && this->AutoRunCurrentCmdIdx == -1)
+        {
+            this->CancelAutoRunSlot();
+            qApp->processEvents();
+            QMessageBox::warning(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto initialize Bitbot, check your connection and try again later."), QMessageBox::Ok);
+            return;
+        }
+        else
+        {
+            this->AutoRunNextCmdCycleRemain__--;
+            return;
+        }  
+    }
+
+    QString state = this->RobotStateUI__->CurrentState();
+    if (state == QString("Disconnected"))
+        return;
+
+    this->AutoRunNextCmdCycleRemain__--;
+    if (this->AutoRunCurrentCmdIdx == -1)
+    {
+        if (this->AutoRunNextCmdCycleRemain__ == 0)
+        {
+            this->AutoRunCurrentCmdIdx = 0;
+            this->AutoRunDiag__->setMinimum(-1);
+            this->AutoRunDiag__->setMaximum(this->AutoRunCmdList.size());
+            this->AutoRunDiag__->setValue(this->AutoRunCurrentCmdIdx);
+            this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
+            qApp->processEvents();
+            this->AutoRunSimClickButton(this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName);
+            qApp->processEvents();
+            this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
+        }
+    }
+    else
+    {
+        if (this->AutoRunNextCmdCycleRemain__ == 0 || this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitUntil == state)
+        {
+            this->AutoRunCurrentCmdIdx++;
+            if (this->AutoRunCurrentCmdIdx >= this->AutoRunCmdList.size())
+            {
+                if (this->AutoRunDiag__ != nullptr)
+                {
+                    this->AutoRunDiag__->close();
+                    this->AutoRunDiag__->deleteLater();
+                    this->AutoRunDiag__ = nullptr;
+                }
+                this->AutoRunRefreshTimer__->stop();
+                qApp->processEvents();
+                this->setFocus();
+            }
+            else
+            {
+                this->AutoRunDiag__->setValue(this->AutoRunCurrentCmdIdx);
+                this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
+                qApp->processEvents();
+                this->AutoRunSimClickButton(this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName);
+                qApp->processEvents();
+                this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
+            }
+        }
+    }
+}
+
+void PilotPage::CancelAutoRunSlot()
+{
+    this->AutoRunRefreshTimer__->stop();
+    if (this->AutoRunDiag__ != nullptr)
+    {
+        this->AutoRunDiag__->close();
+        this->AutoRunDiag__->deleteLater();
+        qApp->processEvents();
+        this->AutoRunDiag__ = nullptr;
+    }
+    if (this->connected__)
+    {
+        this->AutoRunSimClickButton(" ");
+    }
+    else
+    {
+        this->BackendManagerUI__->TerminateBackend();
+    }
+
+
+}
+
+void PilotPage::AutoRunSimClickButton(QString key)
+{
+    if (!this->connected__)
+        return;
+    if (!this->KeyEventMap.contains(key))
+        return;
+
+    
+    QTimer::singleShot(0, [this,key]() {
+        qDebug() << key << " is pressed";
+        QVariantMap map;
+        map.insert(this->KeyEventMap[key], QVariant(1));
+        this->CommHandle__->SendUserCommand(map);
+        if (this->KeyboardEventUI__ != nullptr)
+        {
+            this->KeyboardEventUI__->ButtonClicked(key, true);
+        }
+        });
+    qApp->processEvents();
+
+
+    QTimer::singleShot(110, [this, key]() {
+        qDebug() << key << " is released";
+
+        if (!this->KeyEventMap.contains(key))
+            return;
+
+        QVariantMap map;
+        map.insert(this->KeyEventMap[key], QVariant(2));
+        this->CommHandle__->SendUserCommand(map);
+        if (this->KeyboardEventUI__ != nullptr)
+        {
+            this->KeyboardEventUI__->ButtonClicked(key, false);
+        }
+    });
+    
 }
 

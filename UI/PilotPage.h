@@ -15,12 +15,14 @@
 #include "../Communication/BitbotTcpProtocalV1.h"
 #include "../Communication/MetaCommunication.hpp"
 #include "../Utils/GamepadDriver/ZQGamepad.h"
+#include "../Utils/Settings/SettingsHandler.h"
 #include <QThread>
 #include <QVariant>
 #include <QVariantList>
 #include <QMap>
 #include <QVBoxLayout>
 #include <QGraphicsBlurEffect>
+#include <QProgressDialog>
 
 
 class PilotPage : public ElaScrollPage
@@ -32,6 +34,7 @@ public:
 	~PilotPage();
 
 	bool RunNewBitbot(bool LaunchBackend, bool dryrun);
+	bool AutoInitBitbot(bool dryrun);
 
 private:
 	void InitConnectionWidget();
@@ -96,6 +99,15 @@ private:
 private: //const definitions
 	const size_t KRNL_STATUS_LEN = 4;
 	const size_t ROBOT_STATUS_LEN = 1;
-
-
+	const size_t AUTORUN_REFRESH_INTERVEL = 100;
+private:
+	void InitAutoRun();
+	void AutoRunRefreshSlot();
+	void CancelAutoRunSlot();
+	void AutoRunSimClickButton(QString key);
+	QTimer* AutoRunRefreshTimer__;
+	int AutoRunNextCmdCycleRemain__ = 0;
+	int AutoRunCurrentCmdIdx = 0;
+	AutoRunCmdList AutoRunCmdList;
+	QProgressDialog* AutoRunDiag__ = nullptr;
 };
