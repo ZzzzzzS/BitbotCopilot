@@ -89,6 +89,7 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
     if (dryrun) return AllowRun;
 
     this->RunNewBitbot(true, false);
+    this->SurpressConnectionError__ = true;
     this->AutoRunCurrentCmdIdx = -1;
     this->AutoRunNextCmdCycleRemain__ = 4000 / this->AUTORUN_REFRESH_INTERVEL; //首个指令延时4秒再执行
     this->AutoRunDiag__ = new QProgressDialog(tr("Launching new Bitbot backend..."), tr("Cancel"), 0, 0, this);
@@ -139,7 +140,7 @@ void PilotPage::InitConnectionWidget()
 
     CustomImageLabel* icon = new CustomImageLabel(this->ConnectionAreaUI__);
     icon->setFixedSize(40, 40);
-    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"));
+    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"),40,40);
     ElaText* name = new ElaText(this->ConnectionAreaUI__);
     name->setText(tr("Frontend Manager"));
     QFont namefont;
@@ -799,6 +800,7 @@ void PilotPage::AutoRunRefreshSlot()
             this->AutoRunCurrentCmdIdx++;
             if (this->AutoRunCurrentCmdIdx >= this->AutoRunCmdList.size())
             {
+                this->SurpressConnectionError__ = false;
                 if (this->AutoRunDiag__ != nullptr)
                 {
                     this->AutoRunDiag__->close();
@@ -832,7 +834,9 @@ void PilotPage::CancelAutoRunSlot()
         qApp->processEvents();
         this->AutoRunDiag__ = nullptr;
     }
-    if (this->connected__)
+    if (this->connected__ && 
+        this->RobotStateUI__ != nullptr &&
+        this->RobotStateUI__->CurrentState() != QString("Disconnected"))
     {
         this->SurpressConnectionError__ = true;
         this->AutoRunSimClickButton(" ");

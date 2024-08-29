@@ -14,11 +14,11 @@
 
 
 BackendManager::BackendManager(QWidget* parent)
-    : MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW,parent)
+    : MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW, parent)
     , ui(new Ui::BackendManager)
 {
     ui->setupUi(this);
-    
+
     std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
     this->isRemote = ZSet->isBackendRemote();
     if (this->isRemote)
@@ -29,6 +29,7 @@ BackendManager::BackendManager(QWidget* parent)
     this->BackendProcess__ = new QProcess(this);
     this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png"), 40, 40);
     this->ui->textEdit_BackendInfo->setReadOnly(true);
+
     QObject::connect(this->BackendProcess__, &QProcess::stateChanged, this, [this](QProcess::ProcessState newState) {
         switch (newState)
         {
@@ -84,12 +85,12 @@ BackendManager::BackendManager(QWidget* parent)
         QByteArray err_msg = this->BackendProcess__->readAllStandardError();
         this->ui->textEdit_BackendInfo->append(QString("[WARNING] ") + QString(err_msg));
         });
-    
+
     QObject::connect(this->ui->textEdit_BackendInfo, &QTextEdit::textChanged, this, [this]() {
         this->ui->textEdit_BackendInfo->moveCursor(QTextCursor::End);
         });
-  
-    
+
+
 
     QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, &BackendManager::ConnectionButtonClickedSlot);
 
@@ -110,7 +111,7 @@ BackendManager::~BackendManager()
 
 void BackendManager::ResetUI()
 {
-    if(!this->isRunning())
+    if (!this->isRunning())
         this->ui->textEdit_BackendInfo->clear();
 }
 
@@ -123,7 +124,7 @@ bool BackendManager::StartBackend()
 {
     if ((this->BackendProcess__->state() != QProcess::ProcessState::NotRunning))
         return false;
-    
+
     this->ConnectionButtonClickedSlot();
     qApp->processEvents();
     return true;
@@ -138,7 +139,7 @@ void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
         palette.setColor(QPalette::Base, Qt::white);
         palette.setColor(QPalette::PlaceholderText, QColor(0x00, 0x00, 0x00, 128));
         this->ui->textEdit_BackendInfo->setPalette(palette);
-        
+
         QPalette palette_label;
         palette_label.setColor(QPalette::WindowText, Qt::black);
         this->ui->label->setPalette(palette_label);
@@ -241,7 +242,7 @@ void BackendManager::ConnectionButtonClickedSlot()
             args.append("-o ConnectTimeout=2");
             args.append(this->UserName + "@" + this->IP);
             args.append("pkill");
-            args.append(this->ExecName+";");
+            args.append(this->ExecName + ";");
             args.append("cd");
             args.append(this->ExecPath + ";");
             args.append("./" + this->ExecName);

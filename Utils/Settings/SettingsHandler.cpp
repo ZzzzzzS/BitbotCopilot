@@ -18,8 +18,8 @@ SettingsHandler* SettingsHandler::getInstance()
 }
 
 
-SettingsHandler::SettingsHandler(QObject *parent)
-	: QObject(parent)
+SettingsHandler::SettingsHandler(QObject* parent)
+    : QObject(parent)
 {
     this->settings__ = new QSettings("./settings.ini", QSettings::IniFormat, this);
 }
@@ -80,7 +80,7 @@ AutoRunCmdList SettingsHandler::getAutoRunCommandList()
         this->settings__->endArray();
         return AutoRunCmdList();
     }
-        
+
 
     AutoRunCmdList cmd_list;
     for (size_t i = 0; i < cmd_num; i++)
