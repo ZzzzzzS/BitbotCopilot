@@ -86,7 +86,6 @@ ui_*.h
 qrc_*.cpp
 Thumbs.db
 *.res
-*.rc
 /.qmake.cache
 /.qmake.stash
 
@@ -133,9 +132,11 @@ build/
 out/
 CMakePresets.json
 CMakeUserPresets.json
+CMakeSettings.json
 CMakeCache.txt
 CMakeFiles/CMakeConfigureLog.yaml
 CMakeFiles/
 build.ninja
 cmake_install.cmake
 ThirdParty/ElaWidgetTools/cmake_install.cmake
+CMakeSettings.json
