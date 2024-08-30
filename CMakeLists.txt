@@ -39,6 +39,8 @@ set(UI_WIDGETS
     UI/widget/RTDDeviceInfo.cpp
     UI/widget/RTDDeviceInfo.h
     UI/widget/RTDDeviceInfo.ui
+    UI/widget/RTDDeviceInfoTableModel.h
+    UI/widget/RTDDeviceInfoTableModel.cpp
     UI/widget/RTDConnection.cpp
     UI/widget/RTDConnection.h
     UI/widget/RTDConnection.ui

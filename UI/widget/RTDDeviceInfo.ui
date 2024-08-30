@@ -72,7 +72,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="CentralWidget"/>
+      <widget class="ElaTableView" name="tableView"/>
      </item>
     </layout>
    </item>
@@ -90,6 +90,11 @@
    <class>ElaText</class>
    <extends>QLabel</extends>
    <header>ElaText.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaTableView</class>
+   <extends>QTableView</extends>
+   <header>ElaTableView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

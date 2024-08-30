@@ -25,6 +25,7 @@ private:
     void InitFooter();
     void InitSignalSlot();
     void resizeEvent(QResizeEvent* event);
+    void changeEvent(QEvent* event);
 
 private:
     HomePage* HomePage__;

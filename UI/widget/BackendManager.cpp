@@ -1,6 +1,4 @@
 #include "BackendManager.h"
-#include "BackendManager.h"
-#include "BackendManager.h"
 #include "./ui_BackendManager.h"
 #include <QObject>
 #include <QAction>
@@ -11,6 +9,7 @@
 #include <QPixmap>
 #include "../../Utils/Settings/SettingsHandler.h"
 #include <tuple>
+#include "ElaPlainTextEdit.h"
 
 
 BackendManager::BackendManager(QWidget* parent)
@@ -28,7 +27,8 @@ BackendManager::BackendManager(QWidget* parent)
 
     this->BackendProcess__ = new QProcess(this);
     this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png"), 40, 40);
-    this->ui->textEdit_BackendInfo->setReadOnly(true);
+    //this->ui->textEdit_BackendInfo->setReadOnly(true);
+    //this->ui->textEdit_BackendInfo->setBackgroundVisible(true);
 
     QObject::connect(this->BackendProcess__, &QProcess::stateChanged, this, [this](QProcess::ProcessState newState) {
         switch (newState)
@@ -77,16 +77,15 @@ BackendManager::BackendManager(QWidget* parent)
 
     QObject::connect(this->BackendProcess__, &QProcess::readyReadStandardOutput, this, [this]() {
         QByteArray msg = this->BackendProcess__->readAllStandardOutput();
-        this->ui->textEdit_BackendInfo->append(QString(msg));
+        this->ui->textEdit_BackendInfo->appendPlainText(QString(msg));
         });
-
 
     QObject::connect(this->BackendProcess__, &QProcess::readyReadStandardError, this, [this]() {
         QByteArray err_msg = this->BackendProcess__->readAllStandardError();
-        this->ui->textEdit_BackendInfo->append(QString("[WARNING] ") + QString(err_msg));
+        this->ui->textEdit_BackendInfo->appendPlainText(QString("[WARNING] ") + QString(err_msg));
         });
 
-    QObject::connect(this->ui->textEdit_BackendInfo, &QTextEdit::textChanged, this, [this]() {
+    QObject::connect(this->ui->textEdit_BackendInfo, &ElaPlainTextEdit::textChanged, this, [this]() {
         this->ui->textEdit_BackendInfo->moveCursor(QTextCursor::End);
         });
 
@@ -94,8 +93,8 @@ BackendManager::BackendManager(QWidget* parent)
 
     QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, &BackendManager::ConnectionButtonClickedSlot);
 
-    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &BackendManager::ThemeChanged);
-    this->ThemeChanged(eTheme->getThemeMode());
+    //QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &BackendManager::ThemeChanged);
+    //this->ThemeChanged(eTheme->getThemeMode());
     //this->repaint();
 }
 
@@ -132,52 +131,6 @@ bool BackendManager::StartBackend()
 
 void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
 {
-    if (themeMode == ElaThemeType::Light)
-    {
-        QPalette palette;
-        palette.setColor(QPalette::Text, Qt::black);
-        palette.setColor(QPalette::Base, Qt::white);
-        palette.setColor(QPalette::PlaceholderText, QColor(0x00, 0x00, 0x00, 128));
-        this->ui->textEdit_BackendInfo->setPalette(palette);
-
-        QPalette palette_label;
-        palette_label.setColor(QPalette::WindowText, Qt::black);
-        this->ui->label->setPalette(palette_label);
-    }
-    else
-    {
-        QPalette palette;
-        palette.setColor(QPalette::Text, Qt::white);
-        palette.setColor(QPalette::Base, Qt::black);
-        palette.setColor(QPalette::PlaceholderText, QColor(0xBA, 0xBA, 0xBA));
-        this->ui->textEdit_BackendInfo->setPalette(palette);
-
-        QPalette palette_label;
-        palette_label.setColor(QPalette::WindowText, Qt::white);
-        this->ui->label->setPalette(palette_label);
-    }
-
-    QString styleSheet;
-    if (themeMode == ElaThemeType::ThemeMode::Light)
-    {
-        styleSheet = QString::fromUtf8(R"(
-       QTextEdit {
-            background-color: rgba(255, 255, 255, 100); 
-            border-radius: 10px; 
-        }
-        )");
-    }
-    else
-    {
-        styleSheet = QString::fromUtf8(R"(
-       QTextEdit {
-            background-color: rgba(80, 80, 80, 70); 
-            border-radius: 10px; 
-        }
-        )");
-    }
-
-    //this->setStyleSheet(styleSheet);
 }
 
 void BackendManager::closeEvent(QCloseEvent* event)

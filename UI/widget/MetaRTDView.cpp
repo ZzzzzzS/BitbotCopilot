@@ -57,7 +57,7 @@ void MetaRTDView::paintEvent(QPaintEvent * event)
     
     p.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing | QPainter::TextAntialiasing);
     // 高性能阴影
-    eTheme->drawEffectShadow(&p, rect(), 3, 10);
+    eTheme->drawEffectShadow(&p, rect(), 3, 5);
 }
 
 void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)

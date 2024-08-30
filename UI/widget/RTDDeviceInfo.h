@@ -7,6 +7,7 @@
 #include <QVariant>
 #include <QWidgetItem>
 #include "ElaTheme.h"
+#include "RTDDeviceInfoTableModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class RTDDeviceInfoClass; };
@@ -30,7 +31,6 @@ public: //slots
 	void ResetUI();
 
 private:
-	void ThemeChanged(ElaThemeType::ThemeMode mode);
 	Ui::RTDDeviceInfoClass* ui;
 	bool isDeviceInfo__ = false;
 	bool isUserExtraData__ = false;
@@ -38,6 +38,6 @@ private:
 	QVector<QString> HorizentalHeader;
 	size_t RowLength = 0;
 	size_t RowNumber = 0;
-	QVector<QTableWidgetItem*> TableItem;
 	QString DeviceTypeName__;
+	RTDDeviceInfoRTableModel* Model__;
 };

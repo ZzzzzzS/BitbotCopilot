@@ -121,3 +121,18 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
     ElaWindow::resizeEvent(event);
 }
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    ElaWindow::changeEvent(event);
+    if (event->type() == QEvent::StyleChange)
+    {
+        qDebug() << "theme changed";
+        QPalette defaultPalette;
+        if (defaultPalette.color(QPalette::WindowText).lightness()
+    > defaultPalette.color(QPalette::Window).lightness())
+            qDebug() << "dark";
+        else
+            qDebug() << "light";
+    }
+}

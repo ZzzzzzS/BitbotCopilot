@@ -438,7 +438,7 @@ void PilotPage::DrawConnectedUI()
         QString DeviceTypeName = i.key();
         QVector<QString> DeviceList = DeviceTypeList[i.key()];
         QVector<QString> DeviceSensors = i.value();
-        wid->setHeaders(DeviceTypeName, DeviceSensors, DeviceList);
+        wid->setHeaders(DeviceTypeName, DeviceList, DeviceSensors);
         
         ++i;
         cnt++;
