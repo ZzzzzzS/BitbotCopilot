@@ -1,5 +1,6 @@
 #include "RTDDeviceInfoTableModel.h"
 #include <QDebug>
+#include <algorithm>
 
 RTDDeviceInfoRTableModel::RTDDeviceInfoRTableModel(QObject* parent)
 	:QAbstractTableModel(parent)
@@ -28,8 +29,8 @@ bool RTDDeviceInfoRTableModel::setHeaders(const QVector<QString>& DeviceList, co
 		this->_dataList[i].resize(DeviceSensors.size());
 	}
 
-	emit this->headerDataChanged(Qt::Horizontal, 0, std::min(this->_header.size() - 1, 0));
-	emit this->headerDataChanged(Qt::Vertical, 0, std::min(this->_DeviceName.size() - 1, 0));
+	emit this->headerDataChanged(Qt::Horizontal, 0, std::min(this->_header.size() - 1, static_cast<long long>(0)));
+	emit this->headerDataChanged(Qt::Vertical, 0, std::min(this->_DeviceName.size() - 1, static_cast<long long>(0)));
 	return true;
 }
 
@@ -44,7 +45,7 @@ bool RTDDeviceInfoRTableModel::setHeaders(const QVector<QString>& UserDataHeader
 	this->_header = UserDataHeader.toList();
 	this->_dataList.resize(1);
 	this->_dataList[0].resize(UserDataHeader.size());
-	emit this->headerDataChanged(Qt::Horizontal, 0, std::min(this->_header.size() - 1, 0));
+	emit this->headerDataChanged(Qt::Horizontal, 0, std::min(this->_header.size() - 1, static_cast<long long>(0)));
 	emit this->headerDataChanged(Qt::Vertical, 0, 0);
 	return true;
 }

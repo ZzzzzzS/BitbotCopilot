@@ -13,8 +13,8 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
 set(TS_FILES 

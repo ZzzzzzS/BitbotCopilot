@@ -2,6 +2,7 @@
 #include "ElaWindow.h"
 #include <QDebug>
 #include <QMessageBox>
+#include "AboutPage.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent)
@@ -47,11 +48,13 @@ void MainWindow::InitFooter()
 {
     //init about me
     this->AboutPage__ = new AboutPage(this);
-    this->addFooterNode(tr("About"), this->AboutPage__, QString("About"), 0, ElaIconType::CircleUser);
+    QString About = QString("About");
+    this->addFooterNode(tr("About"), this->AboutPage__, About, 0, ElaIconType::IconName::CircleUser);
 
     //init settings
     this->SettingsPage__ = new SettingsPage(this);
-    this->addFooterNode(tr("Settings"), this->SettingsPage__, QString("Settings"), 0, ElaIconType::Gear);
+    QString Settings = QString("Settings");
+    this->addFooterNode(tr("Settings"), this->SettingsPage__, Settings, 0, ElaIconType::IconName::Gear);
 }
 
 void MainWindow::InitSignalSlot()
