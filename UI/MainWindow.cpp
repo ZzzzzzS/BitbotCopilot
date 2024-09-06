@@ -5,7 +5,8 @@
 #include "AboutPage.h"
 
 MainWindow::MainWindow(QWidget* parent)
-    : ElaWindow(parent)
+    : ElaWindow(parent),
+    AboutWindow__(nullptr)
 {
     this->InitWindow();
     this->InitPage();
@@ -47,9 +48,21 @@ void MainWindow::InitPage()
 void MainWindow::InitFooter()
 {
     //init about me
-    this->AboutPage__ = new AboutPage(this);
-    QString About = QString("About");
-    this->addFooterNode(tr("About"), this->AboutPage__, About, 0, ElaIconType::IconName::CircleUser);
+    this->AboutKey__= QString("About");
+    this->addFooterNode(tr("About"), nullptr, AboutKey__, 0, ElaIconType::IconName::CircleUser);
+    connect(this, &ElaWindow::navigationNodeClicked, this, [=](ElaNavigationType::NavigationNodeType nodeType, QString nodeKey) {
+        if (this->AboutKey__ == nodeKey)
+        {
+            if(this->AboutWindow__==nullptr)
+                this->AboutWindow__ = new AboutPageCentralWidget();
+            this->AboutWindow__->setAttribute(Qt::WA_DeleteOnClose);
+            this->AboutWindow__->show();
+            QObject::connect(this->AboutWindow__, &QObject::destroyed, this, [this]() {
+                this->AboutWindow__ = nullptr;
+            });
+        }
+    });
+
 
     //init settings
     this->SettingsPage__ = new SettingsPage(this);

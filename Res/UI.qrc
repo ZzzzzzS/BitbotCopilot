@@ -2,6 +2,9 @@
     <qresource prefix="/include">
         <file>Font/ElaAwesome.ttf</file>
     </qresource>
+    <qresource prefix="/license">
+        <file>licenses/LICENSE-ElaWidget</file>
+    </qresource>
     <qresource prefix="/UI">
         <file>Image/logo.png</file>
         <file>Image/Home_Background.png</file>

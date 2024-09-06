@@ -13,7 +13,7 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
@@ -67,6 +67,7 @@ set(UI_FILES
 
     UI/AboutPage.cpp
     UI/AboutPage.h
+    UI/AboutPage.ui
     UI/SettingsPage.cpp
     UI/SettingsPage.h
 
@@ -100,6 +101,18 @@ set(PROJECT_SOURCES
 include_directories(./ThirdParty/ElaWidgetTools/src/include)
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
+
+execute_process(
+    COMMAND git log -1 --format=%h
+    WORKING_DIRECTORY
+    ${CMAKE_CURRENT_LIST_DIR}
+    OUTPUT_VARIABLE GIT_HASH
+    
+OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message("Build version ${GIT_HASH}")
+add_definitions(-DBUILD_VERSION_COMMIT_HASH="${GIT_HASH}")
+
 
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

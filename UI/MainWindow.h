@@ -32,6 +32,7 @@ private:
     ViewDataPage* ViewDataPage__;
     PilotPage* PilotPage__;
     SettingsPage* SettingsPage__;
-    AboutPage* AboutPage__;
+    AboutPageCentralWidget* AboutWindow__;
+    QString AboutKey__;
 };
 #endif // MAINWINDOW_H
