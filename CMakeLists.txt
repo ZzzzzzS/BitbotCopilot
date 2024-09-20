@@ -13,13 +13,24 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
 set(TS_FILES 
     Res/Translation/BitbotCopilot_zh_CN.ts
     )
+
+add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
+set(QCP_FILES
+    ./ThirdParty/qcustomplot/qcustomplot.cpp
+    ./ThirdParty/qcustomplot/qcustomplot.h
+    ./ThirdParty/qcustomplot/SmoothGenerator.hpp
+)
+
+set(THIRDPARTY_FILES
+    ${QCP_FILES}
+)
 
 set(UI_WIDGETS
     UI/widget/MetaRTDView.cpp
@@ -52,6 +63,12 @@ set(UI_WIDGETS
     UI/widget/CustomImageLabel.hpp
 )
 
+set(DATA_VIEWER_UI
+    UI/DataViewer/DataViewerPage.cpp
+    UI/DataViewer/DataViewerPage.h
+    UI/DataViewer/DataViewerPage.ui
+)
+
 set(UI_FILES 
     UI/MainWindow.cpp
     UI/MainWindow.h
@@ -72,6 +89,7 @@ set(UI_FILES
     UI/SettingsPage.h
 
     ${UI_WIDGETS}
+    ${DATA_VIEWER_UI}
 )
 
 set(COM_FILES
@@ -86,6 +104,7 @@ set(UTIL_FILES
     Utils/GamepadDriver/ZGamepad_XInput.hpp
     Utils/Settings/SettingsHandler.cpp
     Utils/Settings/SettingsHandler.h
+    Utils/DataReadWriter/csv_io.hpp
 )
 
 
@@ -95,10 +114,15 @@ set(PROJECT_SOURCES
         ${TS_FILES}
         ${UTIL_FILES}
         ${COM_FILES}
+        ${THIRDPARTY_FILES}
         Res/UI.qrc
 )
 
-include_directories(./ThirdParty/ElaWidgetTools/src/include)
+include_directories(
+    ./
+    ./ThirdParty/ElaWidgetTools/src/include
+    ./ThirdParty/qcustomplot
+)
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
 
@@ -150,7 +174,11 @@ target_link_libraries(BitbotCopilot PRIVATE
                      Qt${QT_VERSION_MAJOR}::WebSockets
                      Qt${QT_VERSION_MAJOR}::Network
                      Qt${QT_VERSION_MAJOR}::Svg
+                     Qt${QT_VERSION_MAJOR}::PrintSupport
+                     Qt${QT_VERSION_MAJOR}::OpenGL
                      XInput
+                     Opengl32
+                     glu32
                      )
 
 

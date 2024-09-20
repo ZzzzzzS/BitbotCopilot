@@ -122,18 +122,29 @@ AboutPageLicenseWidget::AboutPageLicenseWidget()
 	gridLayout->addWidget(LicenseText, 0, 0, 1, 1);
 	CencralScroll->setWidget(scrollAreaWidgetContents);
 
-	QString seperater= QString("\n\n-----------------------------------------------------\n");
+	QString seperater= QString("\n\n------------------------------------------------------------------\n");
 
 	QString LicenseTextString=QString("Third-Party Software Acknowledgment");
 	LicenseTextString += seperater;
+
+	//ElaWidgetTools
 	LicenseTextString += QString("ElaWidgetTools\n");
 	LicenseTextString += QString("https://github.com/Liniyous/ElaWidgetTools\n\n");
-
 	QFile Elawidget_license;
 	Elawidget_license.setFileName(":/license/licenses/LICENSE-ElaWidget");
 	Elawidget_license.open(QIODevice::ReadOnly);
 	QTextStream Elawidget_buffer(&Elawidget_license);
 	LicenseTextString += Elawidget_buffer.readAll();
+	LicenseTextString += seperater;
+
+	//QCustomPlot
+	LicenseTextString += QString("QCustomPlot\n");
+	LicenseTextString += QString("https://www.qcustomplot.com/\n\n");
+	QFile QCP_license;
+	QCP_license.setFileName(":/license/licenses/LICENSE-QCustomPlot");
+	QCP_license.open(QIODevice::ReadOnly);
+	QTextStream QCP_buffer(&QCP_license);
+	LicenseTextString += QCP_buffer.readAll();
 	LicenseTextString += seperater;
 
 

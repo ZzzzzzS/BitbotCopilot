@@ -17,10 +17,11 @@ BackendManager::BackendManager(QWidget* parent)
     , ui(new Ui::BackendManager)
 {
     ui->setupUi(this);
+    this->ui->textEdit_BackendInfo->setReadOnly(true);
 
     std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
     this->isRemote = ZSet->isBackendRemote();
-    if (this->isRemote)
+    if (this->isRemote) 
     {
         std::tie(this->UserName, this->IP) = ZSet->getRemoteBackendUserNameAndIP();
     }

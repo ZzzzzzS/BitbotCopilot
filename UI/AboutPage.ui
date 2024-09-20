@@ -121,7 +121,7 @@
               </font>
              </property>
              <property name="text">
-              <string>Bitbot Copilot</string>
+              <string>BITBOT Copilot</string>
              </property>
             </widget>
            </item>
@@ -369,7 +369,7 @@ Version: </string>
               <string notr="true">background:transparent;</string>
              </property>
              <property name="text">
-              <string>Bitbot Copilot Software License Terms</string>
+              <string>BitBot Copilot Software License Terms</string>
              </property>
              <property name="flat">
               <bool>true</bool>
@@ -539,7 +539,7 @@ Version: </string>
               <string notr="true">background:transparent;</string>
              </property>
              <property name="text">
-              <string>Bitbot Kernel Support</string>
+              <string>BitBot Kernel Support</string>
              </property>
              <property name="flat">
               <bool>true</bool>

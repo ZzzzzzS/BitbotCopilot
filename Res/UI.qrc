@@ -4,6 +4,7 @@
     </qresource>
     <qresource prefix="/license">
         <file>licenses/LICENSE-ElaWidget</file>
+		<file>licenses/LICENSE-QCustomPlot</file>
     </qresource>
     <qresource prefix="/UI">
         <file>Image/logo.png</file>

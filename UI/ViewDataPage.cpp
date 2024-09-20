@@ -1,5 +1,6 @@
 #include "ViewDataPage.h"
 #include "QVBoxLayout"
+#include "DataViewer/DataViewerPage.h"
 
 ViewDataPage::ViewDataPage(QWidget *parent)
 	: ElaScrollPage(parent)
@@ -7,7 +8,7 @@ ViewDataPage::ViewDataPage(QWidget *parent)
 {
 	//ui->setupUi(this);
 
-	QWidget* centralWidget = new QWidget(this);
+	QWidget* centralWidget = new DataViewerPage(this);
 	centralWidget->setWindowTitle(tr(" Data Viewer"));
 	this->setPageTitleSpacing(10);
 	QVBoxLayout* centerVLayout = new QVBoxLayout(centralWidget);
