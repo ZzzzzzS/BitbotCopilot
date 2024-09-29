@@ -5,6 +5,10 @@
 #include "QPen"
 #include "QFont"
 #include "QTimer"
+#include "ElaMenu.h"
+#include "QAction"
+#include "ElaApplication.h"
+#include "ElaTheme.h"
 
 DataViewerPage::DataViewerPage(QWidget *parent)
     : QWidget(parent)
@@ -13,23 +17,49 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     , WindowTheme(Theme_e::Light)
 {
     ui->setupUi(this);
-    this->ui->splitter->setStretchFactor(0, 10);
-    this->ui->splitter->setStretchFactor(1, 1);
+    this->setWindowTitle(tr("New Data Viewer"));
+    this->setAttribute(Qt::WA_TranslucentBackground, true);
 
     this->setAcceptDrops(true);
 
     QObject::connect(this->ui->DataListWidget, &QTreeView::clicked, this, &DataViewerPage::ModelItemClickedSlot);
     this->AggregatedDataModel__ = new QStandardItemModel(this);
     this->ui->DataListWidget->setModel(this->AggregatedDataModel__);
+    this->AggregatedDataModel__->setHorizontalHeaderLabels(QStringList(QString("    "+tr("Experiment Data"))));
 
     this->PlotHandle = this->ui->DataPlotWidget;
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
     this->PlotHandle->setOpenGl(true);
-
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
 
     this->InitColorList();
-    this->SetTheme(Theme_e::Light);    
+    
+    this->ui->WelcomeWidget->setAttribute(Qt::WA_TranslucentBackground, true);
+    //this->ui->DataPlotWidget->setBackground()
+    this->ui->DataPlotWidget->setBackground(QBrush(QColor(0, 0, 0, 0)));
+    //this->ui->DataListWidget->setAutoFillBackground(false);
+    this->ui->DataWidget->hide();
+    //this->ui->WelcomeWidget->hide();
+    QObject::connect(this->ui->pushButton_loadlocal, &ElaPushButton::clicked, this, &DataViewerPage::LoadLocalFileSlot);
+    QObject::connect(this->ui->pushButton_loadrobot, &ElaPushButton::clicked, this, &DataViewerPage::LoadRobotFileSlot);
+
+    QObject::connect(this->ui->pushButton_help, &ElaPushButton::clicked, this, &DataViewerPage::HelpButtonClickedSlot);
+    QObject::connect(this->ui->pushButton_clean, &ElaPushButton::clicked, this, &DataViewerPage::RemoveButtonClickedSlot);
+
+    
+    this->SetTheme((eTheme->getThemeMode() == ElaThemeType::ThemeMode::Light) ? Theme_e::Light : Theme_e::Dark);
+    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mode) {
+        if (mode == ElaThemeType::ThemeMode::Light)
+        {
+            this->SetTheme(Theme_e::Light);
+        }
+        else
+        {
+            this->SetTheme(Theme_e::Dark);
+        }
+    });
+
+    this->initReloadButton();
 }
 
 DataViewerPage::~DataViewerPage()
@@ -65,35 +95,116 @@ void DataViewerPage::SetTheme(Theme_e theme)
 
     this->PlotHandle->legend->setFont(axis_font);
     this->PlotHandle->legend->setIconSize(40, 30);
+    this->PlotHandle->legend->setBorderPen(Qt::NoPen);
 
+    QColor ButtonLightDefaultColor(0, 103, 192);
+    QColor ButtonLightHoverColor(26, 118, 198);
+    QColor ButtonLightTextColor(255, 255, 255);
+
+    QColor ButtonDarkDefaultColor(76, 194, 255);
+    QColor ButtonDarkHoverColor(73, 179, 234);
+    QColor ButtonDarkTextColor(0, 0, 0);
+
+    //this->ui->pushButton_loadlocal->setLightDefaultColor(ButtonLightDefaultColor);
+    //this->ui->pushButton_loadlocal->setLightHoverColor(ButtonLightHoverColor);
+    //this->ui->pushButton_loadlocal->setLightTextColor(ButtonLightTextColor);
+    //this->ui->pushButton_loadlocal->setLightPressColor(ButtonLightHoverColor);
+    //this->ui->pushButton_loadlocal->setDarkDefaultColor(ButtonDarkDefaultColor);
+    //this->ui->pushButton_loadlocal->setDarkHoverColor(ButtonDarkHoverColor);
+    //this->ui->pushButton_loadlocal->setDarkTextColor(ButtonDarkTextColor);
+    //this->ui->pushButton_loadlocal->setDarkPressColor(ButtonDarkHoverColor);
+    //
+    //this->ui->pushButton_loadrobot->setLightDefaultColor(ButtonLightDefaultColor);
+    //this->ui->pushButton_loadrobot->setLightHoverColor(ButtonLightHoverColor);
+    //this->ui->pushButton_loadrobot->setLightTextColor(ButtonLightTextColor);
+    //this->ui->pushButton_loadrobot->setLightPressColor(ButtonLightHoverColor);
+    //this->ui->pushButton_loadrobot->setDarkDefaultColor(ButtonDarkDefaultColor);
+    //this->ui->pushButton_loadrobot->setDarkHoverColor(ButtonDarkHoverColor);
+    //this->ui->pushButton_loadrobot->setDarkTextColor(ButtonDarkTextColor);
+    //this->ui->pushButton_loadrobot->setDarkPressColor(ButtonDarkHoverColor);
+
+    //this->ui->PushButton_load->setLightDefaultColor(ButtonLightDefaultColor);
+    //this->ui->PushButton_load->setLightHoverColor(ButtonLightHoverColor);
+    //this->ui->PushButton_load->setLightTextColor(ButtonLightTextColor);
+    //this->ui->PushButton_load->setDarkDefaultColor(ButtonDarkDefaultColor);
+    //this->ui->PushButton_load->setDarkHoverColor(ButtonDarkHoverColor);
+    //this->ui->PushButton_load->setDarkTextColor(ButtonDarkTextColor);
+
+
+    QPalette LabelPalette;
     if (theme == Theme_e::Light)
     {
+        QColor GridLightColor(226, 226, 226);
         QPen axis_pen_X = this->PlotHandle->xAxis->basePen();
         //axis_pen_X.setWidthF(1.5);
-        axis_pen_X.setColor(QColor(226, 226, 226));
+        axis_pen_X.setColor(GridLightColor);
         this->PlotHandle->xAxis->setBasePen(axis_pen_X);
         this->PlotHandle->xAxis2->setBasePen(axis_pen_X);
 
         QPen axis_pen_Y = this->PlotHandle->yAxis->basePen();
         //axis_pen_Y.setWidthF(1.5);
-        axis_pen_Y.setColor(QColor(226, 226, 226));
+        axis_pen_Y.setColor(GridLightColor);
         this->PlotHandle->yAxis->setBasePen(axis_pen_Y);
         this->PlotHandle->yAxis2->setBasePen(axis_pen_Y);
 
         QPen gridx = this->PlotHandle->xAxis->grid()->pen();
         gridx.setStyle(Qt::SolidLine);
-        gridx.setColor(QColor(226, 226, 226));
+        gridx.setColor(GridLightColor);
         this->PlotHandle->xAxis->grid()->setPen(gridx);
 
         QPen gridy = this->PlotHandle->yAxis->grid()->pen();
         gridy.setStyle(Qt::SolidLine);
-        gridy.setColor(QColor(226, 226, 226));
+        gridy.setColor(GridLightColor);
         this->PlotHandle->yAxis->grid()->setPen(gridy);
+
+        QColor TickLabelColorLight(0, 0, 0);
+        this->PlotHandle->xAxis->setTickLabelColor(TickLabelColorLight);
+        this->PlotHandle->yAxis->setTickLabelColor(TickLabelColorLight);
+        this->PlotHandle->legend->setTextColor(TickLabelColorLight);
+        this->PlotHandle->legend->setBrush(QColor(226, 226, 226, 128));
+
+        QBrush brush_versionLabel(QColor(55, 55, 55, 255));
+        brush_versionLabel.setStyle(Qt::SolidPattern);
+        LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
+        LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
     }
     else
     {
+        QColor GridDarkColor(74,74,74);
+        QPen axis_pen_X = this->PlotHandle->xAxis->basePen();
+        //axis_pen_X.setWidthF(1.5);
+        axis_pen_X.setColor(GridDarkColor);
+        this->PlotHandle->xAxis->setBasePen(axis_pen_X);
+        this->PlotHandle->xAxis2->setBasePen(axis_pen_X);
 
+        QPen axis_pen_Y = this->PlotHandle->yAxis->basePen();
+        //axis_pen_Y.setWidthF(1.5);
+        axis_pen_Y.setColor(GridDarkColor);
+        this->PlotHandle->yAxis->setBasePen(axis_pen_Y);
+        this->PlotHandle->yAxis2->setBasePen(axis_pen_Y);
+
+        QPen gridx = this->PlotHandle->xAxis->grid()->pen();
+        gridx.setStyle(Qt::SolidLine);
+        gridx.setColor(GridDarkColor);
+        this->PlotHandle->xAxis->grid()->setPen(gridx);
+
+        QPen gridy = this->PlotHandle->yAxis->grid()->pen();
+        gridy.setStyle(Qt::SolidLine);
+        gridy.setColor(GridDarkColor);
+        this->PlotHandle->yAxis->grid()->setPen(gridy);
+
+        QColor TickLabelColorDark(226, 226, 226);
+        this->PlotHandle->xAxis->setTickLabelColor(TickLabelColorDark);
+        this->PlotHandle->yAxis->setTickLabelColor(TickLabelColorDark);
+        this->PlotHandle->legend->setTextColor(TickLabelColorDark);
+        this->PlotHandle->legend->setBrush(QColor(74, 74, 74, 128));
+
+        QBrush brush_versionLabel(QColor(206, 206, 206, 255));
+        brush_versionLabel.setStyle(Qt::SolidPattern);
+        LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
+        LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
     }
+    this->ui->label_subtitle->setPalette(LabelPalette);
 
     for (auto GroupItem = this->AggregatedDataGroup__.begin(); GroupItem != this->AggregatedDataGroup__.end(); GroupItem++)
     {
@@ -102,6 +213,10 @@ void DataViewerPage::SetTheme(Theme_e theme)
             this->UpdateCurveTheme(GroupItem.key(), CurveItem.key(), theme);
         }
     }
+    
+    QTimer::singleShot(0, [this]() {
+        this->PlotHandle->replot();
+     });
 }
 
 void DataViewerPage::dragEnterEvent(QDragEnterEvent* event)
@@ -135,6 +250,11 @@ void DataViewerPage::dropEvent(QDropEvent* event)
             QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
             return;
         }
+        this->setWindowTitle(groupkey);
+        this->ui->WelcomeWidget->hide();
+        this->ui->DataWidget->show();
+        this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
+        emit this->FileLoaded(true);
     }
 }
 
@@ -183,7 +303,13 @@ bool DataViewerPage::AddCurveGroup(const QString& GroupName, zzs::CSVReader::Ptr
     {
         auto curve = csv_handle->getColumn(value);
         QString QKey = QString::fromStdString(key);
-        ng.Curves.insert(QKey, QVector<double>::fromStdVector(curve));
+        QVector<double> QCurve;
+        QCurve.resize(curve.size());
+        for (size_t i = 0; i < curve.size(); i++)
+        {
+            QCurve[i] = curve[i];
+        }
+        ng.Curves.insert(QKey, QCurve);
         //linked model
         QStandardItem* ChildModel = new QStandardItem(QKey);
         ChildModel->setEditable(false);
@@ -245,19 +371,23 @@ void DataViewerPage::ModelItemClickedSlot(const QModelIndex& index)
 {
     qDebug() << "clicked!";
     qDebug()<<index.data(Qt::DisplayRole);
+    qDebug() << index.data(Qt::CheckStateRole);
     qDebug() << index.parent().data(Qt::DisplayRole);
 
     if (index.parent().isValid())
     {
         QString CurveGroup = index.parent().data(Qt::DisplayRole).toString();
         QString CurveName = index.data(Qt::DisplayRole).toString();
-        auto CheckStatus = this->AggregatedDataGroup__[CurveGroup].LinkedModelItem[CurveName]->checkState();
-        if (CheckStatus == Qt::Unchecked)
+        bool containCurve = this->AggregatedDataGroup__[CurveGroup].VisiableCurve.contains(CurveName);
+
+        if (containCurve)
         {
+            this->AggregatedDataGroup__[CurveGroup].LinkedModelItem[CurveName]->setCheckState(Qt::Unchecked);
             this->SetCurveVisiable(CurveGroup, CurveName, false,false);
         }
         else
         {
+            this->AggregatedDataGroup__[CurveGroup].LinkedModelItem[CurveName]->setCheckState(Qt::Checked);
             this->SetCurveVisiable(CurveGroup, CurveName, true,false);
         }
 
@@ -279,8 +409,9 @@ void DataViewerPage::ModelItemClickedSlot(const QModelIndex& index)
     else
     {
         QString CurveGroup = index.data(Qt::DisplayRole).toString();
-        auto CheckStatus = this->AggregatedDataGroup__[CurveGroup].ParentModel->checkState();
-        if (CheckStatus == Qt::Unchecked)
+
+        bool hasCurveVisiable = !this->AggregatedDataGroup__[CurveGroup].VisiableCurve.isEmpty();
+        if (hasCurveVisiable)
         {
             for (auto item = this->AggregatedDataGroup__[CurveGroup].LinkedModelItem.begin(); 
                 item != this->AggregatedDataGroup__[CurveGroup].LinkedModelItem.end(); item++)
@@ -289,6 +420,7 @@ void DataViewerPage::ModelItemClickedSlot(const QModelIndex& index)
                 item.value()->setCheckState(Qt::Unchecked);
                 this->SetCurveVisiable(CurveGroup, Key, false,false);
             }
+            this->AggregatedDataGroup__[CurveGroup].ParentModel->setCheckState(Qt::Unchecked);
         }
         else
         {
@@ -299,6 +431,7 @@ void DataViewerPage::ModelItemClickedSlot(const QModelIndex& index)
                 item.value()->setCheckState(Qt::Checked);
                 this->SetCurveVisiable(CurveGroup, Key, true, false);
             }
+            this->AggregatedDataGroup__[CurveGroup].ParentModel->setCheckState(Qt::Checked);
         }
         //this->PlotHandle->replot();
     }
@@ -446,4 +579,111 @@ std::tuple<double, double> DataViewerPage::ComputeDeltaDirection(double low, dou
     double new_low = low - length * point;
     double new_high = high + length * point_;
     return { new_low,new_high };
+}
+
+void DataViewerPage::LoadLocalFileSlot()
+{
+    QStringList paths = QFileDialog::getOpenFileNames(this, tr("Open File"), tr("~"), QString("*.csv"));
+    if (paths.isEmpty())
+        return;
+
+    bool hasOpenedFile=false;
+    QString FirstFilename;
+    int loadedFile = 0;
+    for (auto localpath : paths)
+    {
+        if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
+        {
+            QMessageBox::warning(this, tr("Unsupported File Type"), localpath+tr(" is unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
+            continue;
+        }
+        else
+        {
+            zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
+            auto groupkey = localpath.split("/").back();
+            if (!r->open() || !this->AddCurveGroup(groupkey, r))
+            {
+                QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
+                continue;
+            }
+            else
+            {
+                this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
+                if (!hasOpenedFile)
+                {
+                    FirstFilename = groupkey;
+                }
+                hasOpenedFile = true;
+                loadedFile++;
+            }
+        }
+    }
+    if (hasOpenedFile)
+    {
+        this->ui->WelcomeWidget->hide();
+        this->ui->DataWidget->show();
+        if (loadedFile > 1)
+        {
+            FirstFilename += tr(" etc.");
+        }
+        this->setWindowTitle(FirstFilename);
+        emit this->FileLoaded(true);
+    }
+    else
+    {
+        this->setWindowTitle(tr("New Data Viewer"));
+        emit this->FileLoaded(false);
+    }
+}
+
+void DataViewerPage::LoadRobotFileSlot()
+{
+    QMessageBox::critical(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
+}
+
+void DataViewerPage::RemoveButtonClickedSlot()
+{
+    auto keys = this->AggregatedDataGroup__.keys();
+    for (auto key : keys)
+    {
+        this->RemoveCurveGroup(key);
+    }
+    this->PlotHandle->legend->setVisible(false);
+    this->ui->DataWidget->hide();
+    this->ui->WelcomeWidget->show();
+}
+
+void DataViewerPage::HelpButtonClickedSlot()
+{
+    QMessageBox::critical(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
+}
+
+void DataViewerPage::initReloadButton()
+{
+    this->ui->PushButton_load->setIsTransparent(false);
+    this->ui->PushButton_load->setToolButtonStyle(Qt::ToolButtonTextOnly);
+    
+    QFont font= this->font();
+    font.setPixelSize(15);
+    setFont(font);
+    this->ui->PushButton_load->setFont(font);
+
+    ElaMenu* menu = new ElaMenu(this);
+    
+    /*    QAction* action = new QAction(text, this);
+    action->setProperty("ElaIconType", QChar((unsigned short)icon));
+    QMenu::addAction(action);*/
+    QAction* LoadfromLocalAction = new QAction(QString("    ")+tr("Load Local File")+ QString("    "), this);
+    LoadfromLocalAction->setFont(font);
+    menu->addAction(LoadfromLocalAction);
+    QObject::connect(LoadfromLocalAction, &QAction::triggered, this, &DataViewerPage::LoadLocalFileSlot);
+
+    QAction* LoadfromRobotAction = new QAction(QString("    ") + tr("Load from Robot") + QString("    "), this);
+    LoadfromRobotAction->setFont(font);
+    menu->addAction(LoadfromRobotAction);
+    QObject::connect(LoadfromRobotAction, &QAction::triggered, this, &DataViewerPage::LoadRobotFileSlot);
+
+    this->ui->PushButton_load->setMenu(menu);
+    menu->setMenuItemHeight(40);
+    
 }

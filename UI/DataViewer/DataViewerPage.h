@@ -61,6 +61,15 @@ private:
     void PlotHandleMouseWheelSlot(QWheelEvent* event);
     std::tuple<double,double> ComputeDeltaDirection(double low, double high, double point, double vel,bool reverse);
 
+    void LoadLocalFileSlot();
+    void LoadRobotFileSlot();
+    void RemoveButtonClickedSlot();
+    void HelpButtonClickedSlot();
+
+    void initReloadButton();
+signals:
+    void FileLoaded(bool);
+
 private:
     Ui::DataViewerPage *ui;
 

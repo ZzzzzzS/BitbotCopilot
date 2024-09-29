@@ -80,7 +80,6 @@ set(UI_FILES
     UI/PilotPage.h
     UI/ViewDataPage.cpp
     UI/ViewDataPage.h
-    UI/ViewDataPage.ui
 
     UI/AboutPage.cpp
     UI/AboutPage.h

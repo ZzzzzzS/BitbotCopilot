@@ -31,6 +31,7 @@
         <file>Image/backend_icon.png</file>
         <file>Image/frontend_icon.png</file>
         <file>Image/auto_launch.png</file>
+		<file>Image/DataViewerWelcom.svg</file>
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>

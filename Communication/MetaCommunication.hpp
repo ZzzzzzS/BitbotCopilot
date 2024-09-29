@@ -18,7 +18,7 @@ namespace zzs
 			DISCONNECT,
 			CONNECTING,
 			CONNECTED,
-			ERROR
+			ERRORED
 		};
 		Q_ENUM(CONNECTION_STATUS);
 	public:

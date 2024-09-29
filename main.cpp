@@ -8,12 +8,24 @@
 #include "QSplashScreen"
 #include "UI/widget/CustomSplashScreen.h"
 #include "Utils/Settings/SettingsHandler.h"
-
+#include "QSettings"
 #include<windows.h>
+#include "UI/DataViewer/DataViewerPage.h"
 
+QString getMicaBackground()
+{
+#ifdef Q_OS_WIN
+    QSettings wallpaper("HKEY_CURRENT_USER\\Control Panel\\Desktop", QSettings::NativeFormat);
+    QString val = wallpaper.value("Wallpaper").toString();
+    qDebug() << val;
+    return val;
+#endif
+    return QString();
+}
 
 int main(int argc, char* argv[])
 {
+//    SetProcessDPIAware(); // call before the main event loop
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -24,11 +36,11 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
 
+
+
+    CustomSplashScreen* screen =new CustomSplashScreen(QPixmap(":/logo/Image/Splash_Screen.png"));
+    screen->show();
     a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
-
-    CustomSplashScreen screen(QPixmap(":/logo/Image/Splash_Screen.png"));
-    screen.show();
-
     a.processEvents();
 
     //dknt的提议
@@ -40,8 +52,20 @@ int main(int argc, char* argv[])
     {
         Sleep(3000);
     }
-
+    
+    
     eApp->init();
+    QString MicaBackground = getMicaBackground();
+    if (!MicaBackground.isEmpty())
+    {
+        eApp->setMicaImagePath(MicaBackground);
+        eApp->setIsEnableMica(true);
+    }
+    else
+    {
+        eApp->setIsEnableMica(false);
+    }
+
     QTranslator translator;
     //const QStringList uiLanguages = QLocale::system().uiLanguages();
     //for (const QString& locale : uiLanguages) {
@@ -57,8 +81,9 @@ int main(int argc, char* argv[])
 
     MainWindow w;
     w.show();
-    screen.finish(&w);
-    
+    a.processEvents();
+    screen->finish(&w);
+    delete screen;
 
     return a.exec();
 }

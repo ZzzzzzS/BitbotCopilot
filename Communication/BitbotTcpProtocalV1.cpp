@@ -73,17 +73,17 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 			if (this->ParseStateList(StateListArray))
 				this->StateListConnection__ = CONNECTION_STATUS::CONNECTED;
 			else
-				this->StateListConnection__ = CONNECTION_STATUS::ERROR;
+				this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		else
 		{
-			this->StateListConnection__ = CONNECTION_STATUS::ERROR;
+			this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		this->CheckConnection();
 	});
 	QObject::connect(this->StateListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
 		qDebug() << "State List Error" << Code;
-		this->StateListConnection__ = CONNECTION_STATUS::ERROR;
+		this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
 		this->CheckConnection();
 	});
 
@@ -99,17 +99,17 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 			if (this->ParseControlList(ControlListArray))
 				this->ControlListConnection__ = CONNECTION_STATUS::CONNECTED;
 			else
-				this->ControlListConnection__ = CONNECTION_STATUS::ERROR;
+				this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		else
 		{
-			this->ControlListConnection__ = CONNECTION_STATUS::ERROR;
+			this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		this->CheckConnection();
 	});
 	QObject::connect(this->ControlListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
 		qDebug() << "Control List Error" << Code;
-		this->ControlListConnection__ = CONNECTION_STATUS::ERROR;
+		this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
 		this->CheckConnection();
 	});
 
@@ -125,17 +125,17 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 			if (this->ParsePDOHeader(PDOHeaderArray))
 				this->PDOHeaderConnection__ = CONNECTION_STATUS::CONNECTED;
 			else
-				this->PDOHeaderConnection__ = CONNECTION_STATUS::ERROR;
+				this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		else
 		{
-			this->PDOHeaderConnection__ = CONNECTION_STATUS::ERROR;
+			this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
 		}
 		this->CheckConnection();
 	});
 	QObject::connect(this->PDOHeaderReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
 		qDebug() << "PDO Header Error" << Code;
-		this->PDOHeaderConnection__ = CONNECTION_STATUS::ERROR;
+		this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
 		this->CheckConnection();
 	});
 
@@ -153,7 +153,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 	QObject::connect(this->PDOManager__, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, [this](QAbstractSocket::SocketError error) {
 		qDebug() << "websocket error:" << error;
 		this->RefreshTimer__->stop();
-		this->PDODataConnection__ = CONNECTION_STATUS::ERROR;
+		this->PDODataConnection__ = CONNECTION_STATUS::ERRORED;
 		//this->PDOManager__->abort();
 		//this->PDOManager__->close();
 		this->CheckConnection();
@@ -337,17 +337,17 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::CheckConnection()
 		return false;
 	}
 	else if (
-		this->StateListConnection__ == CONNECTION_STATUS::ERROR ||
-		this->ControlListConnection__ == CONNECTION_STATUS::ERROR ||
-		this->PDOHeaderConnection__ == CONNECTION_STATUS::ERROR ||
-		this->PDODataConnection__ == CONNECTION_STATUS::ERROR
+		this->StateListConnection__ == CONNECTION_STATUS::ERRORED ||
+		this->ControlListConnection__ == CONNECTION_STATUS::ERRORED ||
+		this->PDOHeaderConnection__ == CONNECTION_STATUS::ERRORED ||
+		this->PDODataConnection__ == CONNECTION_STATUS::ERRORED
 		)
 	{
 		if (!this->AlreadSentErrorMessage__)
 		{
 			this->AlreadSentErrorMessage__ = true;
 			this->PDOManager__->abort();
-			emit this->ConnectionStateChanged(static_cast<int>(META_COMMUNICATION::CONNECTION_STATUS::ERROR));
+			emit this->ConnectionStateChanged(static_cast<int>(META_COMMUNICATION::CONNECTION_STATUS::ERRORED));
 		}
 		return false;
 	}

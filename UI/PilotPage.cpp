@@ -256,7 +256,7 @@ void PilotPage::InitCommHandle()
         case zzs::META_COMMUNICATION::CONNECTION_STATUS::DISCONNECT:
             this->ProcessDisconnetced();
             break;
-        case zzs::META_COMMUNICATION::CONNECTION_STATUS::ERROR:
+        case zzs::META_COMMUNICATION::CONNECTION_STATUS::ERRORED:
             this->ProcessConnectionError();
             break;
         default:
