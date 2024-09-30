@@ -56,6 +56,9 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 	
 	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &AboutPageCentralWidget::ThemeChangedSlot);
 	this->ThemeChangedSlot(eTheme->getThemeMode());
+	this->setIsFixedSize(true);
+	this->setIsStayTop(false);
+	this->setWindowModality(Qt::ApplicationModal);
 }
 
 AboutPageCentralWidget::~AboutPageCentralWidget()
@@ -66,7 +69,8 @@ void AboutPageCentralWidget::ThirdpartyLicenseSlot()
 {
 	auto ptr = new AboutPageLicenseWidget();
 	ptr->setAttribute(Qt::WA_DeleteOnClose);
-	ptr->setWindowModality(Qt::WindowModal);
+	ptr->setIsFixedSize(true);
+	ptr->setWindowModality(Qt::ApplicationModal);
 	ptr->show();
 }
 

@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "AboutPage.h"
+#include "QPalette"
+#include "ElaApplication.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -30,6 +32,12 @@ void MainWindow::InitWindow()
     setUserInfoCardTitle("BITBOT Copilot");
     setUserInfoCardSubTitle("BIT Humanoid Group");
     //setWindowTitle("Bitbot Pilot");
+
+    this->InitMica();
+    if (this->isDarkMode())
+        eTheme->setThemeMode(ElaThemeType::Dark);
+    else
+        eTheme->setThemeMode(ElaThemeType::Light);
 }
 
 
@@ -144,11 +152,68 @@ void MainWindow::changeEvent(QEvent* event)
     if (event->type() == QEvent::StyleChange)
     {
         qDebug() << "theme changed";
-        QPalette defaultPalette;
-        if (defaultPalette.color(QPalette::WindowText).lightness()
-    > defaultPalette.color(QPalette::Window).lightness())
-            qDebug() << "dark";
+        if (!this->isDarkMode())
+        {
+            if(eTheme->getThemeMode()!=ElaThemeType::Light)
+                this->TriggerThemeChangeAnimation();
+        }
         else
-            qDebug() << "light";
+        {
+            if (eTheme->getThemeMode() != ElaThemeType::Dark)
+                this->TriggerThemeChangeAnimation();
+        }
+
+        //some time there are some delay in changing wallpaper.
+
+        QTimer::singleShot(1000, this, [this]() {
+            this->InitMica();
+            });
+
+        QTimer::singleShot(5000, this, [this]() {
+            this->InitMica();
+            });
+           
     }
+}
+
+void MainWindow::InitMica()
+{
+    static QString LastMicaBackground;
+    QString MicaBackground = getMicaBackground();
+    if (MicaBackground == LastMicaBackground)
+        return;
+    if (!MicaBackground.isEmpty())
+    {
+        eApp->setMicaImagePath(MicaBackground);
+        eApp->setIsEnableMica(true);
+    }
+    else
+    {
+        eApp->setIsEnableMica(false);
+    }
+    LastMicaBackground = MicaBackground;
+}
+
+bool MainWindow::isDarkMode()
+{
+#ifdef Q_OS_WIN
+    QSettings wallpaper("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+    bool ok;
+    int val = wallpaper.value("AppsUseLightTheme").toInt(&ok);
+    if (!ok) return false;
+    return val == 0 ? true : false;
+#endif // Q_OS_WIN
+
+    return false;
+}
+
+QString MainWindow::getMicaBackground()
+{
+#ifdef Q_OS_WIN
+    QSettings wallpaper("HKEY_CURRENT_USER\\Control Panel\\Desktop", QSettings::NativeFormat);
+    QString val = wallpaper.value("Wallpaper").toString();
+    qDebug() << val;
+    return val;
+#endif
+    return QString();
 }

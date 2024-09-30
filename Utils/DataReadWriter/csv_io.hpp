@@ -33,6 +33,7 @@ SOFTWARE.
 #include <vector>
 #include <map>
 
+
 namespace lee
 {
     namespace blocks
@@ -131,6 +132,8 @@ namespace zzs
     class CSVReader
     {
     public:
+        using ReadStageCallback = std::function<void (bool&)>;
+    public:
         using Ptr=std::shared_ptr<CSVReader>;
         static Ptr Create(const std::string& _FileName, const bool& _HasHeader = true)
         {
@@ -139,10 +142,16 @@ namespace zzs
 
     public:
         CSVReader(std::string filename, bool has_header = true)
-            : filename_(filename), has_header(has_header)
+            : filename_(filename), has_header(has_header),
+            ReadStageCallbackPtr__(nullptr)
         {
 
            
+        }
+
+        void RegistReadStateCallback(const ReadStageCallback& func)
+        {
+            this->ReadStageCallbackPtr__ = func;
         }
 
         bool open()
@@ -162,7 +171,6 @@ namespace zzs
                     std::string line;
                     while (std::getline(file, line))
                     {
-
                         line.erase(std::remove(line.begin(), line.end(), ' '), line.end());
 
                         std::vector<std::string> row;
@@ -188,6 +196,13 @@ namespace zzs
                             //qDebug() << "reading line:" << data_numeric_.size();
                         }
                         row_count++;
+                        bool cancel=false;
+                        if(this->ReadStageCallbackPtr__!=nullptr)
+                            this->ReadStageCallbackPtr__(cancel);
+                        if (cancel)
+                        {
+                            return false;
+                        }
                     }
 
                     file.close();
@@ -348,5 +363,6 @@ namespace zzs
         std::map<std::string, int> header_;
         std::vector<std::vector<double>> data_numeric_;
         bool has_header;
+        ReadStageCallback ReadStageCallbackPtr__;
     };
 };

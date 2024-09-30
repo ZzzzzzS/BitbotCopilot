@@ -12,17 +12,6 @@
 #include<windows.h>
 #include "UI/DataViewer/DataViewerPage.h"
 
-QString getMicaBackground()
-{
-#ifdef Q_OS_WIN
-    QSettings wallpaper("HKEY_CURRENT_USER\\Control Panel\\Desktop", QSettings::NativeFormat);
-    QString val = wallpaper.value("Wallpaper").toString();
-    qDebug() << val;
-    return val;
-#endif
-    return QString();
-}
-
 int main(int argc, char* argv[])
 {
 //    SetProcessDPIAware(); // call before the main event loop
@@ -35,8 +24,6 @@ int main(int argc, char* argv[])
 #endif
 
     QApplication a(argc, argv);
-
-
 
     CustomSplashScreen* screen =new CustomSplashScreen(QPixmap(":/logo/Image/Splash_Screen.png"));
     screen->show();
@@ -55,16 +42,6 @@ int main(int argc, char* argv[])
     
     
     eApp->init();
-    QString MicaBackground = getMicaBackground();
-    if (!MicaBackground.isEmpty())
-    {
-        eApp->setMicaImagePath(MicaBackground);
-        eApp->setIsEnableMica(true);
-    }
-    else
-    {
-        eApp->setIsEnableMica(false);
-    }
 
     QTranslator translator;
     //const QStringList uiLanguages = QLocale::system().uiLanguages();

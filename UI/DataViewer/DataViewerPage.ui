@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1221</width>
-    <height>1074</height>
+    <width>1227</width>
+    <height>1090</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -296,32 +296,32 @@
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="ElaToolButton" name="PushButton_load">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>40</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>40</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>    Load New File    </string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="ElaToolButton" name="PushButton_load">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>    Load New File    </string>
+                  </property>
+                 </widget>
+                </item>
                 <item>
                  <widget class="ElaPushButton" name="pushButton_clean">
                   <property name="sizePolicy">
@@ -343,38 +343,23 @@
                    </size>
                   </property>
                   <property name="text">
-                   <string>Clean</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="ElaPushButton" name="pushButton_help">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="minimumSize">
-                   <size>
-                    <width>40</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>40</width>
-                    <height>40</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>?</string>
+                   <string>Clean All</string>
                   </property>
                  </widget>
                 </item>
                </layout>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="ElaSuggestBox" name="SearchBoxWidget" native="true">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>40</height>
+               </size>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="ElaTreeView" name="DataListWidget">
@@ -496,6 +481,12 @@
    <class>ElaToolButton</class>
    <extends>QToolButton</extends>
    <header>ElaToolButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ElaSuggestBox</class>
+   <extends>QWidget</extends>
+   <header>ElaSuggestBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

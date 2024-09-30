@@ -26,7 +26,9 @@ private:
     void InitSignalSlot();
     void resizeEvent(QResizeEvent* event);
     void changeEvent(QEvent* event);
-
+    void InitMica();
+    bool isDarkMode();
+    QString getMicaBackground();
 private:
     HomePage* HomePage__;
     ViewDataPage* ViewDataPage__;

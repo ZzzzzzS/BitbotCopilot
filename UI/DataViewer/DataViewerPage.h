@@ -9,6 +9,8 @@
 #include "QStandardItem"
 #include "Utils/DataReadWriter/csv_io.hpp"
 #include "tuple"
+#include "QAction"
+#include "ElaMenu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -64,9 +66,12 @@ private:
     void LoadLocalFileSlot();
     void LoadRobotFileSlot();
     void RemoveButtonClickedSlot();
-    void HelpButtonClickedSlot();
+    void ListWidgetRightClickedSlot(const QPoint& pos);
 
     void initReloadButton();
+    void initListWidgetRightClickedMenu();
+    
+    void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 signals:
     void FileLoaded(bool);
 
@@ -81,6 +86,9 @@ private:
     QMap<size_t, ColorPair> AvailableColorPair;
     QMap<size_t, ColorPair> UsedColorPair;
     Theme_e WindowTheme;
+
+    QMap<QString, QAction*> SearchActions;
+    ElaMenu* SeachMenu;
 
 };
 #endif // DATAVIEWERPAGE_H

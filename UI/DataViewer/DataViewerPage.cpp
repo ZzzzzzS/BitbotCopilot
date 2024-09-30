@@ -9,6 +9,8 @@
 #include "QAction"
 #include "ElaApplication.h"
 #include "ElaTheme.h"
+#include "QProgressDialog"
+#include "ElaSuggestBox.h"
 
 DataViewerPage::DataViewerPage(QWidget *parent)
     : QWidget(parent)
@@ -43,7 +45,6 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     QObject::connect(this->ui->pushButton_loadlocal, &ElaPushButton::clicked, this, &DataViewerPage::LoadLocalFileSlot);
     QObject::connect(this->ui->pushButton_loadrobot, &ElaPushButton::clicked, this, &DataViewerPage::LoadRobotFileSlot);
 
-    QObject::connect(this->ui->pushButton_help, &ElaPushButton::clicked, this, &DataViewerPage::HelpButtonClickedSlot);
     QObject::connect(this->ui->pushButton_clean, &ElaPushButton::clicked, this, &DataViewerPage::RemoveButtonClickedSlot);
 
     
@@ -60,6 +61,10 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     });
 
     this->initReloadButton();
+    this->initListWidgetRightClickedMenu();
+    this->ui->SearchBoxWidget->setPlaceholderText(tr("Search"));
+    QObject::connect(this->ui->SearchBoxWidget, &ElaSuggestBox::suggestionClicked, this, &DataViewerPage::SearchClickedSlot);
+
 }
 
 DataViewerPage::~DataViewerPage()
@@ -123,12 +128,14 @@ void DataViewerPage::SetTheme(Theme_e theme)
     //this->ui->pushButton_loadrobot->setDarkTextColor(ButtonDarkTextColor);
     //this->ui->pushButton_loadrobot->setDarkPressColor(ButtonDarkHoverColor);
 
-    //this->ui->PushButton_load->setLightDefaultColor(ButtonLightDefaultColor);
-    //this->ui->PushButton_load->setLightHoverColor(ButtonLightHoverColor);
-    //this->ui->PushButton_load->setLightTextColor(ButtonLightTextColor);
-    //this->ui->PushButton_load->setDarkDefaultColor(ButtonDarkDefaultColor);
-    //this->ui->PushButton_load->setDarkHoverColor(ButtonDarkHoverColor);
-    //this->ui->PushButton_load->setDarkTextColor(ButtonDarkTextColor);
+
+    this->ui->pushButton_clean->setLightDefaultColor(ButtonLightDefaultColor);
+    this->ui->pushButton_clean->setLightHoverColor(ButtonLightHoverColor);
+    this->ui->pushButton_clean->setLightTextColor(ButtonLightTextColor);
+    this->ui->pushButton_clean->setDarkDefaultColor(ButtonDarkDefaultColor);
+    this->ui->pushButton_clean->setDarkHoverColor(ButtonDarkHoverColor);
+    this->ui->pushButton_clean->setDarkTextColor(ButtonDarkTextColor);
+    this->ui->pushButton_clean->setBorderRadius(this->ui->PushButton_load->getBorderRadius());
 
 
     QPalette LabelPalette;
@@ -243,13 +250,34 @@ void DataViewerPage::dropEvent(QDropEvent* event)
     }
     else
     {
+        bool cancel = false;
+        QProgressDialog* diag = new QProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this);
+        QObject::connect(diag, &QProgressDialog::canceled, this, [&cancel]() {
+            cancel = true;
+        });
+        diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
+        diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+        diag->setAttribute(Qt::WA_DeleteOnClose);
+        diag->show();
+        qApp->processEvents();
+
         zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
+        r->RegistReadStateCallback([&cancel,this](bool& cancel_){
+            qApp->processEvents();
+            cancel_ = cancel;
+        });
+
         auto groupkey = localpath.split("/").back();
         if (!r->open() || !this->AddCurveGroup(groupkey, r))
         {
-            QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
+            if(cancel==false)
+                QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
+            diag->close();
+            qApp->processEvents();
             return;
         }
+        diag->close();
+        qApp->processEvents();
         this->setWindowTitle(groupkey);
         this->ui->WelcomeWidget->hide();
         this->ui->DataWidget->show();
@@ -325,8 +353,32 @@ bool DataViewerPage::AddCurveGroup(const QString& GroupName, zzs::CSVReader::Ptr
         t[i] = static_cast<double>(i);
     }
     ng.t = t;
+
+    if (this->AggregatedDataGroup__.size() == 1)
+    {
+        QStringList keys = this->AggregatedDataGroup__.first().Curves.keys();
+        QString GroupName = this->AggregatedDataGroup__.firstKey();
+        QString GroupKey = GroupName.split('.')[0];
+        for (auto key : keys)
+        {
+            this->ui->SearchBoxWidget->removeSuggestion(key);
+            this->ui->SearchBoxWidget->addSuggestion(GroupKey + "/" + key);
+        }
+    }
+
     this->AggregatedDataGroup__.insert(GroupName, ng);
     this->AggregatedDataModel__->appendRow(ParentModel);
+
+    QStringList keys = this->AggregatedDataGroup__[GroupName].Curves.keys();
+    QString GroupKey = GroupName.split('.')[0];
+    for (auto key : keys)
+    {
+        if (this->AggregatedDataGroup__.size() == 1)
+            this->ui->SearchBoxWidget->addSuggestion(key);
+        else
+            this->ui->SearchBoxWidget->addSuggestion(GroupKey + "/" + key);
+    }
+
     return true;
 }
 
@@ -335,6 +387,22 @@ bool DataViewerPage::RemoveCurveGroup(const QString& GroupName)
     if (!this->AggregatedDataGroup__.contains(GroupName)) return false;
 
     DataGroup_t rg = this->AggregatedDataGroup__[GroupName];
+    
+    QStringList keynames = rg.Curves.keys();
+    QString GroupKey = GroupName.split('.')[0];
+    for (auto key : keynames)
+    {
+        if (this->AggregatedDataGroup__.size() == 1)
+        {
+            this->ui->SearchBoxWidget->removeSuggestion(key);
+        }
+        else
+        {
+            QString keyword = GroupKey + "/" + key;
+            this->ui->SearchBoxWidget->removeSuggestion(keyword);
+        }
+    }
+
     QMapIterator<QString, QCPGraph*> i(rg.VisiableCurve);
     while (i.hasNext()) {
         i.next();
@@ -354,6 +422,18 @@ bool DataViewerPage::RemoveCurveGroup(const QString& GroupName)
     }
 
     this->AggregatedDataGroup__.remove(GroupName);
+    if (this->AggregatedDataGroup__.size() == 1)
+    {
+        QString GroupName_ = this->AggregatedDataGroup__.firstKey();
+        QString GroupKey_ = GroupName_.split('.')[0];
+        QStringList Keys_ = this->AggregatedDataGroup__.first().Curves.keys();
+        for (auto key : Keys_)
+        {
+            this->ui->SearchBoxWidget->removeSuggestion(GroupKey_ + "/" + key);
+            this->ui->SearchBoxWidget->addSuggestion(key);
+        }
+    }
+
     return true;
 }
 
@@ -583,7 +663,12 @@ std::tuple<double, double> DataViewerPage::ComputeDeltaDirection(double low, dou
 
 void DataViewerPage::LoadLocalFileSlot()
 {
-    QStringList paths = QFileDialog::getOpenFileNames(this, tr("Open File"), tr("~"), QString("*.csv"));
+    QStringList paths;
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), tr("~"), QString("*.csv"));
+    if (file.isEmpty())
+        return;
+
+    paths.push_back(file);
     if (paths.isEmpty())
         return;
 
@@ -599,11 +684,28 @@ void DataViewerPage::LoadLocalFileSlot()
         }
         else
         {
+            bool cancel = false;
+            QProgressDialog* diag = new QProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this);
+            QObject::connect(diag, &QProgressDialog::canceled, this, [&cancel]() {
+                cancel = true;
+                });
+            diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
+            diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+            diag->setAttribute(Qt::WA_DeleteOnClose);
+            diag->show();
+            qApp->processEvents();
             zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
+            r->RegistReadStateCallback([&cancel, this](bool& cancel_) {
+                qApp->processEvents();
+                cancel_ = cancel;
+            });
             auto groupkey = localpath.split("/").back();
             if (!r->open() || !this->AddCurveGroup(groupkey, r))
             {
-                QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
+                if(!cancel)
+                    QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
+                diag->close();
+                qApp->processEvents();
                 continue;
             }
             else
@@ -615,7 +717,10 @@ void DataViewerPage::LoadLocalFileSlot()
                 }
                 hasOpenedFile = true;
                 loadedFile++;
+                diag->close();
+                qApp->processEvents();
             }
+
         }
     }
     if (hasOpenedFile)
@@ -653,11 +758,6 @@ void DataViewerPage::RemoveButtonClickedSlot()
     this->ui->WelcomeWidget->show();
 }
 
-void DataViewerPage::HelpButtonClickedSlot()
-{
-    QMessageBox::critical(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
-}
-
 void DataViewerPage::initReloadButton()
 {
     this->ui->PushButton_load->setIsTransparent(false);
@@ -669,21 +769,126 @@ void DataViewerPage::initReloadButton()
     this->ui->PushButton_load->setFont(font);
 
     ElaMenu* menu = new ElaMenu(this);
-    
-    /*    QAction* action = new QAction(text, this);
-    action->setProperty("ElaIconType", QChar((unsigned short)icon));
-    QMenu::addAction(action);*/
-    QAction* LoadfromLocalAction = new QAction(QString("    ")+tr("Load Local File")+ QString("    "), this);
+
+    QAction* LoadfromLocalAction = new QAction(tr("Load Local File"), this);
     LoadfromLocalAction->setFont(font);
+    //LoadfromLocalAction->setProperty("ElaIconType", QChar((unsigned short)ElaIconType::ComputerClassic));
     menu->addAction(LoadfromLocalAction);
     QObject::connect(LoadfromLocalAction, &QAction::triggered, this, &DataViewerPage::LoadLocalFileSlot);
 
-    QAction* LoadfromRobotAction = new QAction(QString("    ") + tr("Load from Robot") + QString("    "), this);
+    QAction* LoadfromRobotAction = new QAction(tr("Load from Robot"), this);
     LoadfromRobotAction->setFont(font);
+    //LoadfromRobotAction->setProperty("ElaIconType", QChar((unsigned short)ElaIconType::Command));
     menu->addAction(LoadfromRobotAction);
     QObject::connect(LoadfromRobotAction, &QAction::triggered, this, &DataViewerPage::LoadRobotFileSlot);
 
     this->ui->PushButton_load->setMenu(menu);
     menu->setMenuItemHeight(40);
     
+}
+
+void DataViewerPage::initListWidgetRightClickedMenu()
+{
+    this->ui->DataListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this->ui->DataListWidget, &ElaTreeView::customContextMenuRequested, this, &DataViewerPage::ListWidgetRightClickedSlot);
+
+}
+
+void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestData)
+{
+    
+    QString GroupName, CurveName;
+    if (this->AggregatedDataGroup__.size() == 1)
+    {
+        CurveName = suggestText;
+        GroupName = this->AggregatedDataGroup__.firstKey();
+    }
+    else
+    {
+        QStringList Split = suggestText.split('/');
+        GroupName = Split[0] + ".csv";
+        CurveName = Split[1];
+    }
+
+    if (!this->AggregatedDataGroup__.contains(GroupName) || !this->AggregatedDataGroup__[GroupName].Curves.contains(CurveName))
+        return;
+
+    if (this->AggregatedDataGroup__[GroupName].VisiableCurve.contains(CurveName))
+    {
+        this->SetCurveVisiable(GroupName, CurveName, false, false);
+        this->AggregatedDataGroup__[GroupName].LinkedModelItem[CurveName]->setCheckState(Qt::Unchecked);
+    }
+
+    else
+    {
+        this->SetCurveVisiable(GroupName, CurveName, true, false);
+        this->AggregatedDataGroup__[GroupName].LinkedModelItem[CurveName]->setCheckState(Qt::Checked);
+    }
+
+    if (this->AggregatedDataGroup__[GroupName].VisiableCurve.empty())
+    {
+        this->AggregatedDataGroup__[GroupName].ParentModel->setCheckState(Qt::Unchecked);
+    }
+    else if (this->AggregatedDataGroup__[GroupName].VisiableCurve.size() == this->AggregatedDataGroup__[GroupName].Curves.size())
+    {
+        this->AggregatedDataGroup__[GroupName].ParentModel->setCheckState(Qt::Checked);
+    }
+    else
+    {
+        this->AggregatedDataGroup__[GroupName].ParentModel->setCheckState(Qt::PartiallyChecked);
+    }
+
+    if (this->AggregatedDataGroup__.empty())
+    {
+        this->PlotHandle->legend->setVisible(false);
+    }
+    else
+    {
+        bool visiable = false;
+        for (auto item = this->AggregatedDataGroup__.begin(); item != this->AggregatedDataGroup__.end(); item++)
+        {
+            visiable |= !item.value().VisiableCurve.isEmpty();
+        }
+        this->PlotHandle->legend->setVisible(visiable);
+    }
+    this->PlotHandle->replot();
+
+}
+
+
+void DataViewerPage::ListWidgetRightClickedSlot(const QPoint& pos)
+{
+    QModelIndex index = this->ui->DataListWidget->indexAt(pos);
+    if (index.parent().isValid())
+        return;
+    QString GroupKey = index.data(Qt::DisplayRole).toString();
+    ElaMenu* menu = new ElaMenu(this);
+    auto CleanAction = menu->addAction(QString("    ") + tr("Clean")+ QString("    "), this, [this, GroupKey]() {
+        this->RemoveCurveGroup(GroupKey);
+
+        if (this->AggregatedDataGroup__.isEmpty())
+        {
+            this->ui->DataWidget->hide();
+            this->ui->WelcomeWidget->show();
+        }
+    });
+
+    bool isModelExpanded = this->ui->DataListWidget->isExpanded(index);
+    QString ActionName = (isModelExpanded) ? (QString("    ") + tr("Collapse") + QString("    ")) : (QString("    ") + tr("Expand") + QString("    "));
+    auto ExpandAction = menu->addAction(ActionName, this, [this, isModelExpanded, index]() {
+        this->ui->DataListWidget->setExpanded(index, !isModelExpanded);
+    });
+    //action->setProperty("ElaIconType", QChar((unsigned short)icon));
+    //ExpandAction->setProperty("ElaIconType", QChar((unsigned short)ElaIconType::SquareList));
+    //CleanAction->setProperty("ElaIconType", QChar((unsigned short)ElaIconType::Broom));
+
+    QFont font = this->font();
+    font.setPixelSize(15);
+    ExpandAction->setFont(font);
+    CleanAction->setFont(font);
+
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->setMenuItemHeight(40);
+
+    menu->exec(QCursor::pos());
 }
