@@ -11,6 +11,7 @@
 #include "ElaTheme.h"
 #include "QProgressDialog"
 #include "ElaSuggestBox.h"
+#include "QTouchEvent"
 
 DataViewerPage::DataViewerPage(QWidget *parent)
     : QWidget(parent)
@@ -21,6 +22,7 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle(tr("New Data Viewer"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
+    this->setAttribute(Qt::WA_AcceptTouchEvents);
 
     this->setAcceptDrops(true);
 
@@ -65,6 +67,12 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     this->ui->SearchBoxWidget->setPlaceholderText(tr("Search"));
     QObject::connect(this->ui->SearchBoxWidget, &ElaSuggestBox::suggestionClicked, this, &DataViewerPage::SearchClickedSlot);
 
+    this->InitSquareZoom();
+    this->InitShowDataPoint();
+    this->ui->pushButton_help->setText("?");
+
+    this->ui->pushButton_savePDF->setText(QChar((unsigned short)ElaIconType::FloppyDisk));
+    QObject::connect(this->ui->pushButton_savePDF, &ElaPushButton::clicked, this, &DataViewerPage::SavePlotSlot);
 }
 
 DataViewerPage::~DataViewerPage()
@@ -99,15 +107,18 @@ void DataViewerPage::SetTheme(Theme_e theme)
     this->PlotHandle->yAxis->setSubTicks(false);
 
     this->PlotHandle->legend->setFont(axis_font);
-    this->PlotHandle->legend->setIconSize(40, 30);
+    this->PlotHandle->legend->setIconSize(40, 25);
     this->PlotHandle->legend->setBorderPen(Qt::NoPen);
 
-    QColor ButtonLightDefaultColor(0, 103, 192);
-    QColor ButtonLightHoverColor(26, 118, 198);
+    
+    QColor ButtonLightDefaultColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryNormal));
+    QColor ButtonLightHoverColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryHover));
+    QColor ButtonLightPressColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryPress));
     QColor ButtonLightTextColor(255, 255, 255);
 
-    QColor ButtonDarkDefaultColor(76, 194, 255);
-    QColor ButtonDarkHoverColor(73, 179, 234);
+    QColor ButtonDarkDefaultColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryNormal));
+    QColor ButtonDarkHoverColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryHover));
+    QColor ButtonDarkPressColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryPress));
     QColor ButtonDarkTextColor(0, 0, 0);
 
     //this->ui->pushButton_loadlocal->setLightDefaultColor(ButtonLightDefaultColor);
@@ -132,11 +143,21 @@ void DataViewerPage::SetTheme(Theme_e theme)
     this->ui->pushButton_clean->setLightDefaultColor(ButtonLightDefaultColor);
     this->ui->pushButton_clean->setLightHoverColor(ButtonLightHoverColor);
     this->ui->pushButton_clean->setLightTextColor(ButtonLightTextColor);
+    this->ui->pushButton_clean->setLightPressColor(ButtonLightPressColor);
     this->ui->pushButton_clean->setDarkDefaultColor(ButtonDarkDefaultColor);
     this->ui->pushButton_clean->setDarkHoverColor(ButtonDarkHoverColor);
     this->ui->pushButton_clean->setDarkTextColor(ButtonDarkTextColor);
+    this->ui->pushButton_clean->setDarkPressColor(ButtonDarkPressColor);
     this->ui->pushButton_clean->setBorderRadius(this->ui->PushButton_load->getBorderRadius());
 
+    //QColor Transparent = QColor(0, 0, 0, 0);
+    //this->ui->pushButton_reset->setLightDefaultColor(Transparent);
+    //this->ui->pushButton_reset->setDarkDefaultColor(Transparent);
+
+    //this->ui->pushButton_help->setLightDefaultColor(Transparent);
+    //this->ui->pushButton_help->setDarkDefaultColor(Transparent);
+    
+    
 
     QPalette LabelPalette;
     if (theme == Theme_e::Light)
@@ -284,6 +305,29 @@ void DataViewerPage::dropEvent(QDropEvent* event)
         this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
         emit this->FileLoaded(true);
     }
+}
+
+bool DataViewerPage::event(QEvent* e)
+{
+    auto type = e->type();
+    //qDebug() << type;
+    if (type == QEvent::Type::TouchBegin ||
+        type == QEvent::Type::TouchCancel ||
+        type == QEvent::Type::TouchEnd ||
+        type == QEvent::Type::TouchUpdate
+        )
+    {
+        QTouchEvent* TouchEvent = dynamic_cast<QTouchEvent*>(e);
+        if (TouchEvent != nullptr)
+        {
+            TouchEvent->accept();
+            qDebug() << "touch event!";
+        }   
+        else
+            qDebug() << "cast failed";
+    }
+
+    return QWidget::event(e);
 }
 
 void DataViewerPage::SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable, bool replot)
@@ -582,6 +626,10 @@ void DataViewerPage::SetupCurve(const QString& CurveGroup, const QString& CurveN
     if(this->PlotHandle->graphCount()==1)
         graph->rescaleAxes(false);
     graph->setName(CurveName);
+    if (this->isShowDataPoint__)
+        graph->setScatterStyle(QCPScatterStyle::ssCircle);
+    else
+        graph->setScatterStyle(QCPScatterStyle::ssNone);
 
     qDebug() << "add curve";
     qDebug() << "Available color" << this->AvailableColorPair.size();
@@ -645,6 +693,11 @@ void DataViewerPage::PlotHandleMouseWheelSlot(QWheelEvent* event)
         RangeX.normalize();
         this->PlotHandle->xAxis->setRange(RangeX);
     }
+}
+
+void DataViewerPage::RangeChangedSlot(const QCPRange& newRange)
+{
+    
 }
 
 std::tuple<double, double> DataViewerPage::ComputeDeltaDirection(double low, double high, double point, double vel, bool reverse)
@@ -791,7 +844,143 @@ void DataViewerPage::initListWidgetRightClickedMenu()
 {
     this->ui->DataListWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     QObject::connect(this->ui->DataListWidget, &ElaTreeView::customContextMenuRequested, this, &DataViewerPage::ListWidgetRightClickedSlot);
+}
 
+void DataViewerPage::InitSquareZoom()
+{
+    this->ui->SquareZoomButton->setText(QChar((unsigned short)ElaIconType::SquareDashedCirclePlus));
+    this->ui->pushButton_reset->setText(QChar((unsigned short)ElaIconType::ArrowsMinimize));
+    
+
+    this->SquareZoomMode__ = false;
+    QObject::connect(this->ui->SquareZoomButton, &ElaToggleButton::toggled, this, [this](bool toggle) {
+        if (toggle)
+        {
+            this->SquareZoomMode__ = true;
+            this->PlotHandle->setSelectionRectMode(QCP::SelectionRectMode::srmZoom);
+        }
+        else
+        {
+            this->SquareZoomMode__ = false;
+            this->PlotHandle->setSelectionRectMode(QCP::SelectionRectMode::srmNone);
+        }
+    });
+
+    //this->PlotHandle->selectionRect()->setPen(QPen(QColor(128, 128, 128, 128), 1.0));
+    this->PlotHandle->selectionRect()->setPen(QPen(Qt::NoPen));
+    this->PlotHandle->selectionRect()->setBrush(QBrush(QColor(128, 128, 128, 128)));
+    
+    
+    QObject::connect(this->ui->pushButton_reset, &ElaPushButton::clicked, this, [this]() {
+        qDebug() << "reset view";
+        this->PlotHandle->rescaleAxes(false);
+        this->PlotHandle->replot();
+    });
+    
+}
+
+
+void DataViewerPage::SavePlotSlot()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save the Figure"), "./", 
+        "PDF File(*.pdf);; \
+        JPEG File Interchange Format(*.jpg);; \
+        Portable Network Graphics (*.png)");
+    if (filename.isEmpty())
+        return;
+
+    QString format = filename.split('.').back();
+    int width = this->PlotHandle->width();
+    int height = this->PlotHandle->height();
+    bool saved = false;
+    
+    /*
+            this->PlotHandle->xAxis->setTickLabelColor(TickLabelColorLight);
+        this->PlotHandle->yAxis->setTickLabelColor(TickLabelColorLight);
+        this->PlotHandle->legend->setTextColor(TickLabelColorLight);
+        this->PlotHandle->legend->setBrush(QColor(226, 226, 226, 128));*/
+    QColor TickLabelColorX = this->PlotHandle->xAxis->tickLabelColor();
+    QColor TickLabelColorY = this->PlotHandle->yAxis->tickLabelColor();
+    QColor LegendTextColor = this->PlotHandle->legend->textColor();
+    QBrush LegendBrush = this->PlotHandle->legend->brush();
+    QPen xAxisPen = this->PlotHandle->xAxis->grid()->pen();
+    QPen yAxisPen = this->PlotHandle->yAxis->grid()->pen();
+    QPen modiX = xAxisPen;
+    QPen modiY = yAxisPen;
+    modiX.setColor(QColor(200, 200, 200));
+    modiY.setColor(QColor(200, 200, 200));
+
+    this->PlotHandle->xAxis->setTickLabelColor(QColor(0, 0, 0, 255));
+    this->PlotHandle->yAxis->setTickLabelColor(QColor(0, 0, 0, 255));
+    this->PlotHandle->legend->setTextColor(QColor(0, 0, 0, 255));
+    this->PlotHandle->legend->setBrush(QColor(255, 255, 255));
+    this->PlotHandle->legend->setBorderPen(Qt::SolidLine);
+    this->PlotHandle->setBackground(QBrush(QColor(255, 255, 255, 255)));
+    this->PlotHandle->xAxis->grid()->setPen(modiX);
+    this->PlotHandle->yAxis->grid()->setPen(modiY);
+
+    if (format == "pdf")
+    {
+        saved = this->PlotHandle->savePdf(filename, width, height);
+    }
+    else if (format == "jpg")
+    {
+        saved = this->PlotHandle->saveJpg(filename, width*2, height*2);
+    }
+    else if (format == "png")
+    {
+        saved = this->PlotHandle->savePng(filename, width*2, height*2);
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Unknown File Format"), QMessageBox::Ok);
+        saved = true; //prevent re-pop up window
+    }
+
+    this->PlotHandle->xAxis->setTickLabelColor(TickLabelColorX);
+    this->PlotHandle->yAxis->setTickLabelColor(TickLabelColorY);
+    this->PlotHandle->legend->setBrush(LegendBrush);
+    this->PlotHandle->legend->setTextColor(LegendTextColor);
+    this->PlotHandle->legend->setBorderPen(Qt::NoPen);
+    this->PlotHandle->setBackground(QBrush(QColor(0, 0, 0, 0)));
+    this->PlotHandle->xAxis->grid()->setPen(xAxisPen);
+    this->PlotHandle->yAxis->grid()->setPen(yAxisPen);
+
+    if (!saved)
+        QMessageBox::critical(this, tr("Error"), tr("Failed to save file, try again later."), QMessageBox::Ok);
+    else
+        QMessageBox::information(this, tr("Saved"), tr("Save success!"), QMessageBox::Ok);
+}
+
+void DataViewerPage::InitShowDataPoint()
+{
+    this->isShowDataPoint__ = false;
+    this->ui->pushButton_showPoint->setText(QChar((unsigned short)ElaIconType::GripDots));
+    QObject::connect(this->ui->pushButton_showPoint, &ElaPushButton::clicked, this, [this]() {
+        this->isShowDataPoint__ = !this->isShowDataPoint__;
+
+        if (this->isShowDataPoint__)
+            this->ui->pushButton_showPoint->setText(QChar((unsigned short)ElaIconType::WaveformLines));
+        else
+            this->ui->pushButton_showPoint->setText(QChar((unsigned short)ElaIconType::GripDots));
+
+        auto Groups = this->AggregatedDataGroup__.keys();
+        for (auto& Group : Groups)
+        {
+            if (this->AggregatedDataGroup__[Group].VisiableCurve.empty())
+                continue;
+            auto Curves = this->AggregatedDataGroup__[Group].VisiableCurve.keys();
+            for (auto& Curve : Curves)
+            {
+                if (this->isShowDataPoint__)
+                    this->AggregatedDataGroup__[Group].VisiableCurve[Curve]->setScatterStyle(QCPScatterStyle::ssCircle);
+                else
+                    this->AggregatedDataGroup__[Group].VisiableCurve[Curve]->setScatterStyle(QCPScatterStyle::ssNone);
+            }
+        }
+        this->PlotHandle->replot();
+    }); 
+    
 }
 
 void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestData)

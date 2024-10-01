@@ -47,6 +47,7 @@ public:
 protected:
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
+    bool event(QEvent* event);
 
 private:
     void SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable,bool replot=true);
@@ -61,6 +62,7 @@ private:
     void RemoveCurve(const QString& CurveGroup, const QString& CurveName);
     
     void PlotHandleMouseWheelSlot(QWheelEvent* event);
+    void RangeChangedSlot(const QCPRange& newRange);
     std::tuple<double,double> ComputeDeltaDirection(double low, double high, double point, double vel,bool reverse);
 
     void LoadLocalFileSlot();
@@ -70,6 +72,9 @@ private:
 
     void initReloadButton();
     void initListWidgetRightClickedMenu();
+    void InitSquareZoom();;
+    void SavePlotSlot();
+    void InitShowDataPoint();
     
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 signals:
@@ -90,5 +95,7 @@ private:
     QMap<QString, QAction*> SearchActions;
     ElaMenu* SeachMenu;
 
+    bool SquareZoomMode__=false;
+    bool isShowDataPoint__;
 };
 #endif // DATAVIEWERPAGE_H
