@@ -32,7 +32,7 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     this->AggregatedDataModel__->setHorizontalHeaderLabels(QStringList(QString("    "+tr("Experiment Data"))));
 
     this->PlotHandle = this->ui->DataPlotWidget;
-    this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     this->PlotHandle->setOpenGl(true);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
 
@@ -344,6 +344,20 @@ void DataViewerPage::SetCurveVisiable(const QString& CurveGroup, const QString& 
         this->RefillAvailableColor();
         this->SetupCurve(CurveGroup, CurveName);
         this->UpdateCurveTheme(CurveGroup, CurveName, this->WindowTheme);
+        if (this->PlotHandle->graphCount() == 1)
+        {
+            QCPRange CurrentRangeX = this->PlotHandle->xAxis->range();
+            QCPRange CurrentRangeY = this->PlotHandle->yAxis->range();
+            auto graph = this->PlotHandle->graph();
+            graph->rescaleAxes(false);
+            QCPRange TargetRangeX = this->PlotHandle->xAxis->range();
+            QCPRange TargetRangeY = this->PlotHandle->yAxis->range();
+            this->PlotHandle->xAxis->setRange(CurrentRangeX);
+            this->PlotHandle->yAxis->setRange(CurrentRangeY);
+            this->PlotHandle->replot();
+            qApp->processEvents();
+            this->FakeZoomAnimation(TargetRangeX, TargetRangeY);
+        }
     }
     else
     {
@@ -623,8 +637,7 @@ void DataViewerPage::SetupCurve(const QString& CurveGroup, const QString& CurveN
     this->AggregatedDataGroup__[CurveGroup].VisiableCurve[CurveName] = graph;
     graph->setSmooth(false);
     graph->setData(this->AggregatedDataGroup__[CurveGroup].t, this->AggregatedDataGroup__[CurveGroup].Curves[CurveName]);
-    if(this->PlotHandle->graphCount()==1)
-        graph->rescaleAxes(false);
+        
     graph->setName(CurveName);
     if (this->isShowDataPoint__)
         graph->setScatterStyle(QCPScatterStyle::ssCircle);
@@ -857,7 +870,7 @@ void DataViewerPage::InitSquareZoom()
         if (toggle)
         {
             this->SquareZoomMode__ = true;
-            this->PlotHandle->setSelectionRectMode(QCP::SelectionRectMode::srmZoom);
+            this->PlotHandle->setSelectionRectMode(QCP::SelectionRectMode::srmCustom);
         }
         else
         {
@@ -865,18 +878,37 @@ void DataViewerPage::InitSquareZoom()
             this->PlotHandle->setSelectionRectMode(QCP::SelectionRectMode::srmNone);
         }
     });
-
-    //this->PlotHandle->selectionRect()->setPen(QPen(QColor(128, 128, 128, 128), 1.0));
+    QObject::connect(this->PlotHandle->selectionRect(), &QCPSelectionRect::SelectedRange, this, &DataViewerPage::SquareZoomRangeSlot);
     this->PlotHandle->selectionRect()->setPen(QPen(Qt::NoPen));
     this->PlotHandle->selectionRect()->setBrush(QBrush(QColor(128, 128, 128, 128)));
     
     
     QObject::connect(this->ui->pushButton_reset, &ElaPushButton::clicked, this, [this]() {
         qDebug() << "reset view";
+        //this->PlotHandle->rescaleAxes(false);
+        auto CurrentRangeX = this->PlotHandle->xAxis->range();
+        auto CurrentRangeY = this->PlotHandle->yAxis->range();
         this->PlotHandle->rescaleAxes(false);
-        this->PlotHandle->replot();
+        qApp->processEvents();
+        auto TargetRangeX = this->PlotHandle->xAxis->range();
+        auto TargetRangeY = this->PlotHandle->yAxis->range();
+        qApp->processEvents();
+        this->PlotHandle->xAxis->setRange(CurrentRangeX);
+        this->PlotHandle->yAxis->setRange(CurrentRangeY);
+        qApp->processEvents();
+        this->FakeZoomAnimation(TargetRangeX, TargetRangeY);
+        //this->PlotHandle->replot();
     });
-    
+}
+
+
+void DataViewerPage::SquareZoomRangeSlot(const QCPRange& rangeX, const QCPRange& rangeY)
+{
+    //this->PlotHandle->xAxis->setRange(rangeX);
+    //this->PlotHandle->yAxis->setRange(rangeY);
+    this->FakeZoomAnimation(rangeX, rangeY);
+    this->PlotHandle->replot();
+    this->ui->SquareZoomButton->setIsToggled(false);
 }
 
 
@@ -1042,6 +1074,49 @@ void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestD
     }
     this->PlotHandle->replot();
 
+}
+
+void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t MaxIter, size_t AccIter, size_t SubIter)
+{
+    QCPRange CurrentRangeX = this->PlotHandle->xAxis->range();
+    QCPRange CurrentRangeY = this->PlotHandle->yAxis->range();
+
+    auto CalCulateIter = [MaxIter, AccIter, SubIter](double CurrentPos,double TargetPos) ->std::vector<double> {
+        std::vector<double> PosList(MaxIter);
+        double DeltaRange = TargetPos - CurrentPos;
+        double A = -6.0 * DeltaRange / (double)(MaxIter * MaxIter * MaxIter);
+
+        auto Range = [A,MaxIter](double x)->double {
+            double MaxIterf = static_cast<double>(MaxIter);
+            double rtn = A * std::pow(x, 3) / 3 - A * MaxIterf * std::pow(x, 2) / 2;
+            return rtn;
+            };
+
+        for (size_t i = 0; i < MaxIter; i++)
+        {
+            
+            PosList[i] = CurrentPos + Range(static_cast<double>(i));
+            //PosList[i] = CurrentPos + DeltaRange * ((double)i) / MaxIter;
+        }
+        return PosList;
+    };
+    
+    auto PosListXL = CalCulateIter(CurrentRangeX.lower, TargetRangeX.lower);
+    auto PosListXH = CalCulateIter(CurrentRangeX.upper, TargetRangeX.upper);
+    auto PosListYL = CalCulateIter(CurrentRangeY.lower, TargetRangeY.lower);
+    auto PosListYH = CalCulateIter(CurrentRangeY.upper, TargetRangeY.upper);
+
+    for (size_t i = 0; i < MaxIter; i++)
+    {
+        CurrentRangeX.lower = PosListXL[i];
+        CurrentRangeX.upper = PosListXH[i];
+        CurrentRangeY.lower = PosListYL[i];
+        CurrentRangeY.upper = PosListYH[i];
+        this->PlotHandle->xAxis->setRange(CurrentRangeX);
+        this->PlotHandle->yAxis->setRange(CurrentRangeY);
+        this->PlotHandle->replot(QCustomPlot::rpImmediateRefresh);
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 1);
+    }
 }
 
 

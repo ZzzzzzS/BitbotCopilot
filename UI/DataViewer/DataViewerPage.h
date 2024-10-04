@@ -72,11 +72,14 @@ private:
 
     void initReloadButton();
     void initListWidgetRightClickedMenu();
-    void InitSquareZoom();;
+    void InitSquareZoom();
+    void SquareZoomRangeSlot(const QCPRange& rangeX, const QCPRange& rangeY);
     void SavePlotSlot();
     void InitShowDataPoint();
-    
+
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
+
+    void FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t MaxIter = 50, size_t AccIter = 0, size_t SubIter = 0);
 signals:
     void FileLoaded(bool);
 

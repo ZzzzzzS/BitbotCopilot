@@ -1176,6 +1176,8 @@ signals:
   void changed(const QRect &rect, QMouseEvent *event);
   void canceled(const QRect &rect, QInputEvent *event);
   void accepted(const QRect &rect, QMouseEvent *event);
+  //function add by zzs in 2024-10-04
+  void SelectedRange(const QCPRange& rangeX, const QCPRange& rangeY);
   
 protected:
   // property members:
@@ -1190,7 +1192,8 @@ protected:
   virtual void moveSelection(QMouseEvent *event);
   virtual void endSelection(QMouseEvent *event);
   virtual void keyPressEvent(QKeyEvent *event);
-  
+  //function add by zzs in 2024-10-04
+  void EmitRangeChangeSignal(const QCPRange& X, const QCPRange& Y);
   // reimplemented virtual methods
   virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;
   virtual void draw(QCPPainter *painter) Q_DECL_OVERRIDE;

@@ -2964,6 +2964,12 @@ void QCPSelectionRect::keyPressEvent(QKeyEvent *event)
   }
 }
 
+//function add by zzs in 2024-10-04
+void QCPSelectionRect::EmitRangeChangeSignal(const QCPRange& X, const QCPRange& Y)
+{
+    emit this->SelectedRange(X, Y);
+}
+
 /* inherits documentation from base class */
 void QCPSelectionRect::applyDefaultAntialiasingHint(QCPPainter *painter) const
 {
@@ -15686,6 +15692,10 @@ void QCustomPlot::mouseReleaseEvent(QMouseEvent *event)
   {
     // finish selection rect, the appropriate action will be taken via signal-slot connection:
     mSelectionRect->endSelection(event);
+    QCPRange XRange = mSelectionRect->range(this->xAxis);//code add by zzs in 2024-10-04
+    QCPRange YRange = mSelectionRect->range(this->yAxis);//code add by zzs in 2024-10-04
+    this->mSelectionRect->EmitRangeChangeSignal(XRange, YRange);//code add by zzs in 2024-10-04
+
   } else
   {
     // call event of affected layerable:
