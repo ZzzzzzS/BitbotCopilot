@@ -1,4 +1,4 @@
-#include "DataViewerPage.h"
+﻿#include "DataViewerPage.h"
 #include "./ui_DataViewerPage.h"
 #include "QVector"
 #include "qcustomplot.h"
@@ -1076,12 +1076,12 @@ void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestD
 
 }
 
-void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t MaxIter, size_t AccIter, size_t SubIter)
+void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY,size_t time, size_t MaxIter)
 {
     QCPRange CurrentRangeX = this->PlotHandle->xAxis->range();
     QCPRange CurrentRangeY = this->PlotHandle->yAxis->range();
 
-    auto CalCulateIter = [MaxIter, AccIter, SubIter](double CurrentPos,double TargetPos) ->std::vector<double> {
+    auto CalCulateIter = [MaxIter](double CurrentPos,double TargetPos) ->std::vector<double> {
         std::vector<double> PosList(MaxIter);
         double DeltaRange = TargetPos - CurrentPos;
         double A = -6.0 * DeltaRange / (double)(MaxIter * MaxIter * MaxIter);
@@ -1106,17 +1106,36 @@ void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRa
     auto PosListYL = CalCulateIter(CurrentRangeY.lower, TargetRangeY.lower);
     auto PosListYH = CalCulateIter(CurrentRangeY.upper, TargetRangeY.upper);
 
-    for (size_t i = 0; i < MaxIter; i++)
+    auto start = std::chrono::system_clock::now();
+    while (true)
     {
-        CurrentRangeX.lower = PosListXL[i];
-        CurrentRangeX.upper = PosListXH[i];
-        CurrentRangeY.lower = PosListYL[i];
-        CurrentRangeY.upper = PosListYH[i];
+        auto current = std::chrono::system_clock::now();
+
+        std::chrono::duration<double> diff = current - start;
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(current - start);
+        int time_count = duration.count();
+        time_count = std::max(time_count, static_cast<int>(0));
+        if (time_count > time)
+            break;
+        double idx_f = (double)time_count / (double)time * MaxIter;
+        int idx = std::round(idx_f);
+        idx = std::clamp(idx, 0, static_cast<int>(MaxIter - 1));
+
+        CurrentRangeX.lower = PosListXL[idx];
+        CurrentRangeX.upper = PosListXH[idx];
+        CurrentRangeY.lower = PosListYL[idx];
+        CurrentRangeY.upper = PosListYH[idx];
         this->PlotHandle->xAxis->setRange(CurrentRangeX);
         this->PlotHandle->yAxis->setRange(CurrentRangeY);
         this->PlotHandle->replot(QCustomPlot::rpImmediateRefresh);
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 1);
     }
+
+
+    this->PlotHandle->xAxis->setRange(TargetRangeX);
+    this->PlotHandle->yAxis->setRange(TargetRangeY);
+    this->PlotHandle->replot(QCustomPlot::rpImmediateRefresh);
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::ExcludeSocketNotifiers, 1);
 }
 
 

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <QJsonDocument>
 #include <QTimer>
+#include <QApplication>
 
 zzs::BITBOT_TCP_PROTOCAL_V1::BITBOT_TCP_PROTOCAL_V1(const QJsonObject& cfg, QObject* parent)
 	:META_COMMUNICATION(parent)
@@ -42,128 +43,11 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint time
 		this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING)
 		return false;
 
-	if (timeout != 0)
-	{
-		this->SDOManager__->setTransferTimeout(timeout);
-	}
-
-	this->AlreadSentErrorMessage__ = false;
-	this->StateListConnection__ = CONNECTION_STATUS::DISCONNECT;
-	this->ControlListConnection__ = CONNECTION_STATUS::DISCONNECT;
-	this->PDOHeaderConnection__ = CONNECTION_STATUS::DISCONNECT;
-	this->PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
-
-	QString PortString = QString::number(port);
-	QString UrlPrefix = QString("http://") + Host + QString(":") + PortString;
-	QString RequestStatesUrl = UrlPrefix + QString("/monitor/stateslist");
-	QString RequestControlUrl = UrlPrefix + QString("/setting/control/get");
-	QString RequestPDOHeaderUrl = UrlPrefix + QString("/monitor/headers");
-	QString WsPDODataUrl = QString("ws://") + Host + QString(":") + PortString + QString("/console");
-	
-	//http request
-	QNetworkRequest StateListRequester = QNetworkRequest(QUrl(RequestStatesUrl));
-	StateListRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
-	this->StateListConnection__ = CONNECTION_STATUS::CONNECTING;
-	this->StateListReply__ = this->SDOManager__->get(StateListRequester);
-	QObject::connect(this->StateListReply__, &QNetworkReply::finished, this, [this]() {
-		if (this->StateListReply__->error() == QNetworkReply::NoError)
-		{
-			QByteArray StateListArray = this->StateListReply__->readAll();
-			qDebug() << "State List Received:" << StateListArray;
-			if (this->ParseStateList(StateListArray))
-				this->StateListConnection__ = CONNECTION_STATUS::CONNECTED;
-			else
-				this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		else
-		{
-			this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		this->CheckConnection();
-	});
-	QObject::connect(this->StateListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
-		qDebug() << "State List Error" << Code;
-		this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
-		this->CheckConnection();
-	});
-
-	QNetworkRequest ControlListRequester = QNetworkRequest(QUrl(RequestControlUrl));
-	ControlListRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
-	this->ControlListConnection__ = CONNECTION_STATUS::CONNECTING;
-	this->ControlListReply__ = this->SDOManager__->get(ControlListRequester);
-	QObject::connect(this->ControlListReply__, &QNetworkReply::finished, this, [this]() {
-		if (this->ControlListReply__->error() == QNetworkReply::NoError)
-		{
-			QByteArray ControlListArray = this->ControlListReply__->readAll();
-			qDebug() << "Control List Received:" << ControlListArray;
-			if (this->ParseControlList(ControlListArray))
-				this->ControlListConnection__ = CONNECTION_STATUS::CONNECTED;
-			else
-				this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		else
-		{
-			this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		this->CheckConnection();
-	});
-	QObject::connect(this->ControlListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
-		qDebug() << "Control List Error" << Code;
-		this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
-		this->CheckConnection();
-	});
-
-	QNetworkRequest PDOHeaderRequester = QNetworkRequest(QUrl(RequestPDOHeaderUrl));
-	PDOHeaderRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
-	this->PDOHeaderConnection__ = CONNECTION_STATUS::CONNECTING;
-	this->PDOHeaderReply__ = this->SDOManager__->get(PDOHeaderRequester);
-	QObject::connect(this->PDOHeaderReply__, &QNetworkReply::finished, this, [this]() {
-		if (this->PDOHeaderReply__->error() == QNetworkReply::NoError)
-		{
-			QByteArray PDOHeaderArray = this->PDOHeaderReply__->readAll();
-			qDebug() << "PDOHeader Received:" << PDOHeaderArray;
-			if (this->ParsePDOHeader(PDOHeaderArray))
-				this->PDOHeaderConnection__ = CONNECTION_STATUS::CONNECTED;
-			else
-				this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		else
-		{
-			this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
-		}
-		this->CheckConnection();
-	});
-	QObject::connect(this->PDOHeaderReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
-		qDebug() << "PDO Header Error" << Code;
-		this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
-		this->CheckConnection();
-	});
-
-	//websocket request
-	QObject::connect(this->PDOManager__, &QWebSocket::connected, this, [this]() {
-		this->PDODataConnection__ = CONNECTION_STATUS::CONNECTED;
-		this->CheckConnection();
-		this->RefreshTimer__->start();
-	});
-	QObject::connect(this->PDOManager__, &QWebSocket::disconnected, this, [this]() {
-		this->RefreshTimer__->stop();
-		this->PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
-		this->CheckConnection();
-	});
-	QObject::connect(this->PDOManager__, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, [this](QAbstractSocket::SocketError error) {
-		qDebug() << "websocket error:" << error;
-		this->RefreshTimer__->stop();
-		this->PDODataConnection__ = CONNECTION_STATUS::ERRORED;
-		//this->PDOManager__->abort();
-		//this->PDOManager__->close();
-		this->CheckConnection();
-	});
-	QObject::connect(this->PDOManager__, &QWebSocket::textMessageReceived, this, [this](QString Message) {
-		
-		this->ParsePDOData(Message.toLatin1());
-	});
-
-	this->PDOManager__->open(QUrl(WsPDODataUrl));
+	QTimer::singleShot(0, this, [this, Host, port, timeout]() {
+		this->doConnect(Host, port, timeout);
+		});
+	qApp->processEvents();
+	qApp->processEvents();
 
 	return true;
 }
@@ -175,7 +59,11 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Disconnect()
 		this->PDOHeaderConnection__ == CONNECTION_STATUS::CONNECTING ||
 		this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING)
 		return false;
-	this->PDOManager__->close();
+	
+	QTimer::singleShot(0, this, [this]() {
+		this->PDOManager__->close();
+		});
+	qApp->processEvents();
 	this->AlreadSentErrorMessage__ = false;
 	this->StateListConnection__ = CONNECTION_STATUS::DISCONNECT;
 	this->ControlListConnection__ = CONNECTION_STATUS::DISCONNECT;
@@ -299,6 +187,132 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::getDeviceHeader(QVector<ABSTRACT_DEVICE_HEADER
 		return false;
 	Headers = this->DeviceHeaders__;
 	return true;
+}
+
+void zzs::BITBOT_TCP_PROTOCAL_V1::doConnect(QString Host, uint16_t port, uint timeout)
+{
+	if (timeout != 0)
+	{
+		this->SDOManager__->setTransferTimeout(timeout);
+	}
+
+	this->AlreadSentErrorMessage__ = false;
+	this->StateListConnection__ = CONNECTION_STATUS::DISCONNECT;
+	this->ControlListConnection__ = CONNECTION_STATUS::DISCONNECT;
+	this->PDOHeaderConnection__ = CONNECTION_STATUS::DISCONNECT;
+	this->PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
+
+	QString PortString = QString::number(port);
+	QString UrlPrefix = QString("http://") + Host + QString(":") + PortString;
+	QString RequestStatesUrl = UrlPrefix + QString("/monitor/stateslist");
+	QString RequestControlUrl = UrlPrefix + QString("/setting/control/get");
+	QString RequestPDOHeaderUrl = UrlPrefix + QString("/monitor/headers");
+	QString WsPDODataUrl = QString("ws://") + Host + QString(":") + PortString + QString("/console");
+
+	//http request
+	QNetworkRequest StateListRequester = QNetworkRequest(QUrl(RequestStatesUrl));
+	StateListRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
+	this->StateListConnection__ = CONNECTION_STATUS::CONNECTING;
+	this->StateListReply__ = this->SDOManager__->get(StateListRequester);
+	QObject::connect(this->StateListReply__, &QNetworkReply::finished, this, [this]() {
+		if (this->StateListReply__->error() == QNetworkReply::NoError)
+		{
+			QByteArray StateListArray = this->StateListReply__->readAll();
+			qDebug() << "State List Received:" << StateListArray;
+			if (this->ParseStateList(StateListArray))
+				this->StateListConnection__ = CONNECTION_STATUS::CONNECTED;
+			else
+				this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		else
+		{
+			this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		this->CheckConnection();
+		});
+	QObject::connect(this->StateListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
+		qDebug() << "State List Error" << Code;
+		this->StateListConnection__ = CONNECTION_STATUS::ERRORED;
+		this->CheckConnection();
+		});
+
+	QNetworkRequest ControlListRequester = QNetworkRequest(QUrl(RequestControlUrl));
+	ControlListRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
+	this->ControlListConnection__ = CONNECTION_STATUS::CONNECTING;
+	this->ControlListReply__ = this->SDOManager__->get(ControlListRequester);
+	QObject::connect(this->ControlListReply__, &QNetworkReply::finished, this, [this]() {
+		if (this->ControlListReply__->error() == QNetworkReply::NoError)
+		{
+			QByteArray ControlListArray = this->ControlListReply__->readAll();
+			qDebug() << "Control List Received:" << ControlListArray;
+			if (this->ParseControlList(ControlListArray))
+				this->ControlListConnection__ = CONNECTION_STATUS::CONNECTED;
+			else
+				this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		else
+		{
+			this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		this->CheckConnection();
+		});
+	QObject::connect(this->ControlListReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
+		qDebug() << "Control List Error" << Code;
+		this->ControlListConnection__ = CONNECTION_STATUS::ERRORED;
+		this->CheckConnection();
+		});
+
+	QNetworkRequest PDOHeaderRequester = QNetworkRequest(QUrl(RequestPDOHeaderUrl));
+	PDOHeaderRequester.setRawHeader("User-Agent", "BITBOT COPILOT");
+	this->PDOHeaderConnection__ = CONNECTION_STATUS::CONNECTING;
+	this->PDOHeaderReply__ = this->SDOManager__->get(PDOHeaderRequester);
+	QObject::connect(this->PDOHeaderReply__, &QNetworkReply::finished, this, [this]() {
+		if (this->PDOHeaderReply__->error() == QNetworkReply::NoError)
+		{
+			QByteArray PDOHeaderArray = this->PDOHeaderReply__->readAll();
+			qDebug() << "PDOHeader Received:" << PDOHeaderArray;
+			if (this->ParsePDOHeader(PDOHeaderArray))
+				this->PDOHeaderConnection__ = CONNECTION_STATUS::CONNECTED;
+			else
+				this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		else
+		{
+			this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
+		}
+		this->CheckConnection();
+		});
+	QObject::connect(this->PDOHeaderReply__, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError Code) {
+		qDebug() << "PDO Header Error" << Code;
+		this->PDOHeaderConnection__ = CONNECTION_STATUS::ERRORED;
+		this->CheckConnection();
+		});
+
+	//websocket request
+	QObject::connect(this->PDOManager__, &QWebSocket::connected, this, [this]() {
+		this->PDODataConnection__ = CONNECTION_STATUS::CONNECTED;
+		this->CheckConnection();
+		this->RefreshTimer__->start();
+		});
+	QObject::connect(this->PDOManager__, &QWebSocket::disconnected, this, [this]() {
+		this->RefreshTimer__->stop();
+		this->PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
+		this->CheckConnection();
+		});
+	QObject::connect(this->PDOManager__, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, [this](QAbstractSocket::SocketError error) {
+		qDebug() << "websocket error:" << error;
+		this->RefreshTimer__->stop();
+		this->PDODataConnection__ = CONNECTION_STATUS::ERRORED;
+		//this->PDOManager__->abort();
+		//this->PDOManager__->close();
+		this->CheckConnection();
+		});
+	QObject::connect(this->PDOManager__, &QWebSocket::textMessageReceived, this, [this](QString Message) {
+
+		this->ParsePDOData(Message.toLatin1());
+		});
+
+	this->PDOManager__->open(QUrl(WsPDODataUrl));
 }
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::RequestPDO()

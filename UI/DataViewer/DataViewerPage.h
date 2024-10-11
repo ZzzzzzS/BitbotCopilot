@@ -79,7 +79,7 @@ private:
 
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 
-    void FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t MaxIter = 50, size_t AccIter = 0, size_t SubIter = 0);
+    void FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t time = 800, size_t MaxIter = 200);
 signals:
     void FileLoaded(bool);
 

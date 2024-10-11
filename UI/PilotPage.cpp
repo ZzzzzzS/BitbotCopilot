@@ -244,8 +244,8 @@ void PilotPage::InitConnectionWidget()
 void PilotPage::InitCommHandle()
 {
     this->CommThread__ = new QThread(this);
-    this->CommHandle__ = new zzs::BITBOT_TCP_PROTOCAL_V1(QJsonObject(), this);
-    //this->CommHandle__->moveToThread(this->CommThread__); //FIXME: solve multi thread wwebsocket message sending
+    this->CommHandle__ = new zzs::BITBOT_TCP_PROTOCAL_V1(QJsonObject(),nullptr);
+    this->CommHandle__->moveToThread(this->CommThread__);
     QObject::connect(this->CommHandle__, &zzs::BITBOT_TCP_PROTOCAL_V1::ConnectionStateChanged, this, [this](int status__) {
         zzs::META_COMMUNICATION::CONNECTION_STATUS status = static_cast<zzs::META_COMMUNICATION::CONNECTION_STATUS>(status__);
         switch (status)

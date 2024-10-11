@@ -140,3 +140,4 @@ build.ninja
 cmake_install.cmake
 ThirdParty/ElaWidgetTools/cmake_install.cmake
 CMakeSettings.json
+data/

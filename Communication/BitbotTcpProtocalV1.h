@@ -47,6 +47,7 @@ namespace zzs
 
 
 	private:
+		void doConnect(QString Host, uint16_t port, uint timeout = 0);
 		bool RequestPDO() final;
 		bool CheckConnection();
 		bool ParseStateList(const QByteArray& array);
