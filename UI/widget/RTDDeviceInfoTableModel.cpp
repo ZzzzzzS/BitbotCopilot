@@ -131,7 +131,7 @@ int RTDDeviceInfoRTableModel::columnCount(const QModelIndex& parent) const
 
 QVariant RTDDeviceInfoRTableModel::data(const QModelIndex& index, int role) const
 {
-	qDebug() << "data call" << index.row() << "," << index.column() << "," << role;
+	//qDebug() << "data call" << index.row() << "," << index.column() << "," << role;
 	if (role == Qt::DisplayRole)
 	{
 		return this->_dataList[index.row()][index.column()];

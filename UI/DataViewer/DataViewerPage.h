@@ -33,6 +33,8 @@ struct DataGroup_t
     QMap<QString, QStandardItem*> LinkedModelItem;
     QMap<QString, size_t> ColorIndex;
     QMap<QString, QCPGraph*> VisiableCurve;
+    QMap<QString, QCPItemTracer*> Tracer;
+    QMap<QString, QCPItemText*> Label;
 };
 
 class DataViewerPage : public QWidget
@@ -48,6 +50,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent* event);
     void dropEvent(QDropEvent* event);
     bool event(QEvent* event);
+    bool eventFilter(QObject* watched, QEvent* event);
 
 private:
     void SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable,bool replot=true);
@@ -76,6 +79,8 @@ private:
     void SquareZoomRangeSlot(const QCPRange& rangeX, const QCPRange& rangeY);
     void SavePlotSlot();
     void InitShowDataPoint();
+    void InitFloatingAxis();
+    void PlotMouseMoveHandle(QMouseEvent* event);
 
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 
@@ -100,5 +105,8 @@ private:
 
     bool SquareZoomMode__=false;
     bool isShowDataPoint__;
+
+    QCPItemStraightLine* PlotRefLine__;
+    bool MouseMovedInPlot__ = false;
 };
 #endif // DATAVIEWERPAGE_H

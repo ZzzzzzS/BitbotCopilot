@@ -32,6 +32,7 @@ DataViewerPage::DataViewerPage(QWidget *parent)
     this->AggregatedDataModel__->setHorizontalHeaderLabels(QStringList(QString("    "+tr("Experiment Data"))));
 
     this->PlotHandle = this->ui->DataPlotWidget;
+    this->PlotHandle->installEventFilter(this);
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     this->PlotHandle->setOpenGl(true);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
@@ -49,19 +50,6 @@ DataViewerPage::DataViewerPage(QWidget *parent)
 
     QObject::connect(this->ui->pushButton_clean, &ElaPushButton::clicked, this, &DataViewerPage::RemoveButtonClickedSlot);
 
-    
-    this->SetTheme((eTheme->getThemeMode() == ElaThemeType::ThemeMode::Light) ? Theme_e::Light : Theme_e::Dark);
-    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mode) {
-        if (mode == ElaThemeType::ThemeMode::Light)
-        {
-            this->SetTheme(Theme_e::Light);
-        }
-        else
-        {
-            this->SetTheme(Theme_e::Dark);
-        }
-    });
-
     this->initReloadButton();
     this->initListWidgetRightClickedMenu();
     this->ui->SearchBoxWidget->setPlaceholderText(tr("Search"));
@@ -73,6 +61,20 @@ DataViewerPage::DataViewerPage(QWidget *parent)
 
     this->ui->pushButton_savePDF->setText(QChar((unsigned short)ElaIconType::FloppyDisk));
     QObject::connect(this->ui->pushButton_savePDF, &ElaPushButton::clicked, this, &DataViewerPage::SavePlotSlot);
+
+    this->InitFloatingAxis();
+
+    this->SetTheme((eTheme->getThemeMode() == ElaThemeType::ThemeMode::Light) ? Theme_e::Light : Theme_e::Dark);
+    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mode) {
+        if (mode == ElaThemeType::ThemeMode::Light)
+        {
+            this->SetTheme(Theme_e::Light);
+        }
+        else
+        {
+            this->SetTheme(Theme_e::Dark);
+        }
+        });
 }
 
 DataViewerPage::~DataViewerPage()
@@ -195,6 +197,10 @@ void DataViewerPage::SetTheme(Theme_e theme)
         brush_versionLabel.setStyle(Qt::SolidPattern);
         LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
         LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
+
+        QColor ColorRefLine(120, 120, 120);
+        this->PlotRefLine__->setPen(QPen(ColorRefLine, 2, Qt::SolidLine));
+        this->WindowTheme = Theme_e::Light;
     }
     else
     {
@@ -231,6 +237,10 @@ void DataViewerPage::SetTheme(Theme_e theme)
         brush_versionLabel.setStyle(Qt::SolidPattern);
         LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
         LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
+
+        QColor ColorRefLine(150, 150, 150);
+        this->PlotRefLine__->setPen(QPen(ColorRefLine, 2, Qt::SolidLine));
+        this->WindowTheme = Theme_e::Dark;
     }
     this->ui->label_subtitle->setPalette(LabelPalette);
 
@@ -328,6 +338,62 @@ bool DataViewerPage::event(QEvent* e)
     }
 
     return QWidget::event(e);
+}
+
+bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
+{
+    if (watched == this->PlotHandle)
+    {
+        if (event->type() == QEvent::Enter)
+        {
+            qDebug() << "move inter";
+            this->MouseMovedInPlot__ = true;
+            this->PlotRefLine__->setVisible(true);
+
+            auto groups = this->AggregatedDataGroup__.keys();
+            for (auto&& group : groups)
+            {
+                auto curves = this->AggregatedDataGroup__[group].Tracer.keys();
+                for (auto&& curve : curves)
+                {
+                    auto tracer = this->AggregatedDataGroup__[group].Tracer[curve];
+                    tracer->setVisible(true);
+                    auto label = this->AggregatedDataGroup__[group].Label[curve];
+                    label->setVisible(true);
+                }
+            }
+
+            QTimer::singleShot(0, [this]() {
+                this->PlotHandle->replot();
+            });
+            return true;
+        }
+        else if (event->type() == QEvent::Leave)
+        {
+            qDebug() << "move out";
+            this->MouseMovedInPlot__ = false;
+            this->PlotRefLine__->setVisible(false);
+
+            auto groups = this->AggregatedDataGroup__.keys();
+            for (auto&& group : groups)
+            {
+                auto curves = this->AggregatedDataGroup__[group].Tracer.keys();
+                for (auto&& curve : curves)
+                {
+                    auto tracer = this->AggregatedDataGroup__[group].Tracer[curve];
+                    tracer->setVisible(false);
+                    auto label = this->AggregatedDataGroup__[group].Label[curve];
+                    label->setVisible(false);
+                }
+            }
+
+            QTimer::singleShot(0, [this]() {
+                this->PlotHandle->replot();
+            });
+            return true;
+        }
+    }
+    return QWidget::eventFilter(watched, event);
 }
 
 void DataViewerPage::SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable, bool replot)
@@ -624,6 +690,23 @@ void DataViewerPage::UpdateCurveTheme(const QString& CurveGroup, const QString& 
     QCPGraph* graph = this->AggregatedDataGroup__[CurveGroup].VisiableCurve[CurveName];
     graph->setPen(CurvePen);
     //graph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ScatterShape::ssDisc));
+
+    auto tracer = this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName];
+    QPen TracerPen = CurvePen;
+    TracerPen.setWidthF(6);
+    tracer->setPen(TracerPen);
+
+    auto label= this->AggregatedDataGroup__[CurveGroup].Label[CurveName];
+    if (theme == Theme_e::Light)
+    {
+        QColor ColorRefLine(50, 50, 50);
+        label->setColor(ColorRefLine);
+    }
+    else
+    {
+        QColor ColorRefLine(200, 200, 200);
+        label->setColor(ColorRefLine);
+    }
 }
 
 void DataViewerPage::SetupCurve(const QString& CurveGroup, const QString& CurveName)
@@ -649,6 +732,22 @@ void DataViewerPage::SetupCurve(const QString& CurveGroup, const QString& CurveN
     qDebug() << this->AvailableColorPair;
     qDebug() << "used color" << this->UsedColorPair.size();
     qDebug() << this->UsedColorPair;
+
+    QCPItemTracer* tracer = new QCPItemTracer(this->PlotHandle);
+    tracer->setStyle(QCPItemTracer::tsCircle);
+    tracer->setBrush(Qt::SolidPattern);
+    tracer->setSize(6);
+    tracer->setGraph(graph);
+    tracer->setVisible(true);
+    tracer->position->setType(QCPItemPosition::ptPlotCoords);
+    this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName] = tracer;
+
+    QCPItemText* label = new QCPItemText(this->PlotHandle);
+    label->position->setParentAnchor(tracer->position);
+    label->setFont(QFont(qApp->font().family(), 12));
+    label->setPositionAlignment(Qt::AlignLeft | Qt::AlignCenter);
+    label->setVisible(true);
+    this->AggregatedDataGroup__[CurveGroup].Label[CurveName] = label;
 }
 
 void DataViewerPage::RemoveCurve(const QString& CurveGroup, const QString& CurveName)
@@ -666,6 +765,15 @@ void DataViewerPage::RemoveCurve(const QString& CurveGroup, const QString& Curve
     qDebug() << this->AvailableColorPair;
     qDebug() << "used color" << this->UsedColorPair.size();
     qDebug() << this->UsedColorPair;
+
+    auto label = this->AggregatedDataGroup__[CurveGroup].Label[CurveName];
+    this->PlotHandle->removeItem(label);
+    this->AggregatedDataGroup__[CurveGroup].Label.remove(CurveName);
+
+    auto tracer = this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName];
+    tracer->setGraph(nullptr);
+    this->PlotHandle->removeItem(tracer);
+    this->AggregatedDataGroup__[CurveGroup].Tracer.remove(CurveName);
 }
 
 void DataViewerPage::PlotHandleMouseWheelSlot(QWheelEvent* event)
@@ -1013,6 +1121,44 @@ void DataViewerPage::InitShowDataPoint()
         this->PlotHandle->replot();
     }); 
     
+}
+
+void DataViewerPage::InitFloatingAxis()
+{
+    this->PlotRefLine__ = new QCPItemStraightLine(this->PlotHandle);
+    this->PlotRefLine__->setVisible(false);
+    QObject::connect(this->PlotHandle, &QCustomPlot::mouseMove, this, &DataViewerPage::PlotMouseMoveHandle); 
+}
+
+void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
+{
+    qDebug() << "mouse moved" << event->pos() << event->buttons();
+    QPointF MousePos = event->pos();
+    double CurX = this->PlotHandle->xAxis->pixelToCoord(MousePos.x());
+    double TopY = this->PlotHandle->yAxis->pixelToCoord(0);
+    double ButtomY = this->PlotHandle->yAxis->pixelToCoord(this->PlotHandle->height());
+    this->PlotRefLine__->point1->setCoords(CurX, TopY);
+    this->PlotRefLine__->point2->setCoords(CurX, ButtomY);
+    
+
+    auto groups = this->AggregatedDataGroup__.keys();
+    for (auto&& group : groups)
+    {
+        auto curves = this->AggregatedDataGroup__[group].Tracer.keys();
+        for (auto&& curve : curves)
+        {
+            auto tracer = this->AggregatedDataGroup__[group].Tracer[curve];
+            tracer->setGraphKey(CurX);
+            double y = tracer->positions()[0]->value();
+            
+            auto label = this->AggregatedDataGroup__[group].Label[curve];
+            
+            label->position->setCoords(10, 20);
+            label->setText(QString::number(y, 'g', 2));
+        }
+    }
+
+    this->PlotHandle->replot();
 }
 
 void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestData)
