@@ -11,6 +11,7 @@
 #include "tuple"
 #include "QAction"
 #include "ElaMenu.h"
+#include "UI/widget/DataViewerFlowIndicator.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,8 +34,7 @@ struct DataGroup_t
     QMap<QString, QStandardItem*> LinkedModelItem;
     QMap<QString, size_t> ColorIndex;
     QMap<QString, QCPGraph*> VisiableCurve;
-    QMap<QString, QCPItemTracer*> Tracer;
-    QMap<QString, QCPItemText*> Label;
+    QMap<QString, QCPItemTracer*> Tracer; //FIXME: fix performance issue, when plotting a huge amount of curves.
 };
 
 class DataViewerPage : public QWidget
@@ -108,5 +108,7 @@ private:
 
     QCPItemStraightLine* PlotRefLine__;
     bool MouseMovedInPlot__ = false;
+
+    DataViewerFlowIndicator* PlotFlowIndcator__;
 };
 #endif // DATAVIEWERPAGE_H

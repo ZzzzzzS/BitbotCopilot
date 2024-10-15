@@ -61,6 +61,8 @@ set(UI_WIDGETS
     UI/widget/CustomSplashScreen.cpp
     UI/widget/CustomSplashScreen.h
     UI/widget/CustomImageLabel.hpp
+    UI/widget/DataViewerFlowIndicator.cpp
+    UI/widget/DataViewerFlowIndicator.h
 )
 
 set(DATA_VIEWER_UI
