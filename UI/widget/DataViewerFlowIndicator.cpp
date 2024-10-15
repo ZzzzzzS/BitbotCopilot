@@ -7,11 +7,16 @@
 #include "QHBoxLayout"
 #include "QVBoxLayout"
 #include "QDebug"
+#include "QGraphicsDropShadowEffect"
+#include "QPainterPath"
 
 DataViewerFlowIndicator::DataViewerFlowIndicator(QWidget* Parent)
 	:QWidget(Parent)
 {
 	this->setWindowFlag(Qt::ToolTip);
+    this->setWindowFlag(Qt::FramelessWindowHint);
+
+    this->setAttribute(Qt::WA_TranslucentBackground);
     this->VLay__ = new QVBoxLayout(this);
 
     this->_themeMode = eTheme->getThemeMode();
@@ -21,13 +26,15 @@ DataViewerFlowIndicator::DataViewerFlowIndicator(QWidget* Parent)
         update();
         });
     
-    this->_isEnableMica = eApp->getIsEnableMica();
+    this->_isEnableMica = false;// = eApp->getIsEnableMica();
     connect(eApp, &ElaApplication::pIsEnableMicaChanged, this, [=]() {
         this->_isEnableMica = eApp->getIsEnableMica();
+        this->_isEnableMica = false;
         update();
         });
-    eApp->syncMica(this, this->_isEnableMica);
+    //eApp->syncMica(this, this->_isEnableMica);
     this->setBaseSize(0, 0);
+    this->setMouseTracking(true);
 }
 
 DataViewerFlowIndicator::~DataViewerFlowIndicator()
@@ -42,7 +49,7 @@ void DataViewerFlowIndicator::UpdateValue(const QList<double>& value)
     }
     for (size_t i = 0; i < value.size(); i++)
     {
-        QString val = QString::number(value[i], 'g', 2);
+        QString val = QString::number(value[i], 'f', 2);
         this->CurveValueList__[i]->setText(val);
     }
 }
@@ -54,7 +61,6 @@ void DataViewerFlowIndicator::SetLabelText(const QList<QString>& text, const QLi
         qDebug() << "label size and color size mis-match, will not update label";
         return;
     }
-
     for (size_t i = 0; i < this->CurveIconList__.size(); i++)
     {
         delete this->CurveIconList__[i];
@@ -71,7 +77,13 @@ void DataViewerFlowIndicator::SetLabelText(const QList<QString>& text, const QLi
     for (size_t i = 0; i < text.size(); i++)
     {
         QLabel* Icon = new QLabel(this);
-        Icon->setFixedSize(5, 5);
+        Icon->setFixedSize(5, 20);
+        QPalette p;
+        QColor color = this->ColorPairList__[i];
+        color.setAlpha(255);
+        p.setColor(QPalette::Window, color);
+        Icon->setPalette(p);
+        Icon->setAutoFillBackground(true);
 
         ElaText* Label = new ElaText(this);
         QFont font = Label->font();
@@ -81,9 +93,9 @@ void DataViewerFlowIndicator::SetLabelText(const QList<QString>& text, const QLi
         
         ElaText* Value = new ElaText(this);
         Value->setFont(font);
-        Label->setText("0.0");
+        Value->setText("0.0");
 
-        QHBoxLayout* hlay = new QHBoxLayout(this);
+        QHBoxLayout* hlay = new QHBoxLayout();
         hlay->addWidget(Icon);
         hlay->addWidget(Label);
         hlay->addWidget(Value);
@@ -102,6 +114,20 @@ void DataViewerFlowIndicator::SetLabelText(const QList<QString>& text, const QLi
     }
 }
 
+void DataViewerFlowIndicator::UpdateColor(const QList<QColor>& Colors)
+{
+    if (Colors.size() != this->CurveValueList__.size())
+    {
+        qDebug() << "color list and curve list mismatched!";
+        return;
+    }
+    for (size_t i = 0; i < Colors.size(); i++)
+    {
+        QPalette p = this->CurveIconList__[i]->palette();
+        p.setColor(QPalette::Window, Colors[i]);
+    }
+}
+
 void DataViewerFlowIndicator::paintEvent(QPaintEvent* event)
 {
     QWidget::paintEvent(event);
@@ -110,36 +136,47 @@ void DataViewerFlowIndicator::paintEvent(QPaintEvent* event)
         QPainter painter(this);
         painter.save();
         painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(ElaThemeColor(this->_themeMode, WindowBase));
-        painter.drawRect(rect());
-        painter.drawRoundedRect(rect(), 15, 15);
-        painter.restore();
-    }
-    else
-    {
-        QPainter painter(this);
-        painter.save();
-        painter.setRenderHint(QPainter::Antialiasing); 
-        //painter.setBrush(QBrush(QColor(255, 255, 255))); 
-        //painter.setPen(Qt::NoPen); 
         QPen pen = painter.pen();
-        pen.setColor(ElaThemeColor(this->_themeMode, WindowBase));
+        pen.setWidth(3);
+        pen.setStyle(Qt::PenStyle::SolidLine);
+        pen.setCapStyle(Qt::RoundCap);
+        pen.setJoinStyle(Qt::MiterJoin);
+        if (this->_themeMode == ElaThemeType::Light)
+        {
+            pen.setColor(QColor(200, 200, 200, 128));
+        }
+        else
+        {
+            pen.setColor(QColor(80, 80, 80, 128));
+        }
         painter.setPen(pen);
-        QRect rect = this->rect(); 
-        painter.drawRoundedRect(rect, 10, 10); 
+        QColor brushcolor = ElaThemeColor(this->_themeMode, WindowBase);
+        brushcolor.setAlpha(200);
+        painter.setBrush(brushcolor);
+        //painter.drawRect(rect());
+        painter.drawRoundedRect(rect(), 4, 4);
         painter.restore();
     }
-    //QWidget::paintEvent(event);
 }
 
 void DataViewerFlowIndicator::ThemeChanged(ElaThemeType::ThemeMode theme)
 {
-    for (size_t i = 0; i < this->ColorPairList__.size(); i++)
-    {
-        QPalette p;
-        QColor color = this->ColorPairList__[i];
-        p.setColor(QPalette::Window, color);
-        this->CurveIconList__[i]->setPalette(p);
-    }
+}
+
+void DataViewerFlowIndicator::enterEvent(QEvent* event)
+{
+    QPoint GMouse = QCursor::pos();
+    this->move(GMouse);
+}
+
+void DataViewerFlowIndicator::mouseMoveEvent(QMouseEvent* event)
+{
+    qDebug() << "moc";
+    QPoint GMouse = QCursor::pos();
+    this->move(GMouse);
+}
+
+void DataViewerFlowIndicator::leaveEvent(QEvent* event)
+{
+    this->hide();
 }

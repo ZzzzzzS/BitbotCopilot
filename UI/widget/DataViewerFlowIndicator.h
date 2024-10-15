@@ -16,11 +16,16 @@ public:
 
 	void UpdateValue(const QList<double>& value);
 	void SetLabelText(const QList<QString>& text, const QList<QColor>& Colors);
+	void UpdateColor(const QList<QColor>& Colors);
 
 protected:
 	virtual void paintEvent(QPaintEvent* event) override;
+	void enterEvent(QEvent* event);
+	void mouseMoveEvent(QMouseEvent* event);
+	void leaveEvent(QEvent* event);
 private:
 	void ThemeChanged(ElaThemeType::ThemeMode theme);
+
 private:
 	ElaThemeType::ThemeMode _themeMode;
 	bool _isEnableMica;
