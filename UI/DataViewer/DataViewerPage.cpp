@@ -1372,6 +1372,8 @@ void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRa
 void DataViewerPage::InitTouchEvents()
 {
     this->PlotHandle->grabGesture(Qt::PinchGesture);
+    this->ui->DataListWidget->setVerticalScrollMode(QListView::ScrollPerPixel);
+    QScroller::grabGesture(this->ui->DataListWidget, QScroller::LeftMouseButtonGesture);
 }
 
 void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
