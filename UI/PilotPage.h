@@ -76,7 +76,7 @@ private:
 	ElaSpinBox* SpinBox_Port__ = nullptr;
 	ElaLineEdit* LineEdit_IP__ = nullptr;
 	ElaPushButton* PushButton_Connect__ = nullptr;
-	QString IP = QString("192.168.8.112");
+	QString IP = QString("127.0.0.1");
 	uint16_t port = 12888;
 
 	BackendManager* BackendManagerUI__ = nullptr;

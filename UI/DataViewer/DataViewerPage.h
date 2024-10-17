@@ -34,7 +34,7 @@ struct DataGroup_t
     QMap<QString, QStandardItem*> LinkedModelItem;
     QMap<QString, size_t> ColorIndex;
     QMap<QString, QCPGraph*> VisiableCurve;
-    QMap<QString, QCPItemTracer*> Tracer; //FIXME: fix performance issue, when plotting a huge amount of curves.
+    QMap<QString, QCPItemTracer*> Tracer;
 };
 
 class DataViewerPage : public QWidget
@@ -85,6 +85,10 @@ private:
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 
     void FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t time = 800, size_t MaxIter = 200);
+    
+    void InitTouchEvents();
+    void PlotTouchEventHandler(QTouchEvent* e);
+    void PlotGestureEventHandler(QGestureEvent* g);
 signals:
     void FileLoaded(bool);
 
@@ -110,5 +114,13 @@ private:
     bool MouseMovedInPlot__ = false;
 
     DataViewerFlowIndicator* PlotFlowIndcator__;
+
+    QPointF TouchStartPoint__;
+    double TouchStartRotation__=0.0;
+    bool isMultiTouching__=false;
+
+    // hack scaling shift issue when touch end, do NOT move or change, unless you know what you are doing!
+    QCPRange TouchRangeX__;
+    QCPRange TouchRangeY__;
 };
 #endif // DATAVIEWERPAGE_H

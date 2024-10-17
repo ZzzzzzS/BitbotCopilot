@@ -23,7 +23,7 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     ui->setupUi(this);
     this->setWindowTitle(tr("New Data Viewer"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
-    this->setAttribute(Qt::WA_AcceptTouchEvents);
+    //this->setAttribute(Qt::WA_AcceptTouchEvents);
 
     this->setAcceptDrops(true);
 
@@ -35,7 +35,9 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     this->PlotHandle = this->ui->DataPlotWidget;
     this->PlotHandle->installEventFilter(this);
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    this->PlotHandle->setOpenGl(true);
+    this->PlotHandle->setOpenGl(true,64);
+    this->PlotHandle->setPlottingHint(QCP::phCacheLabels, false);
+    this->PlotHandle->setAttribute(Qt::WA_AcceptTouchEvents);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
 
     this->InitColorList();
@@ -64,6 +66,7 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     QObject::connect(this->ui->pushButton_savePDF, &ElaPushButton::clicked, this, &DataViewerPage::SavePlotSlot);
 
     this->InitFloatingAxis();
+    this->InitTouchEvents();
 
     this->SetTheme((eTheme->getThemeMode() == ElaThemeType::ThemeMode::Light) ? Theme_e::Light : Theme_e::Dark);
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mode) {
@@ -323,9 +326,9 @@ void DataViewerPage::dropEvent(QDropEvent* event)
 
 bool DataViewerPage::event(QEvent* e)
 {
-    auto type = e->type();
+    //auto type = e->type();
     //qDebug() << type;
-    if (type == QEvent::Type::TouchBegin ||
+    /*if (type == QEvent::Type::TouchBegin ||
         type == QEvent::Type::TouchCancel ||
         type == QEvent::Type::TouchEnd ||
         type == QEvent::Type::TouchUpdate
@@ -334,12 +337,27 @@ bool DataViewerPage::event(QEvent* e)
         QTouchEvent* TouchEvent = dynamic_cast<QTouchEvent*>(e);
         if (TouchEvent != nullptr)
         {
-            TouchEvent->accept();
-            qDebug() << "touch event!";
+            e->accept();
         }
         else
-            qDebug() << "cast failed";
-    }
+            qDebug() << "move event cast failed";
+        return true;
+    }if (type == QEvent::Type::TouchBegin ||
+        type == QEvent::Type::TouchCancel ||
+        type == QEvent::Type::TouchEnd ||
+        type == QEvent::Type::TouchUpdate
+        )
+    {
+        QTouchEvent* TouchEvent = dynamic_cast<QTouchEvent*>(e);
+        if (TouchEvent != nullptr)
+        {
+            e->accept();
+            this->PlotTouchEventHandler(TouchEvent);
+        }
+        else
+            qDebug() << "move event cast failed";
+        return true;
+    }*/
 
     return QWidget::event(e);
 }
@@ -352,16 +370,20 @@ bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
         {
             qDebug() << "move inter";
             this->MouseMovedInPlot__ = true;
+
+            QPoint GMousePos = QCursor::pos();
+            QPoint LMouse = this->PlotHandle->mapFromGlobal(GMousePos);
+            double CurX = this->PlotHandle->xAxis->pixelToCoord(LMouse.x());
+            double TopY = this->PlotHandle->yAxis->pixelToCoord(0);
+            double ButtomY = this->PlotHandle->yAxis->pixelToCoord(this->PlotHandle->height());
+            this->PlotRefLine__->point1->setCoords(CurX, TopY);
+            this->PlotRefLine__->point2->setCoords(CurX, ButtomY);
             this->PlotRefLine__->setVisible(true);
 
-            //FIXME: solve tracer performance issue.
             auto groups = this->AggregatedDataGroup__.keys();
             QList<QString> CurveNames;
             QList<QColor> CurveColors;
             QList<double> CurveValue;
-            QPoint GMouse = QCursor::pos();
-            QPoint LMouse = this->PlotHandle->mapFromGlobal(GMouse);
-            double CurX = this->PlotHandle->xAxis->pixelToCoord(LMouse.x());
             for (auto&& group : groups)
             {
                 auto curves = this->AggregatedDataGroup__[group].Tracer.keys();
@@ -430,6 +452,27 @@ bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
                 this->PlotHandle->replot();
                 });
             this->PlotFlowIndcator__->hide();
+            return true;
+        }
+        else if (event->type() == QEvent::Type::TouchBegin ||
+            event->type() == QEvent::Type::TouchCancel ||
+            event->type() == QEvent::Type::TouchEnd ||
+            event->type() == QEvent::Type::TouchUpdate)
+        {
+            QTouchEvent* TouchEvent = dynamic_cast<QTouchEvent*>(event);
+            if (TouchEvent != nullptr)
+            {
+                TouchEvent->accept();
+                this->PlotTouchEventHandler(TouchEvent);
+            }
+            else
+                qDebug() << "cast failed";
+            return true;
+        }
+        else if (event->type() == QEvent::Type::Gesture)
+        {
+            QGestureEvent* ge = dynamic_cast<QGestureEvent*>(event);
+            this->PlotGestureEventHandler(ge);
             return true;
         }
     }
@@ -1153,12 +1196,13 @@ void DataViewerPage::InitFloatingAxis()
 
 void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
 {
-    if (event->buttons() != Qt::NoButton)
+    qDebug() << "mouse move";
+    if (event->buttons() != Qt::NoButton || this->isMultiTouching__==true)
     {
         this->PlotFlowIndcator__->hide();
         return;
     }
-    
+    qDebug() << "mouse move2";
     //qDebug() << "mouse moved" << event->pos() << event->buttons();
     QPointF MousePos = event->pos();
     QPoint MouseGlobalPos = event->globalPos();
@@ -1325,6 +1369,126 @@ void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRa
     qDebug() << "fake animation done";
 }
 
+void DataViewerPage::InitTouchEvents()
+{
+    this->PlotHandle->grabGesture(Qt::PinchGesture);
+}
+
+void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
+{
+    //qDebug() << "touch event";
+    if (e->type() == QEvent::TouchBegin)
+    {
+        if (e->touchPoints().size() > 1)
+        {
+            this->PlotHandle->setInteraction(QCP::iRangeDrag, false);
+            this->isMultiTouching__ = true;
+            this->PlotFlowIndcator__->setVisible(false);
+        }
+
+        auto TouchPoints = e->touchPoints();
+        QPointF avg_center;
+        for (auto& i : TouchPoints)
+        {
+            qDebug() << i.startPos();
+            avg_center += i.startPos();
+        }
+        this->TouchStartPoint__ = avg_center / TouchPoints.size();
+
+        this->PlotFlowIndcator__->hide();
+        this->PlotHandle->replot();
+    }
+    else if (e->type() == QEvent::TouchEnd)
+    {
+        this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        this->PlotHandle->replot();
+        QTimer::singleShot(1,this, [this]() {
+            // hack scaling shift issue when touch end, do NOT move or change, unless you know what you are doing!
+            if (this->isMultiTouching__)
+            {
+                this->PlotHandle->xAxis->setRange(this->TouchRangeX__);
+                this->PlotHandle->yAxis->setRange(this->TouchRangeY__);
+            }
+            this->isMultiTouching__ = false;
+            this->PlotHandle->replot();
+            });
+    }
+    else if (e->type() == QEvent::TouchUpdate)
+    {
+        auto TouchPoints = e->touchPoints();
+        if (TouchPoints.size() > 1)
+        {
+            this->PlotHandle->setInteraction(QCP::iRangeDrag, false);
+            this->isMultiTouching__ = true;
+        }
+
+        if (TouchPoints.size() == 2)
+        {
+            double y = std::abs(TouchPoints[0].pos().y() - TouchPoints[1].pos().y());
+            double x = std::abs(TouchPoints[0].pos().x() - TouchPoints[1].pos().x());
+            if (x == 0)
+                this->TouchStartRotation__ = 1.57;
+            else
+            {
+                this->TouchStartRotation__ = std::atan(y / x);
+            }
+        }
+    }
+    else
+    {
+       this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+       this->PlotHandle->replot();
+       QTimer::singleShot(300, this, [this]() {
+           this->isMultiTouching__ = false;
+           this->PlotHandle->replot();
+           });
+    }
+}
+
+void DataViewerPage::PlotGestureEventHandler(QGestureEvent* g)
+{
+    QGesture* ges = g->gesture(Qt::PinchGesture);
+    QPinchGesture* PGes = dynamic_cast<QPinchGesture*>(ges);
+    if(PGes!=nullptr)
+    {
+        QPointF CenterPoint = this->TouchStartPoint__;
+        qDebug() << "center point" << CenterPoint;
+        double Scales = PGes->scaleFactor() - 1;
+        QPointF CenterDelta = PGes->centerPoint() - PGes->lastCenterPoint();
+        qDebug() << "scale" << PGes->totalScaleFactor();
+        qDebug() << "rot" << this->TouchStartRotation__;
+        //qDebug() << "Center del" << CenterDelta;
+
+        QCPRange RangeX = this->PlotHandle->xAxis->range();
+        QCPRange RangeY = this->PlotHandle->yAxis->range();
+
+        constexpr double ScaleFactor = -1;
+        auto [xlow, xhigh] = this->ComputeDeltaDirection(RangeX.lower, RangeX.upper,
+            CenterPoint.x() / this->PlotHandle->width(),
+            Scales * ScaleFactor * std::cos(this->TouchStartRotation__), false);
+        RangeX.lower = xlow;
+        RangeX.upper = xhigh;
+        RangeX.normalize();
+
+        auto [ylow, yhigh] = this->ComputeDeltaDirection(RangeY.lower, RangeY.upper,
+            CenterPoint.y() / this->PlotHandle->height(),
+            Scales * ScaleFactor*std::sin(this->TouchStartRotation__), true);
+        RangeY.lower = ylow;
+        RangeY.upper = yhigh;
+        RangeY.normalize();
+
+        //RangeX.lower += CenterDelta.x();
+        //RangeX.upper += CenterDelta.x();
+        //RangeY.lower += CenterDelta.y();
+        //RangeY.upper += CenterDelta.y();
+        this->TouchRangeX__ = RangeX;
+        this->TouchRangeY__ = RangeY;
+        this->PlotHandle->xAxis->setRange(RangeX);
+        this->PlotHandle->yAxis->setRange(RangeY);
+        qDebug() << "range" << RangeX.lower<<"," << RangeX.upper;
+        this->PlotHandle->replot();
+    }
+}
 
 void DataViewerPage::ListWidgetRightClickedSlot(const QPoint& pos)
 {
