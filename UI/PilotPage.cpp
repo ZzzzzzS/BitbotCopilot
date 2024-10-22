@@ -84,7 +84,7 @@ bool PilotPage::RunNewBitbot(bool LaunchBackend, bool dryrun)
 bool PilotPage::AutoInitBitbot(bool dryrun)
 {
     bool AllowRun = false;
-    AllowRun = this->RunNewBitbot(true, true) && this->AutoRunCmdList.size() != 0;
+    AllowRun = this->RunNewBitbot(true, true) && this->AutoRunCmdList__.size() != 0;
     if (!AllowRun) return false;
     if (dryrun) return AllowRun;
 
@@ -748,7 +748,7 @@ void PilotPage::focusOutEvent(QFocusEvent* event)
 
 void PilotPage::InitAutoRun()
 {
-    this->AutoRunCmdList = ZSet->getAutoRunCommandList();
+    this->AutoRunCmdList__ = ZSet->getAutoRunCommandList();
     this->AutoRunRefreshTimer__ = new QTimer(this);
     this->AutoRunRefreshTimer__->setInterval(this->AUTORUN_REFRESH_INTERVEL);
     QObject::connect(this->AutoRunRefreshTimer__, &QTimer::timeout, this, &PilotPage::AutoRunRefreshSlot);
@@ -784,21 +784,21 @@ void PilotPage::AutoRunRefreshSlot()
         {
             this->AutoRunCurrentCmdIdx = 0;
             this->AutoRunDiag__->setMinimum(-1);
-            this->AutoRunDiag__->setMaximum(this->AutoRunCmdList.size());
+            this->AutoRunDiag__->setMaximum(this->AutoRunCmdList__.size());
             this->AutoRunDiag__->setValue(this->AutoRunCurrentCmdIdx);
-            this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
+            this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
             qApp->processEvents();
-            this->AutoRunSimClickButton(this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName);
+            this->AutoRunSimClickButton(this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].KeyName);
             qApp->processEvents();
-            this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
+            this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
         }
     }
     else
     {
-        if (this->AutoRunNextCmdCycleRemain__ == 0 || this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitUntil == state)
+        if (this->AutoRunNextCmdCycleRemain__ == 0 || this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].WaitUntil == state)
         {
             this->AutoRunCurrentCmdIdx++;
-            if (this->AutoRunCurrentCmdIdx >= this->AutoRunCmdList.size())
+            if (this->AutoRunCurrentCmdIdx >= this->AutoRunCmdList__.size())
             {
                 this->SurpressConnectionError__ = false;
                 if (this->AutoRunDiag__ != nullptr)
@@ -814,11 +814,11 @@ void PilotPage::AutoRunRefreshSlot()
             else
             {
                 this->AutoRunDiag__->setValue(this->AutoRunCurrentCmdIdx);
-                this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
+                this->AutoRunDiag__->setLabelText(QString(tr("Processing Command: ") + this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].KeyName + tr("...")));
                 qApp->processEvents();
-                this->AutoRunSimClickButton(this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].KeyName);
+                this->AutoRunSimClickButton(this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].KeyName);
                 qApp->processEvents();
-                this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
+                this->AutoRunNextCmdCycleRemain__ = this->AutoRunCmdList__[this->AutoRunCurrentCmdIdx].WaitTime / this->AUTORUN_REFRESH_INTERVEL;
             }
         }
     }

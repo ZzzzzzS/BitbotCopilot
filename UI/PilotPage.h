@@ -110,6 +110,6 @@ private:
 	QTimer* AutoRunRefreshTimer__;
 	int AutoRunNextCmdCycleRemain__ = 0;
 	int AutoRunCurrentCmdIdx = 0;
-	AutoRunCmdList AutoRunCmdList;
+	AutoRunCmdList AutoRunCmdList__;
 	QProgressDialog* AutoRunDiag__ = nullptr;
 };

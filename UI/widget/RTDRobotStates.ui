@@ -99,7 +99,7 @@
   <customwidget>
    <class>MetaRTDView</class>
    <extends>QWidget</extends>
-   <header>metartdview.h</header>
+   <header>MetaRTDView.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
