@@ -172,6 +172,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
+if(WIN32)
+
 target_link_libraries(BitbotCopilot PRIVATE
                      elawidgettools
                      Qt${QT_VERSION_MAJOR}::Widgets 
@@ -180,11 +182,25 @@ target_link_libraries(BitbotCopilot PRIVATE
                      Qt${QT_VERSION_MAJOR}::Svg
                      Qt${QT_VERSION_MAJOR}::PrintSupport
                      Qt${QT_VERSION_MAJOR}::OpenGL
-                    #  XInput
-                    #  Opengl32
-                    #  glu32
+                    XInput
+                    Opengl32
+                    glu32
+                     )
+
+elseif(LINUX)
+
+target_link_libraries(BitbotCopilot PRIVATE
+                     elawidgettools
+                     Qt${QT_VERSION_MAJOR}::Widgets 
+                     Qt${QT_VERSION_MAJOR}::WebSockets
+                     Qt${QT_VERSION_MAJOR}::Network
+                     Qt${QT_VERSION_MAJOR}::Svg
+                     Qt${QT_VERSION_MAJOR}::PrintSupport
+                     Qt${QT_VERSION_MAJOR}::OpenGL
                      OpenGL
                      )
+endif()
+
 
 
 
