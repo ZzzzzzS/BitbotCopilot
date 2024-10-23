@@ -1,4 +1,5 @@
 #include "RTDKernelStates.h"
+#include <cmath>
 
 RTDKernelStates::RTDKernelStates(QWidget *parent)
 	: MetaRTDView(MetaRTDView::RTDViewType::SMALL_WINDOW,parent)
