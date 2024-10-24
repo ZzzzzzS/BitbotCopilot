@@ -118,6 +118,11 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
     return true;
 }
 
+zzs::BITBOT_TCP_PROTOCAL_V1* PilotPage::getCommHandle()
+{
+    return this->CommHandle__;
+}
+
 
 void PilotPage::InitConnectionWidget()
 {
@@ -556,6 +561,8 @@ void PilotPage::ProcessConnected()
 void PilotPage::ProcessConnectionError()
 {
     this->connected__ = false;
+    if (this->RobotStateUI__->CurrentState() == QString("kernel_stopped"))
+        this->SurpressConnectionError__ = true;
     this->DrawDisconnectedUI();
     if (this->SurpressConnectionError__)
         this->SurpressConnectionError__ = false;
@@ -690,9 +697,6 @@ void PilotPage::keyPressEvent(QKeyEvent* event)
     if (!this->KeyEventMap.contains(key))
         return;
 
-    if (key == " ")
-        this->SurpressConnectionError__ = true;
-
     QVariantMap map;
     map.insert(this->KeyEventMap[key], QVariant(1));
     this->CommHandle__->SendUserCommand(map);
@@ -712,9 +716,6 @@ void PilotPage::keyReleaseEvent(QKeyEvent* event)
 
     if (!this->KeyEventMap.contains(key))
         return;
-
-    if (key == " ")
-        this->SurpressConnectionError__ = true;
 
     QVariantMap map;
     map.insert(this->KeyEventMap[key], QVariant(2));

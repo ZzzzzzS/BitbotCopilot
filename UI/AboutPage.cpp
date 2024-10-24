@@ -26,7 +26,7 @@ AboutPage::~AboutPage()
 }
 
 AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
-	:ElaWidget(parent),
+	:QWidget(parent),
 	ui(new Ui::AboutPageCentralWidget)
 {
 	ui->setupUi(this);
@@ -56,8 +56,8 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 	
 	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &AboutPageCentralWidget::ThemeChangedSlot);
 	this->ThemeChangedSlot(eTheme->getThemeMode());
-	this->setIsFixedSize(true);
-	this->setIsStayTop(false);
+	//this->setIsFixedSize(true);
+	//this->setIsStayTop(false);
 	this->setWindowModality(Qt::ApplicationModal);
 }
 

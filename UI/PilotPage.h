@@ -35,6 +35,8 @@ public:
 
 	bool RunNewBitbot(bool LaunchBackend, bool dryrun);
 	bool AutoInitBitbot(bool dryrun);
+	
+	zzs::BITBOT_TCP_PROTOCAL_V1* getCommHandle();
 
 private:
 	void InitConnectionWidget();

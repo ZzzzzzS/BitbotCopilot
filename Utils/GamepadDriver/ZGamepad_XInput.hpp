@@ -57,6 +57,7 @@ namespace zzs
 	public:
         ZGAMEPAD_XINPUT(UINT FPS)
             :CallingRate__(1000 / FPS),
+            JoystickCallingDivider__(15),
             GamepadStateChangedCallback__(nullptr),
             ButtonClickedCallback__(nullptr),
             JoystickMoveCallback__(nullptr),
@@ -139,6 +140,7 @@ namespace zzs
         void RUN()
         {
             this->Running__ = true;
+            int JoystickDividerCounter = 0;
             while (this->Running__)
             {
                 Sleep(this->CallingRate__);
@@ -194,17 +196,19 @@ namespace zzs
                     }
 
                     //process device joystick
-                    auto CurrentJoystickStates = this->ScaleRemoveDeathZone(state.Gamepad);
-                    for (size_t j = 0; j < JOYSTICK_NUM; j++)
+                    if (JoystickDividerCounter == 0)
                     {
-                        if (auto err = std::abs(CurrentJoystickStates[j] - this->LastJoystickStates__[i][j]); err > JOYSTICK_RESOLUTION)
+                        auto CurrentJoystickStates = this->ScaleRemoveDeathZone(state.Gamepad);
+                        for (size_t j = 0; j < JOYSTICK_NUM; j++)
                         {
-                            ChangedJoystickGroup.emplace_back(static_cast<UINT>(i), static_cast<INT>(j+14), CurrentJoystickStates[j]);
+                            if (auto err = std::abs(CurrentJoystickStates[j] - this->LastJoystickStates__[i][j]); err > JOYSTICK_RESOLUTION)
+                            {
+                                ChangedJoystickGroup.emplace_back(static_cast<UINT>(i), static_cast<INT>(j + 14), CurrentJoystickStates[j]);
+                            }
                         }
+                        this->LastJoystickStates__[i] = CurrentJoystickStates;
                     }
-                    this->LastJoystickStates__[i] = CurrentJoystickStates;
                     this->GamepadStates__[i] = state.Gamepad;
-
                     //process rumble
                     this->ProcessRumble(i);
                 }
@@ -215,10 +219,14 @@ namespace zzs
                     this->ButtonClickedCallback__(ChangedButtonGroup);
                 }
 
+
                 if (!ChangedJoystickGroup.empty() && this->JoystickMoveCallback__ != nullptr)
                 {
                     this->JoystickMoveCallback__(ChangedJoystickGroup);
                 }
+
+                JoystickDividerCounter++;
+                JoystickDividerCounter %= JoystickCallingDivider__;
             }
         }
 
@@ -252,8 +260,8 @@ namespace zzs
         {
             auto [lx, ly] = this->RemoveJoystickDeadZone(GamepadState.sThumbLX, GamepadState.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE/4);
             auto [rx, ry] = this->RemoveJoystickDeadZone(GamepadState.sThumbRX, GamepadState.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE/4);
-            auto lt = this->RemoveTriggerDeadZone(GamepadState.bLeftTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/4);
-            auto rt = this->RemoveTriggerDeadZone(GamepadState.bRightTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/4);
+            auto lt = this->RemoveTriggerDeadZone(GamepadState.bLeftTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/6);
+            auto rt = this->RemoveTriggerDeadZone(GamepadState.bRightTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD/6);
             std::array<FLOAT, JOYSTICK_NUM> arr = { lx,ly,rx,ry,lt,rt };
             return arr;
         }
@@ -356,6 +364,7 @@ namespace zzs
         std::mutex GamepadStateLock;
 
         CONST DWORD CallingRate__;
+        CONST DWORD JoystickCallingDivider__;
         
 	};
 };

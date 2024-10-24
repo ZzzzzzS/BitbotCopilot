@@ -28,18 +28,7 @@ int main(int argc, char* argv[])
     CustomSplashScreen* screen =new CustomSplashScreen(QPixmap(":/logo/Image/Splash_Screen.png"));
     screen->show();
     a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
-    a.processEvents();
-
-    //dknt的提议
-    if (ZSet->isVIP())
-    {
-        Sleep(1000); //这个地方先这样，让用户能充分看到我们的启动界面，等以后加钱再改
-    }
-    else
-    {
-        Sleep(3000);
-    }
-    
+    a.processEvents();    
     
     eApp->init();
 
@@ -57,6 +46,7 @@ int main(int argc, char* argv[])
     }
 
     MainWindow w;
+    Sleep(2000); //wait for mica initialization
     w.show();
     a.processEvents();
     screen->finish(&w);

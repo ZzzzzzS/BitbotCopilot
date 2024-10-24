@@ -70,5 +70,4 @@ private:
 
     void InitButtonNameMap();
     QMap<Q_XSX_JOYSTICK_ENUM, QString> GamepadButtonNameMap;
-
 };

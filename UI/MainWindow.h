@@ -8,6 +8,8 @@
 #include "PilotPage.h"
 #include "AboutPage.h"
 #include "SettingsPage.h"
+#include "ElaDockWidget.h"
+#include "VirtualTrackpad/VirtualTrackpad.h"
 #include <QResizeEvent>
 
 
@@ -27,6 +29,7 @@ private:
     void resizeEvent(QResizeEvent* event);
     void changeEvent(QEvent* event);
     void InitMica();
+    void InitDockVirtualTrackpad();
     bool isDarkMode();
     QString getMicaBackground();
 private:
@@ -35,6 +38,9 @@ private:
     PilotPage* PilotPage__;
     SettingsPage* SettingsPage__;
     AboutPageCentralWidget* AboutWindow__;
+    VirtualTrackpad* VirtualTrackpad__;
+    ElaDockWidget* WindowBottomDocker__;
     QString AboutKey__;
+    zzs::BITBOT_TCP_PROTOCAL_V1* CommHandle__;
 };
 #endif // MAINWINDOW_H

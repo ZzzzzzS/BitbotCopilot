@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <ElaTheme.h>
 #include <QGraphicsDropShadowEffect>
+#include <QTimer>
 
 MetaRTDView::MetaRTDView(RTDViewType type,QWidget *parent)
 	: QWidget(parent),
@@ -58,6 +59,7 @@ void MetaRTDView::paintEvent(QPaintEvent * event)
     p.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing | QPainter::TextAntialiasing);
     // 高性能阴影
     eTheme->drawEffectShadow(&p, rect(), 3, 5);
+    QWidget::paintEvent(event);
 }
 
 void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)
@@ -81,7 +83,6 @@ void MetaRTDView::ThemeChangedSlot(ElaThemeType::ThemeMode mode)
         }
         )");
     }
-
     this->setStyleSheet(styleSheet);
 }
 

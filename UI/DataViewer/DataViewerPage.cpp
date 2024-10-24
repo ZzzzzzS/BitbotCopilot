@@ -35,7 +35,7 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     this->PlotHandle = this->ui->DataPlotWidget;
     this->PlotHandle->installEventFilter(this);
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    this->PlotHandle->setOpenGl(true,64);
+    this->PlotHandle->setOpenGl(true,128);
     this->PlotHandle->setPlottingHint(QCP::phCacheLabels, false);
     this->PlotHandle->setAttribute(Qt::WA_AcceptTouchEvents);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
@@ -259,9 +259,7 @@ void DataViewerPage::SetTheme(Theme_e theme)
         }
     }
     this->PlotFlowIndcator__->UpdateColor(CurveColor);
-    QTimer::singleShot(0, [this]() {
-        this->PlotHandle->replot();
-        });
+    this->PlotHandle->replot(QCustomPlot::rpQueuedRefresh);
 }
 
 void DataViewerPage::dragEnterEvent(QDragEnterEvent* event)

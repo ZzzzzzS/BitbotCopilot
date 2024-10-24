@@ -13,7 +13,7 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
-find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
@@ -71,6 +71,14 @@ set(DATA_VIEWER_UI
     UI/DataViewer/DataViewerPage.ui
 )
 
+set(VIRTUAL_TRACK_PAD_UI
+    UI/VirtualTrackpad/VirtualTrackpad.cpp
+    UI/VirtualTrackpad/VirtualTrackpad.h
+    UI/VirtualTrackpad/VirtualTrackpad.ui
+    UI/VirtualTrackpad/SimpleTrackpad.cpp
+    UI/VirtualTrackpad/SimpleTrackpad.h
+)
+
 set(UI_FILES 
     UI/MainWindow.cpp
     UI/MainWindow.h
@@ -91,6 +99,7 @@ set(UI_FILES
 
     ${UI_WIDGETS}
     ${DATA_VIEWER_UI}
+    ${VIRTUAL_TRACK_PAD_UI}
 )
 
 set(COM_FILES

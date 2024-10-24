@@ -5,6 +5,7 @@
 #include "AboutPage.h"
 #include "QPalette"
 #include "ElaApplication.h"
+#include "ElaDockWidget.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -12,6 +13,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
     this->InitWindow();
     this->InitPage();
+    this->InitDockVirtualTrackpad();
     this->InitFooter();
 
     this->InitSignalSlot();
@@ -47,6 +49,7 @@ void MainWindow::InitPage()
     this->addPageNode(tr("Home"), this->HomePage__, ElaIconType::House);
 
     this->PilotPage__ = new PilotPage(this);
+    this->CommHandle__ = this->PilotPage__->getCommHandle();
     this->addPageNode(tr("Nav Deck"), this->PilotPage__, ElaIconType::GamepadModern);
 
     this->ViewDataPage__ = new ViewDataPage(this);
@@ -55,10 +58,29 @@ void MainWindow::InitPage()
 
 void MainWindow::InitFooter()
 {
+    //init virtual trackpad
+    QString TrackpadIdx = QString("Virtual Trackpad");
+    this->addFooterNode(tr("Virtual Trackpad"), nullptr, TrackpadIdx, 0, ElaIconType::Keyboard);
+    QObject::connect(this, &ElaWindow::navigationNodeClicked, this, [this, TrackpadIdx](ElaNavigationType::NavigationNodeType nodeType, QString nodeKey) {
+        if (nodeKey == TrackpadIdx && nodeType == ElaNavigationType::NavigationNodeType::FooterNode)
+        {
+            if (this->WindowBottomDocker__->isVisible())
+            {
+                this->WindowBottomDocker__->close();
+            }
+            else
+            {
+                this->WindowBottomDocker__->setFloating(false);
+                this->WindowBottomDocker__->show();
+            }
+        }
+     });
+
     //init about me
     this->AboutKey__= QString("About");
-    this->addFooterNode(tr("About"), nullptr, AboutKey__, 0, ElaIconType::IconName::CircleUser);
-    connect(this, &ElaWindow::navigationNodeClicked, this, [=](ElaNavigationType::NavigationNodeType nodeType, QString nodeKey) {
+    this->AboutWindow__ = new AboutPageCentralWidget(this);
+    this->addFooterNode(tr("About"), this->AboutWindow__, AboutKey__, 0, ElaIconType::IconName::CircleUser);
+    /*connect(this, &ElaWindow::navigationNodeClicked, this, [=](ElaNavigationType::NavigationNodeType nodeType, QString nodeKey) {
         if (this->AboutKey__ == nodeKey)
         {
             if(this->AboutWindow__==nullptr)
@@ -69,7 +91,7 @@ void MainWindow::InitFooter()
                 this->AboutWindow__ = nullptr;
             });
         }
-    });
+    });*/
 
 
     //init settings
@@ -127,6 +149,7 @@ void MainWindow::InitSignalSlot()
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
         });
+
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)
@@ -192,6 +215,44 @@ void MainWindow::InitMica()
         eApp->setIsEnableMica(false);
     }
     LastMicaBackground = MicaBackground;
+}
+
+void MainWindow::InitDockVirtualTrackpad()
+{
+    this->WindowBottomDocker__ = new ElaDockWidget(tr("Virtual Trackpad"), this);
+    this->VirtualTrackpad__ = new VirtualTrackpad(this);
+    this->WindowBottomDocker__->setWidget(this->VirtualTrackpad__);
+    this->WindowBottomDocker__->setAllowedAreas(Qt::DockWidgetArea::BottomDockWidgetArea);
+    this->addDockWidget(Qt::BottomDockWidgetArea, this->WindowBottomDocker__);
+    this->WindowBottomDocker__->close();
+
+    QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualButtonPressed, this, [this](QString Event, int KeyState) {
+        QVariantMap map;
+        map.insert(Event, QVariant(KeyState));
+        this->CommHandle__->SendUserCommand(map);
+        });
+    
+    QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualTrackpadMoved, this, [this](QString Axis1, double value1, QString Axis2, double value2) {
+        QVariantMap map;
+        map.insert(Axis1, QVariant(value1));
+        map.insert(Axis2, QVariant(value2));
+        this->CommHandle__->SendUserCommand(map);
+     });
+
+    
+    QObject::connect(this->CommHandle__, &zzs::BITBOT_TCP_PROTOCAL_V1::ConnectionStateChanged, this, [this](int status) {
+        if (status == static_cast<int>(zzs::BITBOT_TCP_PROTOCAL_V1::CONNECTION_STATUS::CONNECTED))
+        {
+            QMap<QString, QString> availableKeys;
+            this->CommHandle__->getAvailableKeys(availableKeys, false);
+            this->VirtualTrackpad__->UpdateAvailableButton(availableKeys);
+            this->VirtualTrackpad__->setConnected(true);
+        }
+        else
+        {
+            this->VirtualTrackpad__->setConnected(false);
+        }
+    });
 }
 
 bool MainWindow::isDarkMode()

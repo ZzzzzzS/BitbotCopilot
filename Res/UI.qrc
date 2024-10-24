@@ -32,6 +32,8 @@
         <file>Image/frontend_icon.png</file>
         <file>Image/auto_launch.png</file>
 		<file>Image/DataViewerWelcom.svg</file>
+		<file>Image/vscode.png</file>
+	    <file>Image/TrackpadDisconnected.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>

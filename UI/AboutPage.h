@@ -20,7 +20,7 @@ namespace Ui {
 	class AboutPageCentralWidget;
 }
 
-class AboutPageCentralWidget :public ElaWidget
+class AboutPageCentralWidget :public QWidget
 {
 	Q_OBJECT
 public:

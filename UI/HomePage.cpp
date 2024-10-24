@@ -28,7 +28,7 @@ HomePage::HomePage(QWidget* parent)
     this->AttachBitbotCard = new ElaReminderCard(this);
     QObject::connect(this->AttachBitbotCard, &ElaReminderCard::clicked, this, [=]() { emit this->AttachBitbotSignal(); });
     this->AttachBitbotCard->setTitle(tr("Attach to Bitbot Task"));
-    this->AttachBitbotCard->setSubTitle(tr("Attach Bitbot Copilot to an Bitbot backend instance"));
+    this->AttachBitbotCard->setSubTitle(tr("Attach to a running Bitbot\nbackend"));
     this->AttachBitbotCard->setCardPixmap(QPixmap(":/UI/Image/attach_bitbot.png"));
 
     this->LaunchBitbotCard = new ElaReminderCard(this);
@@ -52,14 +52,23 @@ HomePage::HomePage(QWidget* parent)
     this->DataViewerCard->setSubTitle(tr("View Bitbot experiment data"));
     this->DataViewerCard->setCardPixmap(QPixmap(":/UI/Image/view_data.png"));
 
+    this->LaunchVSCCard = new ElaReminderCard(this);
+    this->LaunchVSCCard->setTitle(tr("Launch Robot VSCode"));
+    this->LaunchVSCCard->setSubTitle(tr("Launch VSCode on robot side"));
+    this->LaunchVSCCard->setCardPixmap(QPixmap(":/UI/Image/vscode.png"));
+
+    QObject::connect(this->LaunchVSCCard, &ElaReminderCard::clicked, this, [=]() {
+        QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
+    });
+
   
     ElaFlowLayout* flowLayout = new ElaFlowLayout(0, 5, 5);
     flowLayout->setIsAnimation(true);
     flowLayout->addWidget(this->AttachBitbotCard);
     flowLayout->addWidget(this->LaunchBitbotCard);
+    flowLayout->addWidget(this->LaunchVSCCard);
     flowLayout->addWidget(this->AutoRunBitbotCard);
     flowLayout->addWidget(this->DataViewerCard);
-
 
     //add layout
     centerVLayout->addWidget(backgroundCard);

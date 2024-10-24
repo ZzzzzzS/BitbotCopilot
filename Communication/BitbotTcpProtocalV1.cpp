@@ -74,6 +74,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Disconnect()
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPairs)
 {
+	qDebug() << CommandPairs;
 	if(this->PDODataConnection__!=CONNECTION_STATUS::CONNECTED)
 		return false;
 	if (CommandPairs.isEmpty()) return false;
@@ -126,6 +127,8 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPair
 	}
 	//json.insert("data", KeyValueArray);
 	qDebug() << "user cmd:" << KeyValueArray;
+	if (KeyValueArray.isEmpty())
+		return false;
 	QJsonObject events;
 	events.insert("events", KeyValueArray);
 	QByteArray UserCmdParser = QJsonDocument(events).toJson(QJsonDocument::Compact);
@@ -299,14 +302,23 @@ void zzs::BITBOT_TCP_PROTOCAL_V1::doConnect(QString Host, uint16_t port, uint ti
 		this->PDODataConnection__ = CONNECTION_STATUS::DISCONNECT;
 		this->CheckConnection();
 		});
-	QObject::connect(this->PDOManager__, QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error), this, [this](QAbstractSocket::SocketError error) {
+
+	QObject::connect(this->PDOManager__, &QWebSocket::errorOccurred, this, [this](QAbstractSocket::SocketError error) {
 		qDebug() << "websocket error:" << error;
+		qDebug() << "connect state" << this->PDOManager__->state();
+		qDebug() << this->PDOManager__->closeReason();
+		qDebug() << this->PDOManager__->closeCode();
+
+		if (error == QAbstractSocket::NetworkError)
+			return; //ignore this error, this error happen sometimes, I don't known why, but seems it has no influence. 
+
 		this->RefreshTimer__->stop();
+		this->PDOManager__->abort();
+		this->PDOManager__->close();
 		this->PDODataConnection__ = CONNECTION_STATUS::ERRORED;
-		//this->PDOManager__->abort();
-		//this->PDOManager__->close();
 		this->CheckConnection();
 		});
+
 	QObject::connect(this->PDOManager__, &QWebSocket::textMessageReceived, this, [this](QString Message) {
 
 		this->ParsePDOData(Message.toLatin1());

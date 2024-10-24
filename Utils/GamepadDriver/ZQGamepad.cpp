@@ -3,6 +3,7 @@
 #ifdef Q_OS_WIN
 #include "ZGamepad_XInput.hpp"
 #endif // QT_OS_WIN
+#include "QDebug"
 
 ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 	:QObject(parent)
@@ -17,7 +18,7 @@ ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 			for (auto state : ButtonStates)
 			{
 				std::thread::id id = std::this_thread::get_id();
-				std::cout << "Sender ID: " << id << std::endl;
+				qDebug() << "button changed" << std::get<0>(state) << " " << std::get<1>(state) << " " << std::get<2>(state);
 				emit this->ButtonClicked(std::get<0>(state), static_cast<Q_XSX_JOYSTICK_ENUM>(std::get<1>(state)), std::get<2>(state));
 			}
 		},
