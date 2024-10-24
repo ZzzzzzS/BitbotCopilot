@@ -18,6 +18,6 @@ void CustomSplashScreen::drawContents(QPainter * painter)
 	this->first_draw = false;
 
 	QSvgRenderer render;
-	render.load(QString(":/logo/Image/Splash_Screen.svg"));
+	render.load(QString(":/logo/Image/splash_screen.svg"));
 	render.render(painter);
 }

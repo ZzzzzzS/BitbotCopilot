@@ -9,12 +9,13 @@
 #include "UI/widget/CustomSplashScreen.h"
 #include "Utils/Settings/SettingsHandler.h"
 #include "QSettings"
-#include<windows.h>
 #include "UI/DataViewer/DataViewerPage.h"
 
+#include <chrono>
+#include <thread>
 int main(int argc, char* argv[])
 {
-//    SetProcessDPIAware(); // call before the main event loop
+    //    SetProcessDPIAware(); // call before the main event loop
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -25,11 +26,11 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
 
-    CustomSplashScreen* screen =new CustomSplashScreen(QPixmap(":/logo/Image/Splash_Screen.png"));
+    CustomSplashScreen* screen = new CustomSplashScreen(QPixmap(":/logo/Image/splash_screen.png"));
     screen->show();
     a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
-    a.processEvents();    
-    
+    a.processEvents();
+
     eApp->init();
 
     QTranslator translator;
@@ -46,7 +47,7 @@ int main(int argc, char* argv[])
     }
 
     MainWindow w;
-    Sleep(2000); //wait for mica initialization
+    std::this_thread::sleep_for(std::chrono::seconds(2));//wait for mica initialization
     w.show();
     a.processEvents();
     screen->finish(&w);

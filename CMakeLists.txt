@@ -16,6 +16,8 @@ endif()
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
 
+
+
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
 set(TS_FILES 
     Res/Translation/BitbotCopilot_zh_CN.ts
@@ -132,9 +134,10 @@ include_directories(
     ./
     ./ThirdParty/ElaWidgetTools/src/include
     ./ThirdParty/qcustomplot
+    ./UI/widget
 )
 
-set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/res/icon.rc")
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/Res/icon.rc")
 
 execute_process(
     COMMAND git log -1 --format=%h
@@ -178,6 +181,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
+if(WIN32)
+
 target_link_libraries(BitbotCopilot PRIVATE
                      elawidgettools
                      Qt${QT_VERSION_MAJOR}::Widgets 
@@ -186,10 +191,25 @@ target_link_libraries(BitbotCopilot PRIVATE
                      Qt${QT_VERSION_MAJOR}::Svg
                      Qt${QT_VERSION_MAJOR}::PrintSupport
                      Qt${QT_VERSION_MAJOR}::OpenGL
-                     XInput
-                     Opengl32
-                     glu32
+                    XInput
+                    Opengl32
+                    glu32
                      )
+
+elseif(LINUX)
+
+target_link_libraries(BitbotCopilot PRIVATE
+                     elawidgettools
+                     Qt${QT_VERSION_MAJOR}::Widgets 
+                     Qt${QT_VERSION_MAJOR}::WebSockets
+                     Qt${QT_VERSION_MAJOR}::Network
+                     Qt${QT_VERSION_MAJOR}::Svg
+                     Qt${QT_VERSION_MAJOR}::PrintSupport
+                     Qt${QT_VERSION_MAJOR}::OpenGL
+                     OpenGL
+                     )
+endif()
+
 
 
 
