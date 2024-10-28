@@ -65,6 +65,9 @@ set(UI_WIDGETS
     UI/widget/CustomImageLabel.hpp
     UI/widget/DataViewerFlowIndicator.cpp
     UI/widget/DataViewerFlowIndicator.h
+    UI/widget/FluentLoadingWidget.cpp
+    UI/widget/FluentLoadingWidget.h
+    UI/widget/FluentMessageBox.hpp
 )
 
 set(DATA_VIEWER_UI

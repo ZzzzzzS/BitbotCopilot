@@ -20,6 +20,7 @@
 #include <QTimer>
 #include "widget/CustomImageLabel.hpp"
 #include "QGraphicsBlurEffect"
+#include "UI/widget/FluentMessageBox.hpp"
 
 
 
@@ -37,7 +38,7 @@ PilotPage::PilotPage(QWidget* parent)
     this->InitConnectionWidget();
 
     this->ProcessDisconnetced();
-    
+
     this->blureffect__ = new QGraphicsBlurEffect(this);
     blureffect__->setBlurRadius(5);	//数值越大，越模糊
 }
@@ -60,7 +61,7 @@ bool PilotPage::RunNewBitbot(bool LaunchBackend, bool dryrun)
     {
         if (!check_result)
             return false;
-        
+
         if (LaunchBackend)
         {
             this->BackendManagerUI__->StartBackend();
@@ -70,13 +71,13 @@ bool PilotPage::RunNewBitbot(bool LaunchBackend, bool dryrun)
                 this->LineEdit_IP__->setText(this->IP);
                 this->SpinBox_Port__->setValue(this->port);
                 this->ConnectionButtonClickedSlot();
-             });
+                });
         }
         else
         {
             this->ConnectionButtonClickedSlot();
         }
-        
+
     }
     return check_result;
 }
@@ -98,7 +99,7 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
     this->AutoRunDiag__->setAttribute(Qt::WA_DeleteOnClose);
     this->AutoRunDiag__->setAttribute(Qt::WA_ShowModal);
     this->AutoRunDiag__->setWindowFlags(this->AutoRunDiag__->windowFlags() & ~(
-        Qt::WindowCloseButtonHint 
+        Qt::WindowCloseButtonHint
         | Qt::WindowMinMaxButtonsHint
         | Qt::WindowContextHelpButtonHint));
     QPushButton* cancel_button = new QPushButton(this->AutoRunDiag__);
@@ -106,13 +107,13 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
     //cancel_button->setEnabled(false); //取消的逻辑太复杂了，暂时先不让取消了
     this->AutoRunDiag__->setCancelButton(cancel_button);
     this->AutoRunDiag__->show();
-    
+
     QObject::connect(cancel_button, &QPushButton::clicked, this, [this]() {
         qDebug() << "auto run cancel button clicked";
         this->CancelAutoRunSlot();
         });
 
-    
+
 
     this->AutoRunRefreshTimer__->start();
     return true;
@@ -145,7 +146,7 @@ void PilotPage::InitConnectionWidget()
 
     CustomImageLabel* icon = new CustomImageLabel(this->ConnectionAreaUI__);
     icon->setFixedSize(40, 40);
-    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"),40,40);
+    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"), 40, 40);
     ElaText* name = new ElaText(this->ConnectionAreaUI__);
     name->setText(tr("Frontend Manager"));
     QFont namefont;
@@ -228,7 +229,7 @@ void PilotPage::InitConnectionWidget()
 
     gridLayout->addLayout(horizontalLayout_3, 0, 0, 1, 1);
 
-    QObject::connect(this->PushButton_Connect__, &ElaPushButton::clicked, this, &PilotPage::ConnectionButtonClickedSlot,Qt::QueuedConnection);
+    QObject::connect(this->PushButton_Connect__, &ElaPushButton::clicked, this, &PilotPage::ConnectionButtonClickedSlot, Qt::QueuedConnection);
 
     /////////////////backend///////////////////////////////////
     this->BackendManagerUI__ = new BackendManager(this->CentralWidget__);
@@ -249,7 +250,7 @@ void PilotPage::InitConnectionWidget()
 void PilotPage::InitCommHandle()
 {
     this->CommThread__ = new QThread(this);
-    this->CommHandle__ = new zzs::BITBOT_TCP_PROTOCAL_V1(QJsonObject(),nullptr);
+    this->CommHandle__ = new zzs::BITBOT_TCP_PROTOCAL_V1(QJsonObject(), nullptr);
     this->CommHandle__->moveToThread(this->CommThread__);
     QObject::connect(this->CommHandle__, &zzs::BITBOT_TCP_PROTOCAL_V1::ConnectionStateChanged, this, [this](int status__) {
         zzs::META_COMMUNICATION::CONNECTION_STATUS status = static_cast<zzs::META_COMMUNICATION::CONNECTION_STATUS>(status__);
@@ -282,13 +283,13 @@ void PilotPage::InitUserInput()
         if (this->GamepadStatusUI__ != nullptr)
         {
             this->GamepadStatusUI__->DeviceConnectionChanged(id, Connected);
-            if(Connected)
+            if (Connected)
                 this->GamepadHandle__->SetRumble(id, 65535, 65535, 500);
         }
-        },Qt::QueuedConnection);
-    
+        }, Qt::QueuedConnection);
 
-    QObject::connect(this->GamepadHandle__, &ZQGamepad::JoystickMoved,this, [this](int id, Q_XSX_JOYSTICK_ENUM axis, float value) {
+
+    QObject::connect(this->GamepadHandle__, &ZQGamepad::JoystickMoved, this, [this](int id, Q_XSX_JOYSTICK_ENUM axis, float value) {
         QString JoystickName;
         JoystickName = this->GamepadHandle__->name(axis);
 
@@ -299,14 +300,14 @@ void PilotPage::InitUserInput()
 
         if (!this->KeyEventMap.contains(JoystickName))
             return;
-        
+
         QVariantMap map;
         map.insert(this->KeyEventMap[JoystickName], QVariant(value));
         this->CommHandle__->SendUserCommand(map);
-        },Qt::QueuedConnection);
+        }, Qt::QueuedConnection);
 
 
-    QObject::connect(this->GamepadHandle__, &ZQGamepad::ButtonClicked,this, [this](int id, Q_XSX_JOYSTICK_ENUM button, bool ButtonState) {
+    QObject::connect(this->GamepadHandle__, &ZQGamepad::ButtonClicked, this, [this](int id, Q_XSX_JOYSTICK_ENUM button, bool ButtonState) {
         QString ButtonName;
         ButtonName = this->GamepadHandle__->name(button);
         if (!this->KeyEventMap.contains(ButtonName))
@@ -321,7 +322,7 @@ void PilotPage::InitUserInput()
         {
             this->KeyboardEventUI__->ButtonClicked(ButtonName, ButtonState);
         }
-        },Qt::QueuedConnection);
+        }, Qt::QueuedConnection);
 }
 void PilotPage::DrawConnectedUI()
 {
@@ -331,8 +332,8 @@ void PilotPage::DrawConnectedUI()
     if (this->ConnectedComponentLayout__ == nullptr)
     {
         this->ConnectedComponentLayout__ = new QVBoxLayout();
-        QSpacerItem* l_space= new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-        QSpacerItem* r_space= new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        QSpacerItem* l_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        QSpacerItem* r_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         QHBoxLayout* hor_box = new QHBoxLayout();
         hor_box->addSpacerItem(l_space);
         hor_box->addLayout(this->ConnectedComponentLayout__);
@@ -341,8 +342,8 @@ void PilotPage::DrawConnectedUI()
         //this->CentralLayout__->addLayout(hor_box);
         this->CentralLayout__->insertLayout(1, hor_box);
     }
-    
-   
+
+
     QHBoxLayout* lay = new QHBoxLayout();
 
     //if (this->BackendConnectionUI__ == nullptr)
@@ -360,7 +361,7 @@ void PilotPage::DrawConnectedUI()
     {
         this->KernelStatusUI__->show();
     }
-    
+
     if (this->RobotStateUI__ == nullptr)
     {
         this->RobotStateUI__ = new RTDRobotStates(this->CentralWidget__);
@@ -383,7 +384,7 @@ void PilotPage::DrawConnectedUI()
     {
         this->KeyboardEventUI__->show();
     }
-    
+
     if (this->GamepadStatusUI__ == nullptr)
     {
         size_t GamepadCnt = this->GamepadHandle__->CountConnectedGamepad();
@@ -402,7 +403,7 @@ void PilotPage::DrawConnectedUI()
         lay->addItem(this->horizontalSpacer);
     }
 
-    
+
     QVBoxLayout* DeviceLayout = new QVBoxLayout();
     QMap<QString, QVector<QString>> DeviceSensors;
     QMap<QString, QVector<QString>> DeviceTypeList;
@@ -439,12 +440,12 @@ void PilotPage::DrawConnectedUI()
             DeviceLayout->addWidget(wid);
             this->DeviceListsUI__.push_back(wid);
         }
-        
+
         QString DeviceTypeName = i.key();
         QVector<QString> DeviceList = DeviceTypeList[i.key()];
         QVector<QString> DeviceSensors = i.value();
         wid->setHeaders(DeviceTypeName, DeviceList, DeviceSensors);
-        
+
         ++i;
         cnt++;
     }
@@ -460,10 +461,10 @@ void PilotPage::DrawConnectedUI()
     {
         this->UserInfoUI__->show();
     }
-    
+
     this->ConnectedComponentLayout__->addLayout(lay);
     this->ConnectedComponentLayout__->addLayout(DeviceLayout);
-    
+
 }
 void PilotPage::DrawDisconnectedUI()
 {
@@ -472,7 +473,7 @@ void PilotPage::DrawDisconnectedUI()
         this->KernelStatusUI__->hide();
         this->KernelStatusUI__->ResetUI();
     }
-    
+
     if (this->RobotStateUI__ != nullptr)
     {
         this->RobotStateUI__->hide();
@@ -484,20 +485,20 @@ void PilotPage::DrawDisconnectedUI()
         this->KeyboardEventUI__->hide();
         this->KeyboardEventUI__->ResetUI();
     }
-   
+
     if (this->GamepadStatusUI__ != nullptr)
     {
         this->GamepadStatusUI__->hide();
         this->GamepadStatusUI__->ResetUI();
     }
-    
+
     for (auto& i : this->DeviceListsUI__)
     {
         if (i != nullptr)
         {
             i->hide();
             i->ResetUI();
-        }    
+        }
     }
 
     if (this->UserInfoUI__ != nullptr)
@@ -507,7 +508,7 @@ void PilotPage::DrawDisconnectedUI()
     }
 
     qApp->processEvents();
-   
+
     //reset ui
     this->PushButton_Connect__->setText(tr("connect"));
     this->PushButton_Connect__->setEnabled(true);
@@ -548,10 +549,10 @@ void PilotPage::ProcessConnected()
     this->AllHeaders.clear();
     this->CommHandle__->getDataHeaderAll(this->AllHeaders);
 
-    auto pads=this->GamepadHandle__->getAvailableGamepadID();
+    auto pads = this->GamepadHandle__->getAvailableGamepadID();
     for (auto& pad : pads)
     {
-        bool ok= this->GamepadHandle__->SetRumble(pad, 65535, 65535, 500);
+        bool ok = this->GamepadHandle__->SetRumble(pad, 65535, 65535, 500);
         qDebug() << ok;
     }
 
@@ -561,13 +562,13 @@ void PilotPage::ProcessConnected()
 void PilotPage::ProcessConnectionError()
 {
     this->connected__ = false;
-    if (this->RobotStateUI__->CurrentState() == QString("kernel_stopped"))
+    if (this->RobotStateUI__!=nullptr && this->RobotStateUI__->CurrentState() == QString("kernel_stopped"))
         this->SurpressConnectionError__ = true;
     this->DrawDisconnectedUI();
     if (this->SurpressConnectionError__)
         this->SurpressConnectionError__ = false;
     else
-        QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
+        FluentMessageBox::warningOk(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
 }
 
 void PilotPage::ProcessPDO(QVariantList PDOInfo)
@@ -599,7 +600,7 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
         {
             RemapPDOInfo[CurrentTypeName].push_back(PDOInfo[j]);
         }
-        PDOInfo= QVariantList(PDOInfo.begin() + len, PDOInfo.end());
+        PDOInfo = QVariantList(PDOInfo.begin() + len, PDOInfo.end());
     }
 
     for (auto& ui : this->DeviceListsUI__)
@@ -624,31 +625,31 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
 }
 
 void PilotPage::removeAllwidget(QLayout* lay)
-{   
+{
     qDebug() << "remove!";
-     if (lay) {
-         // auto tmp = lay->children();
-        
-         while (lay->count() > 0) {
-             qDebug() << lay->count();
-             
-             QLayout* subLay = lay->itemAt(0)->layout();
-             if (subLay) {
-                 this->removeAllwidget(subLay);    // 子布局递归调用
-             }
-     
-             QWidget* wgt = lay->itemAt(0)->widget();
-             if (wgt) {
-                 lay->removeWidget(wgt);
-                 wgt->setParent(nullptr);
-                 wgt->deleteLater();
-                 wgt = nullptr;
-             }
-         }
-     
-         lay->deleteLater();
-         lay = nullptr;
-     }
+    if (lay) {
+        // auto tmp = lay->children();
+
+        while (lay->count() > 0) {
+            qDebug() << lay->count();
+
+            QLayout* subLay = lay->itemAt(0)->layout();
+            if (subLay) {
+                this->removeAllwidget(subLay);    // 子布局递归调用
+            }
+
+            QWidget* wgt = lay->itemAt(0)->widget();
+            if (wgt) {
+                lay->removeWidget(wgt);
+                wgt->setParent(nullptr);
+                wgt->deleteLater();
+                wgt = nullptr;
+            }
+        }
+
+        lay->deleteLater();
+        lay = nullptr;
+    }
 }
 
 void PilotPage::ConnectionButtonClickedSlot()
@@ -660,7 +661,7 @@ void PilotPage::ConnectionButtonClickedSlot()
     {
         if (bool ok = this->CommHandle__->Connect(IP, port, 3000); ok == false)
         {
-            QMessageBox::warning(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
+            FluentMessageBox::warningOk(this, tr("Connection Failed"), tr("Failed to connected to BitBot, please check you network connection!"), QMessageBox::Ok);
         }
         else
         {
@@ -672,16 +673,16 @@ void PilotPage::ConnectionButtonClickedSlot()
     {
         if (!this->CommHandle__->Disconnect())
         {
-            QMessageBox::warning(this, tr("Disconnect Failed"), tr("Failed to disconnect to Bitbot, try again later"), QMessageBox::Ok);
+            FluentMessageBox::warningOk(this, tr("Disconnect Failed"), tr("Failed to disconnect to Bitbot, try again later"), QMessageBox::Ok);
         }
     }
     else if (this->PushButton_Connect__->text() == tr("connecting"))
     {
-        QMessageBox::warning(this, tr("System is Busy"), tr("System is busy, connect/disconnect request will be ignored"));
+        FluentMessageBox::warningOk(this, tr("System is Busy"), tr("System is busy, connect/disconnect request will be ignored"));
     }
     else
     {
-        QMessageBox::critical(this, tr("Catastrophic Failure"), tr("Unknown Button Status"), QMessageBox::Ok);
+        FluentMessageBox::criticalOk(this, tr("Catastrophic Failure"), tr("Unknown Button Status"), QMessageBox::Ok);
     }
 }
 
@@ -764,14 +765,14 @@ void PilotPage::AutoRunRefreshSlot()
         {
             this->CancelAutoRunSlot();
             qApp->processEvents();
-            QMessageBox::warning(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto initialize Bitbot, check your connection and try again later."), QMessageBox::Ok);
+            FluentMessageBox::warningOk(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto initialize Bitbot, check your connection and try again later."), QMessageBox::Ok);
             return;
         }
         else
         {
             this->AutoRunNextCmdCycleRemain__--;
             return;
-        }  
+        }
     }
 
     QString state = this->RobotStateUI__->CurrentState();
@@ -835,7 +836,7 @@ void PilotPage::CancelAutoRunSlot()
         qApp->processEvents();
         this->AutoRunDiag__ = nullptr;
     }
-    if (this->connected__ && 
+    if (this->connected__ &&
         this->RobotStateUI__ != nullptr &&
         this->RobotStateUI__->CurrentState() != QString("Disconnected"))
     {
@@ -857,8 +858,8 @@ void PilotPage::AutoRunSimClickButton(QString key)
     if (!this->KeyEventMap.contains(key))
         return;
 
-    
-    QTimer::singleShot(0, [this,key]() {
+
+    QTimer::singleShot(0, [this, key]() {
         qDebug() << key << " is pressed";
         QVariantMap map;
         map.insert(this->KeyEventMap[key], QVariant(1));
@@ -884,7 +885,7 @@ void PilotPage::AutoRunSimClickButton(QString key)
         {
             this->KeyboardEventUI__->ButtonClicked(key, false);
         }
-    });
-    
+        });
+
 }
 

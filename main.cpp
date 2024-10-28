@@ -10,6 +10,8 @@
 #include "Utils/Settings/SettingsHandler.h"
 #include "QSettings"
 #include "UI/DataViewer/DataViewerPage.h"
+#include "ElaContentDialog.h"
+#include "UI/widget/FluentLoadingWidget.h"
 
 #include <chrono>
 #include <thread>
@@ -32,6 +34,8 @@ int main(int argc, char* argv[])
     a.processEvents();
 
     eApp->init();
+    QFontDatabase::addApplicationFont(":/include/Font/segoe_slboot.ttf");
+    
 
     QTranslator translator;
     //const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -52,6 +56,14 @@ int main(int argc, char* argv[])
     a.processEvents();
     screen->finish(&w);
     delete screen;
+
+    ElaContentDialog aaa(&w);
+    aaa.show();
+    auto bbb = new FluentLoadingWidget("test1", 0, 10);
+    aaa.setCentralWidget(bbb);
+    bbb->UpdatePercentage(5);
+    aaa.setButtonNumber(2);
+    aaa.setRightButtonText("ok", false);
 
     return a.exec();
 }

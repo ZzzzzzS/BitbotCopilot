@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/include">
         <file>Font/ElaAwesome.ttf</file>
+		<file>Font/segoe_slboot.ttf</file>
     </qresource>
     <qresource prefix="/license">
         <file>licenses/LICENSE-ElaWidget</file>

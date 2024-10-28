@@ -6,6 +6,7 @@
 #include "QPalette"
 #include "ElaApplication.h"
 #include "ElaDockWidget.h"
+#include "UI/widget/FluentMessageBox.hpp"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -74,10 +75,10 @@ void MainWindow::InitFooter()
                 this->WindowBottomDocker__->show();
             }
         }
-     });
+        });
 
     //init about me
-    this->AboutKey__= QString("About");
+    this->AboutKey__ = QString("About");
     this->AboutWindow__ = new AboutPageCentralWidget(this);
     this->addFooterNode(tr("About"), this->AboutWindow__, AboutKey__, 0, ElaIconType::IconName::CircleUser);
     /*connect(this, &ElaWindow::navigationNodeClicked, this, [=](ElaNavigationType::NavigationNodeType nodeType, QString nodeKey) {
@@ -111,10 +112,10 @@ void MainWindow::InitSignalSlot()
         }
         else
         {
-            QMessageBox::warning(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
+            FluentMessageBox::warningOk(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
         }
-    });
-    
+        });
+
 
 
     QObject::connect(this->HomePage__, &HomePage::LaunchBitbotSignal, this, [this]() {
@@ -126,9 +127,9 @@ void MainWindow::InitSignalSlot()
         }
         else
         {
-            QMessageBox::warning(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
+            FluentMessageBox::warningOk(this, tr("Failed to Attach Bitbot"), tr("Failed to attach Bitbot backend, nav deck is already running, please disconnect it first"));
         }
-    });
+        });
 
     QObject::connect(this->HomePage__, &HomePage::AutoRunBitbotSignal, this, [this]() {
         if (this->PilotPage__->AutoInitBitbot(true))
@@ -140,11 +141,11 @@ void MainWindow::InitSignalSlot()
         }
         else
         {
-            QMessageBox::warning(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto run new bitbot task, nav deck is already running or launch list is not configured."));
+            FluentMessageBox::warningOk(this, tr("Failed to Auto Initialize Bitbot"), tr("Failed to auto run new bitbot task, nav deck is already running or launch list is not configured."));
         }
-    });
+        });
 
-    
+
 
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
@@ -164,7 +165,7 @@ void MainWindow::resizeEvent(QResizeEvent* event)
         this->resize(1050, this->height());
         return;
     }
-        
+
 
     ElaWindow::resizeEvent(event);
 }
@@ -177,7 +178,7 @@ void MainWindow::changeEvent(QEvent* event)
         qDebug() << "theme changed";
         if (!this->isDarkMode())
         {
-            if(eTheme->getThemeMode()!=ElaThemeType::Light)
+            if (eTheme->getThemeMode() != ElaThemeType::Light)
                 this->TriggerThemeChangeAnimation();
         }
         else
@@ -195,7 +196,7 @@ void MainWindow::changeEvent(QEvent* event)
         QTimer::singleShot(5000, this, [this]() {
             this->InitMica();
             });
-           
+
     }
 }
 
@@ -231,15 +232,15 @@ void MainWindow::InitDockVirtualTrackpad()
         map.insert(Event, QVariant(KeyState));
         this->CommHandle__->SendUserCommand(map);
         });
-    
+
     QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualTrackpadMoved, this, [this](QString Axis1, double value1, QString Axis2, double value2) {
         QVariantMap map;
         map.insert(Axis1, QVariant(value1));
         map.insert(Axis2, QVariant(value2));
         this->CommHandle__->SendUserCommand(map);
-     });
+        });
 
-    
+
     QObject::connect(this->CommHandle__, &zzs::BITBOT_TCP_PROTOCAL_V1::ConnectionStateChanged, this, [this](int status) {
         if (status == static_cast<int>(zzs::BITBOT_TCP_PROTOCAL_V1::CONNECTION_STATUS::CONNECTED))
         {
@@ -252,7 +253,7 @@ void MainWindow::InitDockVirtualTrackpad()
         {
             this->VirtualTrackpad__->setConnected(false);
         }
-    });
+        });
 }
 
 bool MainWindow::isDarkMode()

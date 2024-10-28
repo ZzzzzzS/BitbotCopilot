@@ -13,6 +13,8 @@
 #include "ElaSuggestBox.h"
 #include "QTouchEvent"
 #include "QCursor"
+#include "UI/widget/FluentMessageBox.hpp"
+#include "UI/widget/FluentLoadingWidget.h"
 
 DataViewerPage::DataViewerPage(QWidget* parent)
     : QWidget(parent)
@@ -35,7 +37,7 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     this->PlotHandle = this->ui->DataPlotWidget;
     this->PlotHandle->installEventFilter(this);
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    this->PlotHandle->setOpenGl(true,128);
+    this->PlotHandle->setOpenGl(true, 128);
     this->PlotHandle->setPlottingHint(QCP::phCacheLabels, false);
     this->PlotHandle->setAttribute(Qt::WA_AcceptTouchEvents);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
@@ -281,14 +283,14 @@ void DataViewerPage::dropEvent(QDropEvent* event)
     QString localpath = ImageUrl.toLocalFile();
     if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
     {
-        QMessageBox::warning(this, tr("Unsupported File Type"), tr("Unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
+        FluentMessageBox::warningOk(this, tr("Unsupported File Type"), tr("Unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
         return;
     }
     else
     {
         bool cancel = false;
-        QProgressDialog* diag = new QProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this);
-        QObject::connect(diag, &QProgressDialog::canceled, this, [&cancel]() {
+        FluentProgressDialog* diag = new FluentProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()); // this is stupid
+        QObject::connect(diag, &FluentProgressDialog::canceled, this, [&cancel]() {
             cancel = true;
             });
         diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
@@ -307,7 +309,7 @@ void DataViewerPage::dropEvent(QDropEvent* event)
         if (!r->open() || !this->AddCurveGroup(groupkey, r))
         {
             if (cancel == false)
-                QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
+                FluentMessageBox::warningOk(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
             diag->close();
             qApp->processEvents();
             return;
@@ -366,7 +368,7 @@ bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
     {
         if (event->type() == QEvent::Enter)
         {
-            qDebug() << "move inter";
+            //qDebug() << "move inter";
             this->MouseMovedInPlot__ = true;
 
             QPoint GMousePos = QCursor::pos();
@@ -411,14 +413,14 @@ bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
 
             this->PlotFlowIndcator__->SetLabelText(CurveNames, CurveColors);
             this->PlotFlowIndcator__->UpdateValue(CurveValue);
-            if(!CurveNames.empty())
+            if (!CurveNames.empty())
                 this->PlotFlowIndcator__->show();
-            qDebug() << "inter call";
+            //qDebug() << "inter call";
             return true;
         }
         else if (event->type() == QEvent::Leave)
         {
-            qDebug() << "move out";
+            //qDebug() << "move out";
 
             QPoint TopLeftCoord = this->PlotHandle->mapToGlobal(QPoint(0, 0));
             QPoint l = QPoint(this->PlotHandle->width(), this->PlotHandle->height());
@@ -913,14 +915,14 @@ void DataViewerPage::LoadLocalFileSlot()
     {
         if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
         {
-            QMessageBox::warning(this, tr("Unsupported File Type"), localpath + tr(" is unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
+            FluentMessageBox::warningOk(this, tr("Unsupported File Type"), localpath + tr(" is unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
             continue;
         }
         else
         {
             bool cancel = false;
-            QProgressDialog* diag = new QProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this);
-            QObject::connect(diag, &QProgressDialog::canceled, this, [&cancel]() {
+            FluentProgressDialog* diag = new FluentProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget());
+            QObject::connect(diag, &FluentProgressDialog::canceled, this, [&cancel]() {
                 cancel = true;
                 });
             diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
@@ -937,7 +939,7 @@ void DataViewerPage::LoadLocalFileSlot()
             if (!r->open() || !this->AddCurveGroup(groupkey, r))
             {
                 if (!cancel)
-                    QMessageBox::warning(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
+                    FluentMessageBox::warningOk(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
                 diag->close();
                 qApp->processEvents();
                 continue;
@@ -977,7 +979,7 @@ void DataViewerPage::LoadLocalFileSlot()
 
 void DataViewerPage::LoadRobotFileSlot()
 {
-    QMessageBox::critical(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
+    FluentMessageBox::criticalOk(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
 }
 
 void DataViewerPage::RemoveButtonClickedSlot()
@@ -1133,7 +1135,7 @@ void DataViewerPage::SavePlotSlot()
     }
     else
     {
-        QMessageBox::critical(this, tr("Error"), tr("Unknown File Format"), QMessageBox::Ok);
+        FluentMessageBox::criticalOk(this, tr("Error"), tr("Unknown File Format"), QMessageBox::Ok);
         saved = true; //prevent re-pop up window
     }
 
@@ -1147,9 +1149,9 @@ void DataViewerPage::SavePlotSlot()
     this->PlotHandle->yAxis->grid()->setPen(yAxisPen);
 
     if (!saved)
-        QMessageBox::critical(this, tr("Error"), tr("Failed to save file, try again later."), QMessageBox::Ok);
+        FluentMessageBox::criticalOk(this, tr("Error"), tr("Failed to save file, try again later."), QMessageBox::Ok);
     else
-        QMessageBox::information(this, tr("Saved"), tr("Save success!"), QMessageBox::Ok);
+        FluentMessageBox::informationOk(this, tr("Saved"), tr("Save success!"), QMessageBox::Ok);
 }
 
 void DataViewerPage::InitShowDataPoint()
@@ -1194,13 +1196,13 @@ void DataViewerPage::InitFloatingAxis()
 
 void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
 {
-    qDebug() << "mouse move";
-    if (event->buttons() != Qt::NoButton || this->isMultiTouching__==true)
+    //qDebug() << "mouse move";
+    if (event->buttons() != Qt::NoButton || this->isMultiTouching__ == true)
     {
         this->PlotFlowIndcator__->hide();
         return;
     }
-    qDebug() << "mouse move2";
+    //qDebug() << "mouse move2";
     //qDebug() << "mouse moved" << event->pos() << event->buttons();
     QPointF MousePos = event->pos();
     QPoint MouseGlobalPos = event->globalPos();
@@ -1231,7 +1233,7 @@ void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
     if (CurveValue.empty())
     {
         this->PlotFlowIndcator__->hide();
-    }      
+    }
     else
     {
         this->PlotFlowIndcator__->UpdateValue(CurveValue);
@@ -1402,7 +1404,7 @@ void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
     {
         this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
         this->PlotHandle->replot();
-        QTimer::singleShot(1,this, [this]() {
+        QTimer::singleShot(1, this, [this]() {
             // hack scaling shift issue when touch end, do NOT move or change, unless you know what you are doing!
             if (this->isMultiTouching__)
             {
@@ -1436,12 +1438,12 @@ void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
     }
     else
     {
-       this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-       this->PlotHandle->replot();
-       QTimer::singleShot(300, this, [this]() {
-           this->isMultiTouching__ = false;
-           this->PlotHandle->replot();
-           });
+        this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        this->PlotHandle->replot();
+        QTimer::singleShot(300, this, [this]() {
+            this->isMultiTouching__ = false;
+            this->PlotHandle->replot();
+            });
     }
 }
 
@@ -1449,7 +1451,7 @@ void DataViewerPage::PlotGestureEventHandler(QGestureEvent* g)
 {
     QGesture* ges = g->gesture(Qt::PinchGesture);
     QPinchGesture* PGes = dynamic_cast<QPinchGesture*>(ges);
-    if(PGes!=nullptr)
+    if (PGes != nullptr)
     {
         QPointF CenterPoint = this->TouchStartPoint__;
         qDebug() << "center point" << CenterPoint;
@@ -1472,7 +1474,7 @@ void DataViewerPage::PlotGestureEventHandler(QGestureEvent* g)
 
         auto [ylow, yhigh] = this->ComputeDeltaDirection(RangeY.lower, RangeY.upper,
             CenterPoint.y() / this->PlotHandle->height(),
-            Scales * ScaleFactor*std::sin(this->TouchStartRotation__), true);
+            Scales * ScaleFactor * std::sin(this->TouchStartRotation__), true);
         RangeY.lower = ylow;
         RangeY.upper = yhigh;
         RangeY.normalize();
@@ -1485,7 +1487,7 @@ void DataViewerPage::PlotGestureEventHandler(QGestureEvent* g)
         this->TouchRangeY__ = RangeY;
         this->PlotHandle->xAxis->setRange(RangeX);
         this->PlotHandle->yAxis->setRange(RangeY);
-        qDebug() << "range" << RangeX.lower<<"," << RangeX.upper;
+        qDebug() << "range" << RangeX.lower << "," << RangeX.upper;
         this->PlotHandle->replot();
     }
 }

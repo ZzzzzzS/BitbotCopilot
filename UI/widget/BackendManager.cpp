@@ -10,7 +10,7 @@
 #include "../../Utils/Settings/SettingsHandler.h"
 #include <tuple>
 #include "ElaPlainTextEdit.h"
-
+#include "UI/widget/FluentMessageBox.hpp"
 
 BackendManager::BackendManager(QWidget* parent)
     : MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW, parent)
@@ -21,7 +21,7 @@ BackendManager::BackendManager(QWidget* parent)
 
     std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
     this->isRemote = ZSet->isBackendRemote();
-    if (this->isRemote) 
+    if (this->isRemote)
     {
         std::tie(this->UserName, this->IP) = ZSet->getRemoteBackendUserNameAndIP();
     }
@@ -56,7 +56,7 @@ BackendManager::BackendManager(QWidget* parent)
     QObject::connect(this->BackendProcess__, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
         emit this->ProcessErrored();
         QString ErrMsg = QMetaEnum::fromType<QProcess::ProcessError>().valueToKey(error);
-        QMessageBox::warning(this, tr("Bitbot Backend Error"), tr("Bitbot backend error, backend ") + ErrMsg, QMessageBox::Ok);
+        FluentMessageBox::warningOk(this, tr("Bitbot Backend Error"), tr("Bitbot backend error, backend ") + ErrMsg, QMessageBox::Ok);
         });
 
     QObject::connect(this->BackendProcess__, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](int exitCode, QProcess::ExitStatus exitStatus) {
@@ -136,22 +136,23 @@ void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
 
 void BackendManager::closeEvent(QCloseEvent* event)
 {
-    if (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning)
-    {
-        int button = QMessageBox::warning(this, tr("Backend is Still Running"), tr("Backend is still running, would you like to terminate it now?"), QMessageBox::Yes, QMessageBox::No);
-        if (button == QMessageBox::Yes)
-        {
-            this->TerminateBackend();
-        }
-        else
-        {
-            int button = QMessageBox::warning(this, tr("Unmanaged Backend is Danger!"), tr("The backend is still running and can only be killed by task manager, do you really want to close the window with backend running still?"), QMessageBox::Yes, QMessageBox::No);
-            if (button == QMessageBox::No)
-            {
-                event->ignore();
-            }
-        }
-    }
+    //FIXME: fix close event not working issue
+    // if (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning)
+    // {
+    //     int button = QMessageBox::warning(this, tr("Backend is Still Running"), tr("Backend is still running, would you like to terminate it now?"), QMessageBox::Yes, QMessageBox::No);
+    //     if (button == QMessageBox::Yes)
+    //     {
+    //         this->TerminateBackend();
+    //     }
+    //     else
+    //     {
+    //         int button = QMessageBox::warning(this, tr("Unmanaged Backend is Danger!"), tr("The backend is still running and can only be killed by task manager, do you really want to close the window with backend running still?"), QMessageBox::Yes, QMessageBox::No);
+    //         if (button == QMessageBox::No)
+    //         {
+    //             event->ignore();
+    //         }
+    //     }
+    // }
 }
 
 void BackendManager::TerminateBackend()

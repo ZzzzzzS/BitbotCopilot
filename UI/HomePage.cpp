@@ -8,11 +8,12 @@
 #include "ElaFlowLayout.h"
 #include "ElaContentDialog.h"
 #include "QMessageBox"
+#include "UI/widget/FluentMessageBox.hpp"
 
 HomePage::HomePage(QWidget* parent)
-	:ElaScrollPage(parent)
+    :ElaScrollPage(parent)
 {
-	this->setPageTitleSpacing(5);
+    this->setPageTitleSpacing(5);
 
     QWidget* centralWidget = new QWidget(this);
     centralWidget->setWindowTitle(tr("Home"));
@@ -43,7 +44,7 @@ HomePage::HomePage(QWidget* parent)
     this->AutoRunBitbotCard->setSubTitle(tr("Launch and perform initialization with one click"));
     this->AutoRunBitbotCard->setCardPixmap(QPixmap(":/UI/Image/auto_launch.png"));
     /*QObject::connect(this->AutoRunBitbotCard, &ElaReminderCard::clicked, this, [=]() {
-        QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
+        FluentMessageBox::criticalOk(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
     });*/
 
     this->DataViewerCard = new ElaReminderCard(this);
@@ -58,10 +59,11 @@ HomePage::HomePage(QWidget* parent)
     this->LaunchVSCCard->setCardPixmap(QPixmap(":/UI/Image/vscode.png"));
 
     QObject::connect(this->LaunchVSCCard, &ElaReminderCard::clicked, this, [=]() {
-        QMessageBox::critical(this, tr("unsupported function"), tr("this function is not supported yet!"), QMessageBox::Ok);
-    });
+        FluentMessageBox::criticalOk(this, tr("unsupported function"), tr("this function is not supported yet!"));
+        });
 
-  
+
+
     ElaFlowLayout* flowLayout = new ElaFlowLayout(0, 5, 5);
     flowLayout->setIsAnimation(true);
     flowLayout->addWidget(this->AttachBitbotCard);
