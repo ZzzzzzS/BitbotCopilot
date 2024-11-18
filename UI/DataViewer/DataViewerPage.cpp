@@ -15,6 +15,10 @@
 #include "QCursor"
 #include "UI/widget/FluentMessageBox.hpp"
 #include "UI/widget/FluentLoadingWidget.h"
+#include "UI/DataViewer/RemoteFileSelector.h"
+#include "Communication/RCM/SftpFileTransport.h"
+#include "QEventLoop"
+#include "Utils/Settings/SettingsHandler.h"
 
 DataViewerPage::DataViewerPage(QWidget* parent)
     : QWidget(parent)
@@ -168,6 +172,7 @@ void DataViewerPage::SetTheme(Theme_e theme)
 
 
     QPalette LabelPalette;
+	QPalette DataListBackgroundPalette;
     if (theme == Theme_e::Light)
     {
         QColor GridLightColor(226, 226, 226);
@@ -203,6 +208,11 @@ void DataViewerPage::SetTheme(Theme_e theme)
         brush_versionLabel.setStyle(Qt::SolidPattern);
         LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
         LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
+
+		QBrush brush_DataListBackground(QColor(0, 0, 0, 0));
+		brush_DataListBackground.setStyle(Qt::SolidPattern);
+		DataListBackgroundPalette.setBrush(QPalette::Active, QPalette::Base, brush_DataListBackground);
+		DataListBackgroundPalette.setBrush(QPalette::Inactive, QPalette::Base, brush_DataListBackground);
 
         QColor ColorRefLine(120, 120, 120);
         this->PlotRefLine__->setPen(QPen(ColorRefLine, 2, Qt::SolidLine));
@@ -244,11 +254,17 @@ void DataViewerPage::SetTheme(Theme_e theme)
         LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
         LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
 
+        QBrush brush_DataListBackground(QColor(0, 0, 0, 0));
+        brush_DataListBackground.setStyle(Qt::SolidPattern);
+        DataListBackgroundPalette.setBrush(QPalette::Active, QPalette::Base, brush_DataListBackground);
+        DataListBackgroundPalette.setBrush(QPalette::Inactive, QPalette::Base, brush_DataListBackground);
+
         QColor ColorRefLine(150, 150, 150);
         this->PlotRefLine__->setPen(QPen(ColorRefLine, 2, Qt::SolidLine));
         this->WindowTheme = Theme_e::Dark;
     }
     this->ui->label_subtitle->setPalette(LabelPalette);
+	this->ui->DataListWidget->setPalette(DataListBackgroundPalette);
 
     QList<QColor> CurveColor;
     for (auto GroupItem = this->AggregatedDataGroup__.begin(); GroupItem != this->AggregatedDataGroup__.end(); GroupItem++)
@@ -281,47 +297,7 @@ void DataViewerPage::dropEvent(QDropEvent* event)
     auto ImageUrl = urls[0];
     qDebug() << ImageUrl;
     QString localpath = ImageUrl.toLocalFile();
-    if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
-    {
-        FluentMessageBox::warningOk(this, tr("Unsupported File Type"), tr("Unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
-        return;
-    }
-    else
-    {
-        bool cancel = false;
-        FluentProgressDialog* diag = new FluentProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()); // this is stupid
-        QObject::connect(diag, &FluentProgressDialog::canceled, this, [&cancel]() {
-            cancel = true;
-            });
-        diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
-        diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-        diag->setAttribute(Qt::WA_DeleteOnClose);
-        diag->show();
-        qApp->processEvents();
-
-        zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
-        r->RegistReadStateCallback([&cancel, this](bool& cancel_) {
-            qApp->processEvents();
-            cancel_ = cancel;
-            });
-
-        auto groupkey = localpath.split("/").back();
-        if (!r->open() || !this->AddCurveGroup(groupkey, r))
-        {
-            if (cancel == false)
-                FluentMessageBox::warningOk(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
-            diag->close();
-            qApp->processEvents();
-            return;
-        }
-        diag->close();
-        qApp->processEvents();
-        this->setWindowTitle(groupkey);
-        this->ui->WelcomeWidget->hide();
-        this->ui->DataWidget->show();
-        this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
-        emit this->FileLoaded(true);
-    }
+	this->doLoadFile(localpath);
 }
 
 bool DataViewerPage::event(QEvent* e)
@@ -748,7 +724,7 @@ void DataViewerPage::RefillAvailableColor()
     size_t MaxCapacity = this->UsedColorPair.size();
     size_t MaxIdx = this->UsedColorPair.lastKey();
 
-    size_t IdxOffset = std::max(MaxCapacity, MaxIdx);
+	size_t IdxOffset = MaxCapacity > MaxIdx ? MaxCapacity : MaxIdx;
     for (auto iter = this->UsedColorPair.cbegin(); iter != this->UsedColorPair.cend();iter++)
     {
         this->AvailableColorPair.insert(iter.key() + IdxOffset, iter.value());
@@ -899,87 +875,142 @@ std::tuple<double, double> DataViewerPage::ComputeDeltaDirection(double low, dou
 
 void DataViewerPage::LoadLocalFileSlot()
 {
-    QStringList paths;
     QString file = QFileDialog::getOpenFileName(this, tr("Open File"), tr("~"), QString("*.csv"));
     if (file.isEmpty())
         return;
 
-    paths.push_back(file);
-    if (paths.isEmpty())
-        return;
-
-    bool hasOpenedFile = false;
-    QString FirstFilename;
-    int loadedFile = 0;
-    for (auto localpath : paths)
-    {
-        if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
-        {
-            FluentMessageBox::warningOk(this, tr("Unsupported File Type"), localpath + tr(" is unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
-            continue;
-        }
-        else
-        {
-            bool cancel = false;
-            FluentProgressDialog* diag = new FluentProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget());
-            QObject::connect(diag, &FluentProgressDialog::canceled, this, [&cancel]() {
-                cancel = true;
-                });
-            diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
-            diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-            diag->setAttribute(Qt::WA_DeleteOnClose);
-            diag->show();
-            qApp->processEvents();
-            zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
-            r->RegistReadStateCallback([&cancel, this](bool& cancel_) {
-                qApp->processEvents();
-                cancel_ = cancel;
-                });
-            auto groupkey = localpath.split("/").back();
-            if (!r->open() || !this->AddCurveGroup(groupkey, r))
-            {
-                if (!cancel)
-                    FluentMessageBox::warningOk(this, tr("Failed to Open File"), tr("Failed to open ") + localpath + tr(", try again later."), QMessageBox::Ok);
-                diag->close();
-                qApp->processEvents();
-                continue;
-            }
-            else
-            {
-                this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
-                if (!hasOpenedFile)
-                {
-                    FirstFilename = groupkey;
-                }
-                hasOpenedFile = true;
-                loadedFile++;
-                diag->close();
-                qApp->processEvents();
-            }
-
-        }
-    }
-    if (hasOpenedFile)
-    {
-        this->ui->WelcomeWidget->hide();
-        this->ui->DataWidget->show();
-        if (loadedFile > 1)
-        {
-            FirstFilename += tr(" etc.");
-        }
-        this->setWindowTitle(FirstFilename);
-        emit this->FileLoaded(true);
-    }
-    else
-    {
-        this->setWindowTitle(tr("New Data Viewer"));
-        emit this->FileLoaded(false);
-    }
+	this->doLoadFile(file);
 }
 
 void DataViewerPage::LoadRobotFileSlot()
 {
-    FluentMessageBox::criticalOk(this, tr("Unsupported Function"), tr("This Feature is under development, try again in the future release."), QMessageBox::Ok);
+	QString file = RemoteFileSelector::getOpenFileName(this, tr("Open File"), QString("C:/"));
+	if (file.isEmpty())
+		return;
+
+    QThread* DownloadThread = new QThread(this);
+	SftpFileDownloader* Downloader = new SftpFileDownloader();
+	Downloader->moveToThread(DownloadThread);
+	DownloadThread->start();
+	bool DownloadSuccess = false;
+
+    FluentProgressDialog* diag = new FluentProgressDialog(tr("Downloading data..."), tr("Cancel"), 0, 101, this);
+    diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
+    diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+    //diag->setAttribute(Qt::WA_DeleteOnClose);
+	
+	bool setCancel = false;
+    QObject::connect(diag, &FluentProgressDialog::canceled, this, [Downloader,&setCancel]() {
+        setCancel = true;
+        Downloader->CancelDownload();
+        });
+
+    QObject::connect(Downloader, &SftpFileDownloader::DownloadFinished, this, [diag,&DownloadSuccess,this,&setCancel](bool success) {
+		DownloadSuccess = success;
+		qDebug() << "Download finished";
+        if (!setCancel)
+        {
+			qDebug() << "Download success";
+            try
+            {
+                diag->accept();
+            }
+            catch (const std::exception&)
+            {
+				qDebug() << "exception";
+            } 
+        }
+            
+        });
+
+    QObject::connect(Downloader, &SftpFileDownloader::DownloadError, this, [this](QString error) {
+        
+        QTimer::singleShot(0, this, [this,error]() {
+            FluentMessageBox::warningOk(this, tr("Failed to download file."), error);
+            });
+
+        });
+
+    QObject::connect(Downloader, &SftpFileDownloader::DownloadProgress, this, [this,diag,&setCancel](int progress) {
+        if(setCancel)
+			return;
+        diag->UpdatePercentage(progress);
+        });
+
+    //get file name
+	QString filename = file.split("/").back();
+	QString ChachePath = ZSet->getLocalCachePath();
+	QString localpath = ChachePath + "/" + filename;
+	Downloader->DownloadFile(file, localpath);
+    diag->show();
+    diag->exec();
+    
+	DownloadThread->quit();
+	DownloadThread->wait();
+    qApp->processEvents();
+	qDebug() << "Download thread quit";
+	delete DownloadThread;
+    delete Downloader;
+    delete diag;
+    qApp->processEvents();
+
+	if (setCancel)
+		return;
+
+    if (!DownloadSuccess)
+        return;
+
+	this->doLoadFile(localpath);
+    if (!ZSet->isChachingRemoteData())
+    {
+        //delete local file
+		QFile::remove(localpath);
+    }
+}
+
+void DataViewerPage::doLoadFile(const QString& localpath)
+{
+    if (localpath.isEmpty() || !localpath.endsWith(".csv", Qt::CaseInsensitive))
+    {
+        FluentMessageBox::warningOk(this, tr("Unsupported File Type"), tr("Unsupported path or file type, only .csv file type is supported!"), QMessageBox::Ok);
+        return;
+    }
+    else
+    {
+        bool cancel = false;
+        FluentProgressDialog* diag = new FluentProgressDialog(tr("Loading data..."), tr("Cancel"), 0, 0, this);
+        QObject::connect(diag, &FluentProgressDialog::canceled, this, [&cancel]() {
+            cancel = true;
+            });
+        diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
+        diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+        diag->setAttribute(Qt::WA_DeleteOnClose);
+        diag->show();
+        qApp->processEvents();
+
+        zzs::CSVReader::Ptr r = zzs::CSVReader::Create(localpath.toStdString(), true);
+        r->RegistReadStateCallback([&cancel, this](bool& cancel_) {
+            qApp->processEvents();
+            cancel_ = cancel;
+            });
+
+        auto groupkey = localpath.split("/").back();
+        if (!r->open() || !this->AddCurveGroup(groupkey, r))
+        {
+            if (cancel == false)
+                FluentMessageBox::warningOk(this, tr("Failed to Open File"), tr("Failed to open this file, try again later."), QMessageBox::Ok);
+            diag->close();
+            qApp->processEvents();
+            return;
+        }
+        diag->close();
+        qApp->processEvents();
+        this->setWindowTitle(groupkey);
+        this->ui->WelcomeWidget->hide();
+        this->ui->DataWidget->show();
+        this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
+        emit this->FileLoaded(true);
+    }
 }
 
 void DataViewerPage::RemoveButtonClickedSlot()
@@ -1342,7 +1373,7 @@ void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRa
         std::chrono::duration<double> diff = current - start;
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(current - start);
         int time_count = duration.count();
-        time_count = std::max(time_count, static_cast<int>(0));
+        time_count = time_count > 0 ? time_count : 0;
         if (time_count > time)
             break;
         double idx_f = (double)time_count / (double)time * MaxIter;

@@ -5,6 +5,7 @@
 #include "ElaContentDialog.h"
 
 
+
 #define USE_WINDOWS10_STYLE
 class FluentLoadingWidget : public QWidget
 {
@@ -38,6 +39,32 @@ private:
 #endif // WINDOWS10_STYLE
 };
 
+class SimpleInfinateLoadingWidget : public ElaText
+{
+	Q_OBJECT
+public:
+	SimpleInfinateLoadingWidget(size_t FontSize, QWidget* parent = nullptr);
+	~SimpleInfinateLoadingWidget();
+	void start(bool start);
+private:
+	void RefreshLoadingAnimation();
+	void ThemeChanged(ElaThemeType::ThemeMode theme);
+	
+private:
+	ElaText* LoadingText__;
+	QTimer* RefreshTimer__;
+#ifdef USE_WINDOWS10_STYLE
+	const size_t BEGIN_CHARACTER_INDEX__ = 0xE052;
+	const size_t END_CHARACTER_INDEX__ = 0xE0CB;
+	const size_t END_SLEEP_OFFSET = 15;
+#else
+	const size_t BEGIN_CHARACTER_INDEX__ = 0xE100;
+	const size_t END_CHARACTER_INDEX__ = 0xE176;
+	const size_t END_SLEEP_OFFSET = 0;
+#endif // WINDOWS10_STYLE
+	size_t LoadingAnimationCounter__;
+};
+
 
 class FluentProgressDialog : public ElaContentDialog
 {
@@ -45,7 +72,8 @@ class FluentProgressDialog : public ElaContentDialog
 public:
 	FluentProgressDialog(const QString& labelText, const QString& cancelButtonText, int minimum, int maximum, QWidget* parent);
 	~FluentProgressDialog();
-
+	void UpdatePercentage(int p);
+	void UpdateInfo(QString info);
 signals:
 	void canceled();
 private:

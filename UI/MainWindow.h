@@ -11,6 +11,8 @@
 #include "ElaDockWidget.h"
 #include "VirtualTrackpad/VirtualTrackpad.h"
 #include <QResizeEvent>
+#include <QTimer>
+#include "Communication/RCM/SessionManager.h"
 
 
 class MainWindow : public ElaWindow
@@ -21,6 +23,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
 private:
     void InitWindow();
     void InitPage();
@@ -30,9 +33,11 @@ private:
     void changeEvent(QEvent* event);
     void InitMica();
     void InitDockVirtualTrackpad();
+    void InitSSHConnection();
     bool isDarkMode();
     QString getMicaBackground();
 private:
+    QSystemTrayIcon* TrayIcon__;
     HomePage* HomePage__;
     ViewDataPage* ViewDataPage__;
     PilotPage* PilotPage__;
@@ -42,5 +47,11 @@ private:
     ElaDockWidget* WindowBottomDocker__;
     QString AboutKey__;
     zzs::BITBOT_TCP_PROTOCAL_V1* CommHandle__;
+
+
+	QTimer* CheckSSHConnectionTimer__;
+	zzs::SessionManager* SessionManager__;
+	bool Connected__;
+	bool Errored__;
 };
 #endif // MAINWINDOW_H

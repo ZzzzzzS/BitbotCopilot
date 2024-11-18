@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ElaWindow.h"
 #include <QDebug>
 #include <QMessageBox>
@@ -7,6 +7,8 @@
 #include "ElaApplication.h"
 #include "ElaDockWidget.h"
 #include "UI/widget/FluentMessageBox.hpp"
+#include "ElaStatusBar.h"
+#include "QSystemTrayIcon"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -16,15 +18,37 @@ MainWindow::MainWindow(QWidget* parent)
     this->InitPage();
     this->InitDockVirtualTrackpad();
     this->InitFooter();
+    this->InitSSHConnection();
 
     this->InitSignalSlot();
 
     this->moveToCenter();
+
+#ifdef PRERELEASE_BUILD
+    ElaStatusBar* statusBar = new ElaStatusBar(this);
+    QString dateTime = __DATE__;
+    dateTime.replace(" ", "");
+    QDate BuildDate = QLocale(QLocale::English).toDate(dateTime, "MMMdyyyy");
+    qDebug() << BuildDate;
+    QString InfoText = BuildDate.toString(Qt::ISODate) + "-";
+    InfoText += QString(BUILD_VERSION_COMMIT_HASH);
+
+    ElaText* statusText = new ElaText("BETA VERSION! FOR EVALUATION PURPOSE NOLY!   BUILD VERSION: " + InfoText, this);
+    statusText->setTextPixelSize(14);
+    statusText->setMinimumWidth(670);
+    statusBar->addWidget(statusText);
+    this->setStatusBar(statusBar);
+#endif // PRERELEASE_BUILD
 }
 
 MainWindow::~MainWindow()
 {
+    if (this->SessionManager__ != nullptr)
+    {
+        this->SessionManager__->destoryInstance();
+    }
 }
+
 
 void MainWindow::InitWindow()
 {
@@ -41,6 +65,9 @@ void MainWindow::InitWindow()
         eTheme->setThemeMode(ElaThemeType::Dark);
     else
         eTheme->setThemeMode(ElaThemeType::Light);
+
+	this->TrayIcon__ = new QSystemTrayIcon(QIcon(":/logo/Image/ProgramIcon.png"), this);
+    this->TrayIcon__->show();
 }
 
 
@@ -256,6 +283,48 @@ void MainWindow::InitDockVirtualTrackpad()
         });
 }
 
+void MainWindow::InitSSHConnection()
+{
+    if (!ZSet->isBackendRemote())
+        return;
+    
+    this->SessionManager__ = zzs::SessionManager::getInstance();
+    auto serverinfo = ZSet->getBackendConfig_ex();
+	this->SessionManager__->SetServerInfo(std::get<0>(serverinfo).toStdString(),
+        std::get<1>(serverinfo).toStdString(),
+        std::get<2>(serverinfo).toStdString(),
+        std::get<3>(serverinfo).toStdString());
+    bool ok = this->SessionManager__->Connect();
+    if (!ok)
+        return;
+	this->TrayIcon__->showMessage("Bitbot Pilot", "Connecting to Robot", QSystemTrayIcon::MessageIcon::Information, 2000);
+	this->CheckSSHConnectionTimer__ = new QTimer(this);
+	this->CheckSSHConnectionTimer__->setInterval(3000);
+    this->Connected__ = false;
+	QObject::connect(this->CheckSSHConnectionTimer__, &QTimer::timeout, this, [this]() {
+        bool connected = this->SessionManager__->CheckConnection();
+        if (connected && !this->Connected__)
+        {
+            this->TrayIcon__->showMessage("Bitbot Pilot", "Connection with Robot is Established", QSystemTrayIcon::MessageIcon::Information, 5000);
+        }
+        else if (!connected && this->Connected__)
+        {
+            this->TrayIcon__->showMessage("Bitbot Pilot", "Connection with Robot is Lost", QSystemTrayIcon::MessageIcon::Warning, 5000);
+        }
+        this->Connected__ = connected;
+
+        bool error = this->SessionManager__->CheckError();
+        if (error && !this->Errored__)
+        {
+            this->TrayIcon__->showMessage("Bitbot Pilot", "Error Occured: " + QString::fromStdString(this->SessionManager__->GetErrorMsg()), QSystemTrayIcon::MessageIcon::Warning, 2000);
+        }
+        this->Errored__ = error;
+	});
+    
+    
+	this->CheckSSHConnectionTimer__->start();
+}
+
 bool MainWindow::isDarkMode()
 {
 #ifdef Q_OS_WIN
@@ -275,6 +344,8 @@ QString MainWindow::getMicaBackground()
     QSettings wallpaper("HKEY_CURRENT_USER\\Control Panel\\Desktop", QSettings::NativeFormat);
     QString val = wallpaper.value("Wallpaper").toString();
     qDebug() << val;
+	if (QImage(val).isNull())
+		return QString();
     return val;
 #endif
     return QString();

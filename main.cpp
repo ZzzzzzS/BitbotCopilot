@@ -27,15 +27,15 @@ int main(int argc, char* argv[])
 #endif
 
     QApplication a(argc, argv);
-
-    CustomSplashScreen* screen = new CustomSplashScreen(QPixmap(":/logo/Image/splash_screen.png"));
-    screen->show();
-    a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
-    a.processEvents();
-
     eApp->init();
     QFontDatabase::addApplicationFont(":/include/Font/segoe_slboot.ttf");
+    a.processEvents();
+    CustomSplashScreen* screen = new CustomSplashScreen(4000);
+    screen->show();
+    a.processEvents();
 
+    a.setWindowIcon(QIcon(":/logo/Image/ProgramIcon.ico"));
+    a.processEvents();
 
     QTranslator translator;
     //const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -51,19 +51,11 @@ int main(int argc, char* argv[])
     }
 
     MainWindow w;
-    std::this_thread::sleep_for(std::chrono::seconds(2));//wait for mica initialization
+    screen->exec();
     w.show();
+    //screen->close();
     a.processEvents();
-    screen->finish(&w);
     delete screen;
-
-    // ElaContentDialog aaa(&w);
-    // aaa.show();
-    // auto bbb = new FluentLoadingWidget("test1", 0, 10);
-    // aaa.setCentralWidget(bbb);
-    // bbb->UpdatePercentage(5);
-    // aaa.setButtonNumber(2);
-    // aaa.setRightButtonText("ok", false);
 
     return a.exec();
 }

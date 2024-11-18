@@ -28,8 +28,12 @@ public:
 	~SettingsHandler();
 	std::tuple<QString, uint16_t> getIPAndPort();
 	std::tuple<QString, QString> getBackendPathAndName();
+	std::tuple<QString, QString, QString, QString> getBackendConfig_ex();
+	QString getBackendDataRootPath();
 	bool isVIP();
 	bool isBackendRemote();
+	bool isChachingRemoteData();
+	QString getLocalCachePath();
 	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
 
 	AutoRunCmdList  getAutoRunCommandList();

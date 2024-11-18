@@ -13,9 +13,11 @@ if (MSVC)
     add_compile_options(/MP)
 endif()
 
+add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
+
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
-
+find_package(libssh CONFIG REQUIRED)
 
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
@@ -74,6 +76,8 @@ set(DATA_VIEWER_UI
     UI/DataViewer/DataViewerPage.cpp
     UI/DataViewer/DataViewerPage.h
     UI/DataViewer/DataViewerPage.ui
+    UI/DataViewer/RemoteFileSelector.cpp
+    UI/DataViewer/RemoteFileSelector.h
 )
 
 set(VIRTUAL_TRACK_PAD_UI
@@ -111,6 +115,12 @@ set(COM_FILES
     Communication/BitbotTcpProtocalV1.h
     Communication/BitbotTcpProtocalV1.cpp
     Communication/MetaCommunication.hpp
+    Communication/RCM/SessionManager.cpp
+    Communication/RCM/SessionManager.h
+    Communication/RCM/SftpFileSystemModel.cpp
+    Communication/RCM/SftpFileSystemModel.h
+    Communication/RCM/SftpFileTransport.cpp
+    Communication/RCM/SftpFileTransport.h
 )
 
 set(UTIL_FILES
@@ -197,6 +207,7 @@ target_link_libraries(BitbotCopilot PRIVATE
                     XInput
                     Opengl32
                     glu32
+                    ssh
                      )
 
 elseif(LINUX)
@@ -210,11 +221,9 @@ target_link_libraries(BitbotCopilot PRIVATE
                      Qt${QT_VERSION_MAJOR}::PrintSupport
                      Qt${QT_VERSION_MAJOR}::OpenGL
                      OpenGL
+                     ssh
                      )
 endif()
-
-
-
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

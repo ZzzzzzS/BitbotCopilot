@@ -43,6 +43,22 @@ std::tuple<QString, QString> SettingsHandler::getBackendPathAndName()
     return std::make_tuple(Path, Exec);
 }
 
+std::tuple<QString, QString, QString, QString> SettingsHandler::getBackendConfig_ex()
+{
+    QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
+	QString Port = this->WRSettings("BACKEND/PORT", 22).toString();
+    QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot").toString();
+	QString UserPasswd = this->WRSettings("BACKEND/PASSWD", "bitbot").toString();
+
+	return std::make_tuple(IP, Port, UserName, UserPasswd);
+}
+
+QString SettingsHandler::getBackendDataRootPath()
+{
+	QString Path = this->WRSettings("BACKEND/DATAPATH", "~").toString();
+	return Path;
+}
+
 bool SettingsHandler::isVIP()
 {
     return this->WRSettings("COMMON/VIP", true).toBool();
@@ -63,6 +79,18 @@ bool SettingsHandler::isBackendRemote()
     {
         return false;
     }
+}
+
+bool SettingsHandler::isChachingRemoteData()
+{
+    bool is_chache = this->WRSettings("BACKEND/DATAVIEWERCACHE", true).toBool();
+	return is_chache;
+}
+
+QString SettingsHandler::getLocalCachePath()
+{
+	QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();
+	return Path;
 }
 
 std::tuple<QString, QString> SettingsHandler::getRemoteBackendUserNameAndIP()

@@ -70,6 +70,7 @@ private:
 
     void LoadLocalFileSlot();
     void LoadRobotFileSlot();
+	void doLoadFile(const QString& file_path);
     void RemoveButtonClickedSlot();
     void ListWidgetRightClickedSlot(const QPoint& pos);
 

@@ -4,6 +4,7 @@
 #include "QSpacerItem"
 #include "ElaTheme.h"
 #include "ElaPushButton.h"
+#include "QGridLayout"
 
 FluentLoadingWidget::FluentLoadingWidget(QWidget* parent)
 	:FluentLoadingWidget(QString(),0,0,parent)
@@ -133,4 +134,83 @@ FluentProgressDialog::FluentProgressDialog(const QString& labelText, const QStri
 FluentProgressDialog::~FluentProgressDialog()
 {
 	qDebug() << "fluent diag good bye";
+}
+
+void FluentProgressDialog::UpdatePercentage(int p)
+{
+	this->LoadingWidget->UpdatePercentage(p);
+}
+
+void FluentProgressDialog::UpdateInfo(QString info)
+{
+	this->LoadingWidget->UpdateInfo(info);
+}
+
+SimpleInfinateLoadingWidget::SimpleInfinateLoadingWidget(size_t FontSize, QWidget* parent)
+	:ElaText(parent)
+{
+	this->LoadingText__ = this;
+	QFont LoadingFont = this->LoadingText__->font();
+	LoadingFont.setFamily("Segoe Boot Semilight");
+	LoadingFont.setPointSize(FontSize);
+	this->LoadingText__->setFont(LoadingFont);
+	this->LoadingText__->setAlignment(Qt::AlignCenter);
+	this->RefreshTimer__ = new QTimer(this);
+	this->RefreshTimer__->setInterval(30);
+	QObject::connect(this->RefreshTimer__, &QTimer::timeout, this, &SimpleInfinateLoadingWidget::RefreshLoadingAnimation);
+	this->RefreshTimer__->start();
+	this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
+	this->ThemeChanged(eTheme->getThemeMode());
+	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &SimpleInfinateLoadingWidget::ThemeChanged);
+	this->hide();
+	/*QHBoxLayout* layout = new QHBoxLayout(this);
+	layout->addWidget(this->LoadingText__);*/
+}
+
+SimpleInfinateLoadingWidget::~SimpleInfinateLoadingWidget()
+{
+}
+
+void SimpleInfinateLoadingWidget::RefreshLoadingAnimation()
+{
+	unsigned short loadingIdx = (this->LoadingAnimationCounter__ > this->END_CHARACTER_INDEX__) ? this->END_CHARACTER_INDEX__ : this->LoadingAnimationCounter__;
+	this->LoadingText__->setText(QChar(loadingIdx));
+	this->LoadingAnimationCounter__++;
+	if (this->LoadingAnimationCounter__ > this->END_CHARACTER_INDEX__ + this->END_SLEEP_OFFSET)
+		this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
+}
+
+void SimpleInfinateLoadingWidget::ThemeChanged(ElaThemeType::ThemeMode theme)
+{
+	QColor LoadingColor;
+	if (theme == ElaThemeType::Light)
+	{
+		LoadingColor = eTheme->getThemeColor(theme, ElaThemeType::PrimaryNormal);
+	}
+	else
+	{
+		LoadingColor = eTheme->getThemeColor(theme, ElaThemeType::PrimaryNormal);
+	}
+	QPalette LoadingPalette;
+	qDebug() << LoadingColor;
+	QBrush brush_loadingLabel(LoadingColor);
+	brush_loadingLabel.setStyle(Qt::SolidPattern);
+	LoadingPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_loadingLabel);
+	LoadingPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_loadingLabel);
+	this->LoadingText__->setPalette(LoadingPalette);
+}
+
+void SimpleInfinateLoadingWidget::start(bool start)
+{
+	if (start)
+	{
+		this->RefreshTimer__->start();
+		this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
+		this->show();
+	}
+	else
+	{
+		this->RefreshTimer__->stop();
+		this->hide();
+	}
 }

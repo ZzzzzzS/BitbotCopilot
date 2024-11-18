@@ -94,8 +94,8 @@ BackendManager::BackendManager(QWidget* parent)
 
     QObject::connect(this->ui->pushButton_connect, &QPushButton::clicked, this, &BackendManager::ConnectionButtonClickedSlot);
 
-    //QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &BackendManager::ThemeChanged);
-    //this->ThemeChanged(eTheme->getThemeMode());
+    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &BackendManager::ThemeChanged);
+    this->ThemeChanged(eTheme->getThemeMode());
     //this->repaint();
 }
 
@@ -132,6 +132,17 @@ bool BackendManager::StartBackend()
 
 void BackendManager::ThemeChanged(ElaThemeType::ThemeMode themeMode)
 {
+	switch (themeMode)
+	{
+	case ElaThemeType::ThemeMode::Light:
+		this->ui->textEdit_BackendInfo->setStyleSheet("background-color: white; color: black;");
+		break;
+	case ElaThemeType::ThemeMode::Dark:
+		this->ui->textEdit_BackendInfo->setStyleSheet("background-color: black; color: white;");
+		break;
+	default:
+		break;
+	}
 }
 
 void BackendManager::closeEvent(QCloseEvent* event)

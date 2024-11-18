@@ -35,11 +35,11 @@
 		<file>Image/DataViewerWelcom.svg</file>
 		<file>Image/vscode.png</file>
 	    <file>Image/TrackpadDisconnected.png</file>
+		<file>Image/file.png</file>
+		<file>Image/folder.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>
         <file>Image/ProgramIcon.ico</file>
-        <file>Image/splash_screen.png</file>
-        <file>Image/splash_screen.svg</file>
     </qresource>
 </RCC>
