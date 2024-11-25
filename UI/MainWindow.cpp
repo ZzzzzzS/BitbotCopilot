@@ -182,18 +182,6 @@ void MainWindow::InitSignalSlot()
 
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
-    /*if (this->width() < 1360)
-        this->setIsNavigationBarEnable(false);
-    else
-        this->setIsNavigationBarEnable(true);*/
-    this->setMinimumWidth(1050);
-    if (this->width() < 1050)
-    {
-        this->resize(1050, this->height());
-        return;
-    }
-
-
     ElaWindow::resizeEvent(event);
 }
 

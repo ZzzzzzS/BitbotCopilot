@@ -37,6 +37,10 @@
 	    <file>Image/TrackpadDisconnected.png</file>
 		<file>Image/file.png</file>
 		<file>Image/folder.png</file>
+		<file>Image/XboxGamepad/xbox_black_front.png</file>
+		<file>Image/XboxGamepad/xbox_black_top.png</file>
+		<file>Image/XboxGamepad/xbox_white_front.png</file>
+		<file>Image/XboxGamepad/xbox_white_top.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>

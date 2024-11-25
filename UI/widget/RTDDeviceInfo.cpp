@@ -10,6 +10,7 @@ RTDDeviceInfo::RTDDeviceInfo(QWidget* parent)
 	this->ui->tableView->setModel(this->Model__);
 	this->ui->tableView->setAlternatingRowColors(true);
 	this->ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
+    this->ui->tableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::Stretch);
 }
 
 RTDDeviceInfo::~RTDDeviceInfo()
@@ -30,6 +31,8 @@ bool RTDDeviceInfo::setHeaders(const QString& DeviceType, const QVector<QString>
 	this->HorizentalHeader = DeviceList;
 	this->RowLength = DeviceList.size();
 	this->RowNumber =  DeviceSensors.size();
+	this->ui->tableView->setFixedHeight(RowHeight * (this->RowLength+1));
+
 	this->Model__->setHeaders(DeviceList, DeviceSensors);
 
 	return true;
@@ -44,7 +47,7 @@ bool RTDDeviceInfo::setHeaders(const QVector<QString>& UserDataHeader)
 	this->HorizentalHeader = UserDataHeader;
 	this->RowLength = UserDataHeader.size();
 	this->RowNumber = 1;
-	
+	this->ui->tableView->setFixedHeight(RowHeight * (this->RowLength+1));
 	this->Model__->setHeaders(UserDataHeader);
 
 	return true;

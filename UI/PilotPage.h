@@ -87,7 +87,8 @@ private:
 	RTDRobotStates* RobotStateUI__ = nullptr;
 	RTDKeyboardStatus* KeyboardEventUI__ = nullptr;
 	RTDGamepadStatus* GamepadStatusUI__ = nullptr;
-	QSpacerItem* horizontalSpacer = nullptr;
+	QSpacerItem* horizontalSpacerleft = nullptr;
+	QSpacerItem* horizontalSpacerright = nullptr;
 	QVector<RTDDeviceInfo*> DeviceListsUI__;
 	RTDDeviceInfo* UserInfoUI__ = nullptr;
 

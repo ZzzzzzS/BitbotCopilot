@@ -25,7 +25,7 @@ FluentLoadingWidget::FluentLoadingWidget(QString info,int min, int max, QWidget*
 	this->LoadingText__ = new ElaText(this);
 	QFont LoadingFont = this->LoadingText__->font();
 	LoadingFont.setFamily("Segoe Boot Semilight");
-	LoadingFont.setPointSize(25);
+	LoadingFont.setPointSize(24);
 	this->LoadingText__->setFont(LoadingFont);
 	this->LoadingText__->setFixedSize(42, 42);
 	this->LoadingText__->setAlignment(Qt::AlignCenter);

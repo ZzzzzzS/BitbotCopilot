@@ -27,7 +27,7 @@ MetaRTDView::MetaRTDView(RTDViewType type,QWidget *parent)
         this->setFixedSize(2 * WidthBase + 5, 2 * HeightBase + 5);
         break;
     case MetaRTDView::RTDViewType::EXTEND_WINDOW:
-        this->setFixedSize(5 * WidthBase + 20, 1 * HeightBase);
+        //this->setFixedSize(5 * WidthBase + 20, 1 * HeightBase);
         break;
     default:
         this->setFixedSize(WidthBase, HeightBase);

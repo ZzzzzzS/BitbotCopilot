@@ -1,5 +1,6 @@
 #include "SftpFileSystemModel.h"
 #include <QIcon>
+#include <chrono>
 
 SftpFileSystemModel::SftpFileSystemModel(const QString RootPath, QObject* parent)
 	:QAbstractItemModel(parent),
@@ -151,15 +152,15 @@ int SftpFileSystemModel::rowCount(const QModelIndex& parent) const
 int SftpFileSystemModel::columnCount(const QModelIndex& parent) const
 {
 	if (this->DirInfoCache__.empty())
-		return 1;
-	return 1;
+		return 0;
+	return 3;
 }
 
 QModelIndex SftpFileSystemModel::index(int row, int column, const QModelIndex& parent) const
 {
 	if (row < 0 || row >= this->DirInfoCache__.size())
 		return QModelIndex();
-	if (column < 0 || column >= 1)
+	if (column < 0 || column >= 3)
 		return QModelIndex();
 	return this->createIndex(row, column, &this->DirInfoCache__[row]);
 }
@@ -181,8 +182,33 @@ QVariant SftpFileSystemModel::data(const QModelIndex& index, int role) const
 		if (index.row() < 0 || index.row() >= this->DirInfoCache__.size())
 			return QVariant();
 
-		if (index.column() == 0)
+		if (index.column() == 0) // name
+		{
 			return QString::fromLocal8Bit(this->DirInfoCache__[index.row()].name);
+		}
+		else if (index.column() == 1) //time
+		{
+			auto time = this->DirInfoCache__[index.row()].mtime;
+			//to date and time
+			std::time_t t = static_cast<std::time_t>(time);
+			std::tm tm = *std::localtime(&t);
+			char buffer[80];
+			std::strftime(buffer, 80, "%Y-%m-%d %H:%M:%S", &tm);
+			return QString::fromLocal8Bit(buffer);
+
+		}
+		else if (index.column() == 2) //size
+		{
+			uint64_t sz = this->DirInfoCache__[index.row()].size;
+			if (sz < 1024)
+				return QString::number(sz) + " B";
+			else if (sz < 1024 * 1024)
+				return QString::number(sz / 1024) + " KB";
+			else if (sz < 1024 * 1024 * 1024)
+				return QString::number(sz / 1024 / 1024) + " MB";
+			else
+				return QString::number(sz / 1024 / 1024 / 1024) + " GB";
+		}
 		else
 			return QVariant();
 	}
@@ -201,13 +227,34 @@ QVariant SftpFileSystemModel::data(const QModelIndex& index, int role) const
 		else
 			return QVariant();
 	}
+	else if (role == Qt::ToolTipRole)
+	{
+		if (index.row() < 0 || index.row() >= this->DirInfoCache__.size())
+			return QVariant();
+
+		return QString::fromStdString(this->DirInfoCache__[index.row()].longname);
+	}
 	else
 		return QVariant();
 }
 
 QVariant SftpFileSystemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	return QVariant();
+	if(orientation==Qt::Orientation::Vertical)
+		return QVariant();
+	if (role == Qt::DisplayRole)
+	{
+		if (section == 0)
+			return QString(tr("Name"));
+		else if (section == 1)
+			return QString(tr("Date Modified"));
+		else if (section == 2)
+			return QString(tr("Size"));
+		else
+			return QVariant();
+	}
+	else
+		return QVariant();
 }
 
 void SftpFileSystemModel::setOperationInProgress(bool inProgress)
@@ -309,6 +356,10 @@ void SftpFileSystemModel::doCd(const std::string& path)
 		sftp_attributes_free(attr);
 	}
 	sftp_closedir(dir);
+	std::sort(DirInfoCache.begin(), DirInfoCache.end(), [](const sftp_attributes_struct_ex& a, const sftp_attributes_struct_ex& b) {
+		return a.mtime > b.mtime;
+		});
+
 	this->mutex__.lock();
 	this->beginResetModel();
 	this->DirInfoCache__ = DirInfoCache;

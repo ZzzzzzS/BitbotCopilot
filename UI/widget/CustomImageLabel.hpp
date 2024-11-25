@@ -20,7 +20,7 @@ public:
 		this->height__ = (PixHeight == 0) ? img.height() : PixHeight;
 		this->width__ = (PixWidth == 0) ? img.width() : PixWidth;
 		this->img__ = img;
-		this->repaint();
+		this->update();
 	}
 
 

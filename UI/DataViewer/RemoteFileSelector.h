@@ -14,6 +14,7 @@
 #include "ElaLineEdit.h"
 #include "ElaTheme.h"
 #include "ElaTreeView.h"
+#include "ElaTableView.h"
 #include "ElaBreadcrumbBar.h"
 #include "ElaAppBar.h"
 
@@ -68,17 +69,18 @@ private:
 	ElaPushButton* BackwardButton__;
 	ElaPushButton* UpButton__;
 	ElaPushButton* RefreshButton__;
+	ElaPushButton* ShowList__;
 	ElaBreadcrumbBar* PathBar__;
 	QListView* FileList__;
+	QTableView* FileTable__;
 	ElaMenu* Menu__;
 	ElaText* LoadingIcon__;
 	SimpleInfinateLoadingWidget* LoadingWidget__;
 	SftpFileSystemModel* FileSystemModel__;
 	QThread* FileSystemThread__;
-	//ElaAppBar* AppBar__;
 	RemoteFileSelectorDisConnectedWidget* DisconnectedWidget__;
 
 	ElaThemeType::ThemeMode _themeMode;
 	bool _isEnableMica;
-
+	bool ShowListMode__;
 };

@@ -40,4 +40,6 @@ private:
 	size_t RowNumber = 0;
 	QString DeviceTypeName__;
 	RTDDeviceInfoRTableModel* Model__;
+
+	const size_t RowHeight = 30;
 };

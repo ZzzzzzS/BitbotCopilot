@@ -1008,6 +1008,7 @@ void DataViewerPage::doLoadFile(const QString& localpath)
         this->setWindowTitle(groupkey);
         this->ui->WelcomeWidget->hide();
         this->ui->DataWidget->show();
+        qDebug() << this->size();
         this->ui->DataListWidget->expand(this->AggregatedDataGroup__[groupkey].ParentModel->index());
         emit this->FileLoaded(true);
     }

@@ -6,7 +6,7 @@
 
 
 
-#define USE_WINDOWS10_STYLE
+#define USE_WINDOWS10_STYLE //otherwise use windows 11 style which I don't like it
 class FluentLoadingWidget : public QWidget
 {
 	Q_OBJECT
@@ -32,7 +32,7 @@ private:
 	const size_t BEGIN_CHARACTER_INDEX__ = 0xE052;
 	const size_t END_CHARACTER_INDEX__ = 0xE0CB;
 	const size_t END_SLEEP_OFFSET = 15;
-#else
+#else 
 	const size_t BEGIN_CHARACTER_INDEX__ = 0xE100;
 	const size_t END_CHARACTER_INDEX__ = 0xE176;
 	const size_t END_SLEEP_OFFSET = 0;

@@ -233,12 +233,8 @@ void PilotPage::InitConnectionWidget()
 
     /////////////////backend///////////////////////////////////
     this->BackendManagerUI__ = new BackendManager(this->CentralWidget__);
-    QSpacerItem* l_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    QSpacerItem* r_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     QHBoxLayout* hor_box = new QHBoxLayout();
-    hor_box->addSpacerItem(l_space);
     hor_box->addWidget(this->BackendManagerUI__);
-    hor_box->addSpacerItem(r_space);
 
     this->CentralLayout__ = new QVBoxLayout(this->CentralWidget__);
     this->CentralLayout__->addWidget(this->ConnectionAreaUI__);
@@ -332,12 +328,8 @@ void PilotPage::DrawConnectedUI()
     if (this->ConnectedComponentLayout__ == nullptr)
     {
         this->ConnectedComponentLayout__ = new QVBoxLayout();
-        QSpacerItem* l_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-        QSpacerItem* r_space = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         QHBoxLayout* hor_box = new QHBoxLayout();
-        hor_box->addSpacerItem(l_space);
         hor_box->addLayout(this->ConnectedComponentLayout__);
-        hor_box->addSpacerItem(r_space);
 
         //this->CentralLayout__->addLayout(hor_box);
         this->CentralLayout__->insertLayout(1, hor_box);
@@ -350,6 +342,12 @@ void PilotPage::DrawConnectedUI()
     //{
     //    this->BackendConnectionUI__=new 
     //}
+
+    if (this->horizontalSpacerleft == nullptr)
+    {
+        this->horizontalSpacerleft = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        lay->addItem(this->horizontalSpacerleft);
+    }
 
     if (this->KernelStatusUI__ == nullptr)
     {
@@ -397,10 +395,10 @@ void PilotPage::DrawConnectedUI()
         this->GamepadStatusUI__->show();
     }
 
-    if (this->horizontalSpacer == nullptr)
+    if (this->horizontalSpacerright == nullptr)
     {
-        this->horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-        lay->addItem(this->horizontalSpacer);
+        this->horizontalSpacerright = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        lay->addItem(this->horizontalSpacerright);
     }
 
 

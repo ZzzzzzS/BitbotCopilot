@@ -11,7 +11,11 @@
 #include "QTimer"
 #include "ElaScrollBar.h"
 #include "QApplication"
+#include "QScroller"
 #include "QProgressDialog"
+#include "QHeaderView"
+#include "ElaTableView.h"
+#include "QSortFilterProxyModel"
 
 #include "Utils/Settings/SettingsHandler.h"
 
@@ -51,7 +55,8 @@ QString RemoteFileSelector::getOpenFileName(QWidget* parent, const QString& capt
 }
 
 RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, const QString& dir)
-	:QDialog(parent)
+	:QDialog(parent),
+	ShowListMode__(false)
 {
 	//set window attributes
 	this->setWindowModality(Qt::ApplicationModal);
@@ -66,9 +71,11 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 	this->BackwardButton__ = this->CreateFixSizeButton(QChar(ElaIconType::ArrowLeft));
 	this->UpButton__ = this->CreateFixSizeButton(QChar(ElaIconType::ArrowUp));
 	this->RefreshButton__ = this->CreateFixSizeButton(QChar(ElaIconType::ArrowRotateRight));
+	this->ShowList__ = this->CreateFixSizeButton(QChar(ElaIconType::Bars));
 	this->ForwardButton__->setEnabled(false);
 	this->BackwardButton__->setEnabled(false);
 	this->UpButton__->setEnabled(false);
+	this->ShowList__->setEnabled(false);
 	this->RefreshButton__->setEnabled(true);
 
 	this->PathBar__ = new ElaBreadcrumbBar(this);
@@ -93,6 +100,17 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 	this->FileList__->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 	this->FileList__->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
 	this->FileList__->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+	QScroller::grabGesture(this->FileList__, QScroller::LeftMouseButtonGesture);
+
+	this->FileTable__ = new QTableView(this);
+	this->FileTable__->setShowGrid(false);
+	this->FileTable__->verticalHeader()->setVisible(false);
+	this->FileTable__->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
+	this->FileTable__->verticalHeader()->setDefaultSectionSize(40);
+	this->FileTable__->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+	this->FileTable__->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+	this->FileTable__->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+	QScroller::grabGesture(this->FileTable__, QScroller::LeftMouseButtonGesture);
 
 	this->LoadingWidget__ = new SimpleInfinateLoadingWidget(12, this);
 	this->LoadingWidget__->setFixedSize(35, 35);
@@ -109,12 +127,14 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 	topLayout->addWidget(this->RefreshButton__);
 	topLayout->addItem(new QSpacerItem(15, 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	topLayout->addWidget(this->PathBar__);
-	topLayout->addItem(new QSpacerItem(10, 35, QSizePolicy::Fixed, QSizePolicy::Fixed));
+	topLayout->addItem(new QSpacerItem(5, 35, QSizePolicy::Fixed, QSizePolicy::Fixed));
 	topLayout->addWidget(this->LoadingWidget__);
+	topLayout->addWidget(this->ShowList__);
 
 	QVBoxLayout* fileVLay = new QVBoxLayout();
 	fileVLay->addSpacerItem(new QSpacerItem(0, 25, QSizePolicy::Minimum, QSizePolicy::Fixed));
 	fileVLay->addWidget(this->FileList__);
+	fileVLay->addWidget(this->FileTable__);
 	fileVLay->addWidget(this->DisconnectedWidget__);
 	fileVLay->setContentsMargins(0, 0, 0, 0);
 	//fileVLay->addSpacerItem(new QSpacerItem(0, 10, QSizePolicy::Minimum, QSizePolicy::Fixed));
@@ -140,6 +160,7 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 
 	//model->setRootPath(dir);
 	this->FileList__->setModel(this->FileSystemModel__);
+	this->FileTable__->setModel(this->FileSystemModel__);
 
 	//create signal slots and cfg
 	this->ShowConnectedUI(false);
@@ -173,6 +194,27 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 	QObject::connect(this->UpButton__, &ElaPushButton::clicked, this, &RemoteFileSelector::UpButtonClicked);
 	QObject::connect(this->RefreshButton__, &ElaPushButton::clicked, this, &RemoteFileSelector::RefreshButtonClicked);
 	QObject::connect(this->FileList__, &QListView::doubleClicked, this, &RemoteFileSelector::FileDoubleClicked);
+	QObject::connect(this->FileTable__,&QTableView::doubleClicked, this, &RemoteFileSelector::FileDoubleClicked);
+
+	QObject::connect(this->ShowList__, &ElaPushButton::clicked, this, [this]() {
+		this->ShowListMode__ = !this->ShowListMode__;
+		if (this->ShowListMode__)
+		{
+			qDebug() << "set to grid";
+			this->FileList__->setVisible(false);
+			this->FileTable__->setVisible(true);
+			this->ShowList__->setText(QChar(ElaIconType::Grid2));
+		}
+		else
+		{
+			qDebug() << "set to list";
+			this->FileList__->setVisible(true);
+			this->FileTable__->setVisible(false);
+			this->ShowList__->setText(QChar(ElaIconType::Bars));
+		}
+		
+	});
+	
 
 	eApp->syncMica(this);
 	this->ThemeChanged(this->_themeMode);
@@ -218,7 +260,7 @@ void RemoteFileSelector::paintEvent(QPaintEvent* event)
 	painter.drawRoundedRect(pathBarRect, 5, 5);
 	painter.restore();
 
-	if (this->FileList__->isVisible())
+	if (this->FileList__->isVisible() || this->FileTable__->isVisible())
 	{
 		painter.save();
 		painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
@@ -226,11 +268,18 @@ void RemoteFileSelector::paintEvent(QPaintEvent* event)
 		painter.setPen(QPen(pencolor));
 		QColor color2 = (eTheme->getThemeMode() == ElaThemeType::Light) ? QColor(255, 255, 255, 250) : QColor(25, 25, 25, 128);
 		painter.setBrush(color2);
-		QRect FileRect = this->FileList__->rect();
+		QRect FileRect;
+		if (this->ShowListMode__)
+			FileRect = this->FileTable__->rect();
+		else
+			FileRect = this->FileList__->rect();
 		//FileRect.setHeight(FileRect.height() + 10);
 		FileRect.setHeight(this->height());
 		FileRect.setWidth(this->width());
-		FileRect.moveTo(0, this->FileList__->y() - 10);
+		if(this->ShowListMode__)
+			FileRect.moveTo(0, this->FileTable__->y() - 10);
+		else
+			FileRect.moveTo(0, this->FileList__->y() - 10);
 		painter.drawRect(FileRect);
 		painter.restore();
 	}
@@ -283,6 +332,41 @@ void RemoteFileSelector::ThemeChanged(ElaThemeType::ThemeMode mode)
 				border: transparent;
 			}
         )");
+
+		this->FileTable__->setStyleSheet(R"(
+			QTableView {
+			    background-color: transparent;
+				border: none;
+			}
+			
+			QTableView::item {
+			    background-color: transparent;
+			    color: #000000;
+			    border: transparent;
+			}
+			
+			QTableView::item:hover {
+			    background-color: #f5f5f5;
+			}
+			
+			QTableView::item:selected {
+				background-color: #f5f5f5;
+				border: transparent;
+			}
+        )");
+
+		this->FileTable__->horizontalHeader()->setStyleSheet(R"(
+			QHeaderView {
+			    background-color: transparent;
+				border: none;
+			}
+			
+			QHeaderView::section {
+			    background-color: transparent;
+			    color: #000000;
+			    border: transparent;
+			}
+		)");
 	}
 	else
 	{
@@ -312,6 +396,39 @@ void RemoteFileSelector::ThemeChanged(ElaThemeType::ThemeMode mode)
 				border: transparent;
 			}
         )");
+
+		this->FileTable__->setStyleSheet(R"(
+			QTableView {
+			    background-color: transparent;
+				border: none;
+			}
+
+			QTableView::item {
+			    background-color: transparent;
+			    color: #ffffff;
+			    border: transparent;
+			}
+			
+			QTableView::item:hover {
+			    background-color: #4e4e4e;
+			}
+			
+			QTableView::item:selected {
+			    background-color: #4e4e4e;
+				border: transparent;
+			}
+        )");
+
+		this->FileTable__->horizontalHeader()->setStyleSheet(R"(
+			QHeaderView {
+			    background-color: transparent;
+			}
+			
+			QHeaderView::section {
+			    background-color: transparent;
+			    color: #ffffff;
+			}
+		)");
 	}
 	this->FileList__->setPalette(DataListBackgroundPalette);
 	qDebug() << "ThemeChanged";
@@ -323,13 +440,26 @@ void RemoteFileSelector::ShowConnectedUI(bool show)
 	{
 		this->DisconnectedWidget__->setVisible(false);
 		this->PathBar__->setBreadcrumbList(QStringList());
-		this->FileList__->setVisible(true);
+		if (this->ShowListMode__)
+		{
+			this->FileList__->setVisible(false);
+			this->FileTable__->setVisible(true);
+			this->ShowList__->setText(QChar(ElaIconType::Grid2));
+		}
+		else
+		{
+			this->FileList__->setVisible(true);
+			this->FileTable__->setVisible(false);
+			this->ShowList__->setText(QChar(ElaIconType::Bars));
+		}
+
 	}
 	else
 	{
 		this->DisconnectedWidget__->setVisible(true);
 		this->PathBar__->setBreadcrumbList(QStringList({tr("Connection Lost")}));
 		this->FileList__->setVisible(false);
+		this->FileTable__->setVisible(false);
 	}
 }
 
@@ -341,10 +471,12 @@ void RemoteFileSelector::EnableButton(bool enable)
 		this->BackwardButton__->setEnabled(false);
 		this->UpButton__->setEnabled(false);
 		this->RefreshButton__->setEnabled(false);
+		this->ShowList__->setEnabled(false);
 	}
 	else
 	{
 		this->RefreshButton__->setEnabled(true);
+		this->ShowList__->setEnabled(this->FileSystemModel__->rowCount()!=0);
 		this->UpButton__->setEnabled(!this->FileSystemModel__->isCurrentPathRoot());
 		this->ForwardButton__->setEnabled(this->FileSystemModel__->CanForward());
 		this->BackwardButton__->setEnabled(this->FileSystemModel__->CanBackward());

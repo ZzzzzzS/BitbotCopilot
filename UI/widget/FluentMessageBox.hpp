@@ -25,7 +25,7 @@ public:
 		auto Wid = new ElaContentDialog(parent, QString(tr("Infomation: ")), title_ + text);
 		//Wid->setTitleSubTitle(QString(tr("Infomation: ")), title_ + text);
 		Wid->setButtonNumber(1);
-		Wid->setRightButtonText(tr("Ok"), true);
+		Wid->setRightButtonText(tr("OK"), true);
 		auto rtn = Wid->exec();
 		delete Wid;
 	}
@@ -49,7 +49,7 @@ public:
 		auto Wid = new ElaContentDialog(parent, QString(tr("Warning: ")), title_ + text);
 		Wid->setTitleSubTitle(QString(tr("Warning: ")), title_ + text);
 		Wid->setButtonNumber(1);
-		Wid->setRightButtonText(tr("Ok"), true);
+		Wid->setRightButtonText(tr("OK"), true);
 		auto rtn = Wid->exec();
 		delete Wid;
 	}
@@ -73,7 +73,7 @@ public:
 		auto Wid = new ElaContentDialog(parent, QString(tr("Critical: ")), title_ + text);
 		//Wid->setTitleSubTitle(QString(tr("Critical: ")), title_ + text);
 		Wid->setButtonNumber(1);
-		Wid->setRightButtonText(tr("Ok"), true);
+		Wid->setRightButtonText(tr("OK"), true);
 		auto rtn = Wid->exec();
 		delete Wid;
 	}
