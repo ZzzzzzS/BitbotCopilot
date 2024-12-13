@@ -26,13 +26,20 @@ public:
 
 signals:
 	void VirtualButtonPressed(QString, int);
+	void VirtualButtonValueSet(QString, double);
 	void VirtualTrackpadMoved(QString, double, QString, double);
 
 private:
 	void SetTheme(ElaThemeType::ThemeMode mode);
+	void SetupKeyValueMode();
+	void setValueMode(bool mode);
+	void ApplyKeyValueSlot();
 private:
 	Ui::VirtualTrackpad* ui;
 	QWidget* ButtonsUI__;
 	ElaFlowLayout* ButtonsLayout__;
 	QMap<ElaPushButton*, QString> ButtonList__;
+
+	bool ValueMode = false;
+	bool isConnected = false;
 };

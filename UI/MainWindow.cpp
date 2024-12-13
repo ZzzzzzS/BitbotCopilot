@@ -247,6 +247,12 @@ void MainWindow::InitDockVirtualTrackpad()
         map.insert(Event, QVariant(KeyState));
         this->CommHandle__->SendUserCommand(map);
         });
+    
+    QObject::connect(this->VirtualTrackpad__,&VirtualTrackpad::VirtualButtonValueSet, this, [this](QString Event, double KeyState) {
+        QVariantMap map;
+        map.insert(Event, QVariant(KeyState));
+        this->CommHandle__->SendUserCommand(map);
+        });
 
     QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualTrackpadMoved, this, [this](QString Axis1, double value1, QString Axis2, double value2) {
         QVariantMap map;

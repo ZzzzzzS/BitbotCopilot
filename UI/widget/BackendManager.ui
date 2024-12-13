@@ -58,7 +58,7 @@ Manager</string>
         </widget>
        </item>
        <item>
-        <widget class="CustomImageLabel" name="label_icon">
+        <widget class="ElaText" name="label_icon">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -126,11 +126,6 @@ Manager</string>
    <class>ElaPushButton</class>
    <extends>QPushButton</extends>
    <header>ElaPushButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CustomImageLabel</class>
-   <extends>QLabel</extends>
-   <header>CustomImageLabel.hpp</header>
   </customwidget>
   <customwidget>
    <class>ElaPlainTextEdit</class>

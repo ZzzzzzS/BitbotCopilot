@@ -27,7 +27,12 @@ BackendManager::BackendManager(QWidget* parent)
     }
 
     this->BackendProcess__ = new QProcess(this);
-    this->ui->label_icon->setPixmap(QPixmap(":/UI/Image/backend_icon.png"), 40, 40);
+    this->ui->label_icon->setText(QChar(ElaIconType::Server));
+	QFont font = this->ui->label_icon->font();
+	font.setPointSize(28);
+    font.setFamily("ElaAwesome");
+	this->ui->label_icon->setFont(font);
+	this->ui->label_icon->setAlignment(Qt::AlignCenter);
     //this->ui->textEdit_BackendInfo->setReadOnly(true);
     //this->ui->textEdit_BackendInfo->setBackgroundVisible(true);
 

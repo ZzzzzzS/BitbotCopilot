@@ -787,7 +787,7 @@ void DataViewerPage::SetupCurve(const QString& CurveGroup, const QString& CurveN
     tracer->setBrush(Qt::SolidPattern);
     tracer->setSize(6);
     tracer->setGraph(graph);
-    tracer->setVisible(true);
+    tracer->setVisible(false);
     tracer->position->setType(QCPItemPosition::ptPlotCoords);
     this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName] = tracer;
 }
@@ -809,6 +809,7 @@ void DataViewerPage::RemoveCurve(const QString& CurveGroup, const QString& Curve
     //qDebug() << this->UsedColorPair;
 
     auto tracer = this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName];
+	tracer->setVisible(false);
     tracer->setGraph(nullptr);
     this->PlotHandle->removeItem(tracer);
     this->AggregatedDataGroup__[CurveGroup].Tracer.remove(CurveName);

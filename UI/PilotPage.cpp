@@ -144,18 +144,61 @@ void PilotPage::InitConnectionWidget()
     horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
     auto horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    CustomImageLabel* icon = new CustomImageLabel(this->ConnectionAreaUI__);
+    ElaText* icon = new ElaText(this->ConnectionAreaUI__);
+	QFont iconFont = icon->font();
+	iconFont.setFamily("ElaAwesome");
+	iconFont.setPixelSize(28);
     icon->setFixedSize(40, 40);
-    icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"), 40, 40);
+    icon->setText(QChar(ElaIconType::Computer));
+	icon->setFont(iconFont);
+	icon->setAlignment(Qt::AlignCenter);
+    //icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"));
+	//icon->setScaledContents(true);
     ElaText* name = new ElaText(this->ConnectionAreaUI__);
     name->setText(tr("Frontend Manager"));
     QFont namefont;
-    namefont.setPixelSize(18);
+    namefont.setPixelSize(16);
     name->setFont(namefont);
-    //name->setFont(font);
-    horizontalLayout_3->addWidget(icon);
-    horizontalLayout_3->addWidget(name);
+    name->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
+	ElaText* subname = new ElaText(this->ConnectionAreaUI__);
+    subname->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    subname->setWordWrap(false);
+	subname->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
+    subname->setText(tr("Instantly access your robot states from remote"));
+	QFont subnamefont;
+	subnamefont.setPixelSize(10);
+	subname->setFont(subnamefont);
+
+    auto LamsetTheme= [subname](ElaThemeType::ThemeMode Mode) {
+        QPalette LabelPalette;
+        if (Mode == ElaThemeType::ThemeMode::Dark)
+        {
+            QBrush brush_subLabel(QColor(206, 206, 206, 255));
+            brush_subLabel.setStyle(Qt::SolidPattern);
+            LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
+            LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
+        }
+        else
+        {
+            QBrush brush_subLabel(QColor(55, 55, 55, 255));
+            brush_subLabel.setStyle(Qt::SolidPattern);
+            LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
+            LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
+        }
+        subname->setPalette(LabelPalette);
+		};
+	LamsetTheme(eTheme->getThemeMode());
+    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, LamsetTheme);
+
+	QVBoxLayout* iconLayout = new QVBoxLayout();
+	iconLayout->addWidget(name);
+	iconLayout->addWidget(subname);
+
+    horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
+    horizontalLayout_3->addWidget(icon);
+    horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
+	horizontalLayout_3->addLayout(iconLayout);
 
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
@@ -193,6 +236,7 @@ void PilotPage::InitConnectionWidget()
     label_2->setObjectName(QString::fromUtf8("label_2"));
     label_2->setText("          " + tr("Port:"));
     label_2->setFont(font);
+    label_2->setWordWrap(false);
 
     horizontalLayout->addWidget(label_2);
 
@@ -213,9 +257,31 @@ void PilotPage::InitConnectionWidget()
     horizontalLayout_2->addItem(horizontalSpacer);
 
     this->PushButton_Connect__ = new ElaPushButton(this->ConnectionAreaUI__);
+	this->PushButton_Connect__->setBorderRadius(5);
     this->PushButton_Connect__->setObjectName(QString::fromUtf8("pushButton_Connect"));
     this->PushButton_Connect__->setFont(font);
     this->PushButton_Connect__->setText(tr("connect"));
+
+    QColor ButtonLightDefaultColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryNormal));
+    QColor ButtonLightHoverColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryHover));
+    QColor ButtonLightPressColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Light, ElaThemeType::ThemeColor::PrimaryPress));
+    QColor ButtonLightTextColor(255, 255, 255);
+
+    QColor ButtonDarkDefaultColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryNormal));
+    QColor ButtonDarkHoverColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryHover));
+    QColor ButtonDarkPressColor(eTheme->getThemeColor(ElaThemeType::ThemeMode::Dark, ElaThemeType::ThemeColor::PrimaryPress));
+    QColor ButtonDarkTextColor(0, 0, 0);
+
+    this->PushButton_Connect__->setDarkDefaultColor(ButtonDarkDefaultColor);
+	this->PushButton_Connect__->setDarkHoverColor(ButtonDarkHoverColor);
+	this->PushButton_Connect__->setDarkPressColor(ButtonDarkPressColor);
+	this->PushButton_Connect__->setDarkTextColor(ButtonDarkTextColor);
+	this->PushButton_Connect__->setLightDefaultColor(ButtonLightDefaultColor);
+	this->PushButton_Connect__->setLightHoverColor(ButtonLightHoverColor);
+	this->PushButton_Connect__->setLightPressColor(ButtonLightPressColor);
+	this->PushButton_Connect__->setLightTextColor(ButtonLightTextColor);
+    
+	this->PushButton_Connect__->setFixedWidth(100);
 
     horizontalLayout_2->addWidget(this->PushButton_Connect__);
 
@@ -322,7 +388,7 @@ void PilotPage::InitUserInput()
 }
 void PilotPage::DrawConnectedUI()
 {
-    this->PushButton_Connect__->setText(tr("disconnect"));
+    this->PushButton_Connect__->setText(tr("Disconnect"));
     this->PushButton_Connect__->setEnabled(true);
 
     if (this->ConnectedComponentLayout__ == nullptr)
@@ -508,7 +574,7 @@ void PilotPage::DrawDisconnectedUI()
     qApp->processEvents();
 
     //reset ui
-    this->PushButton_Connect__->setText(tr("connect"));
+    this->PushButton_Connect__->setText(tr("Connect"));
     this->PushButton_Connect__->setEnabled(true);
 }
 
@@ -655,7 +721,7 @@ void PilotPage::ConnectionButtonClickedSlot()
     this->IP = this->LineEdit_IP__->text();
     this->port = this->SpinBox_Port__->value();
 
-    if (this->PushButton_Connect__->text() == tr("connect"))
+    if (this->PushButton_Connect__->text() == tr("Connect"))
     {
         if (bool ok = this->CommHandle__->Connect(IP, port, 3000); ok == false)
         {
@@ -667,7 +733,7 @@ void PilotPage::ConnectionButtonClickedSlot()
             this->PushButton_Connect__->setEnabled(false);
         }
     }
-    else if (this->PushButton_Connect__->text() == tr("disconnect"))
+    else if (this->PushButton_Connect__->text() == tr("Disconnect"))
     {
         if (!this->CommHandle__->Disconnect())
         {

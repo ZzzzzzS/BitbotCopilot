@@ -2,19 +2,24 @@
 #include "QHBoxLayout"
 #include <QFont>
 #include <QTimer>
+#include "ElaApplication.h"
 
 RTDKeyboardStatus::RTDKeyboardStatus(QWidget *parent)
 	: MetaRTDView(MetaRTDView::RTDViewType::SMALL_WINDOW,parent)
 	, ui(new Ui::RTDKeyboardStatusClass())
 {
 	ui->setupUi(this);
-    this->ScrollAreaThemeChangedSlot(eTheme->getThemeMode());
-    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &RTDKeyboardStatus::ScrollAreaThemeChangedSlot);
+    //QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &RTDKeyboardStatus::ScrollAreaThemeChangedSlot);
     this->ui->label->setPixmap(QPixmap(":/UI/Image/keyboard_icon.png"), 70, 70);
-    this->CentralWidget = this->ui->scrollAreaWidgetContents;
+	this->CentralWidget = new QWidget();
+	this->CentralWidget->setStyleSheet("background-color: rgba(255, 255, 255, 0);");
+    eApp->syncMica(this->CentralWidget);
+	this->ui->scrollArea->setWidget(this->CentralWidget);
     this->CentralLayout = new QVBoxLayout(this->CentralWidget);
     this->CentralLayout->setContentsMargins(0, 0, 1, 1);
     this->CentralLayout->setAlignment(Qt::AlignCenter);
+    //this->CentralWidget->setAttribute(Qt::WA_TranslucentBackground);
+    //this->ScrollAreaThemeChangedSlot(eTheme->getThemeMode());
 }
 
 RTDKeyboardStatus::~RTDKeyboardStatus()
@@ -47,22 +52,18 @@ void RTDKeyboardStatus::ScrollAreaThemeChangedSlot(ElaThemeType::ThemeMode mode)
     if (mode == ElaThemeType::ThemeMode::Light)
     {
        styleSheet = QString::fromUtf8(R"(
-       #scrollAreaWidgetContents {
-            background-color: rgba(255, 255, 255, 70); 
-        },
-        #scrollArea {
-            background-color: rgba(255, 255, 255, 70); 
+        {
+            background-color: rgba(255, 255, 255, 0); 
+            background: rgba(255, 255, 255, 0);
         }
         )");
     }
     else
     {
        styleSheet = QString::fromUtf8(R"(
-       #scrollAreaWidgetContents {
-            background-color: rgba(80, 80, 80, 70); 
-        },
-        #scrollArea {
-            background-color: rgba(80, 80, 80, 70); 
+       {
+            background-color: rgba(80, 80, 80, 0); 
+            background: rgba(80, 80, 80, 0);
         }
         )");
     } 
