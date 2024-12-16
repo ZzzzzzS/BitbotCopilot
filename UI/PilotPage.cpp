@@ -523,6 +523,7 @@ void PilotPage::DrawConnectedUI()
     }
     else
     {
+        this->UserInfoUI__->setHeaders(this->ExtraHeader);
         this->UserInfoUI__->show();
     }
 

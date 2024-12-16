@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
     add_compile_options(/MP)
+    add_definitions(-D_WINSOCKAPI_)
 endif()
 
 add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
@@ -18,6 +19,9 @@ add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
 find_package(libssh CONFIG REQUIRED)
+message("Qt version: ${QT_VERSION_MAJOR}, ${QT_VERSION_MINOR}, ${QT_VERSION_PATCH}")
+message("libssh found: ${libssh_FOUND}")
+
 
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)

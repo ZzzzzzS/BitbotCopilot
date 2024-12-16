@@ -47,7 +47,7 @@ bool RTDDeviceInfo::setHeaders(const QVector<QString>& UserDataHeader)
 	this->HorizentalHeader = UserDataHeader;
 	this->RowLength = UserDataHeader.size();
 	this->RowNumber = 1;
-	this->ui->tableView->setFixedHeight(RowHeight * (this->RowLength+1));
+	this->ui->tableView->setFixedHeight(RowHeight*2);
 	this->Model__->setHeaders(UserDataHeader);
 
 	return true;

@@ -142,3 +142,4 @@ ThirdParty/ElaWidgetTools/cmake_install.cmake
 CMakeSettings.json
 data/
 .VSCodeCounter/
+vcpkg_installed/
