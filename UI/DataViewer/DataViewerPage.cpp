@@ -20,11 +20,12 @@
 #include "QEventLoop"
 #include "Utils/Settings/SettingsHandler.h"
 
-DataViewerPage::DataViewerPage(QWidget* parent)
+DataViewerPage::DataViewerPage(QWidget* parent, bool RTMode)
     : QWidget(parent)
     , ui(new Ui::DataViewerPage)
     , AggregatedDataModel__(nullptr)
     , WindowTheme(Theme_e::Light)
+    , RTMode(RTMode)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("New Data Viewer"));
@@ -74,6 +75,9 @@ DataViewerPage::DataViewerPage(QWidget* parent)
     this->InitFloatingAxis();
     this->InitTouchEvents();
 
+    if (RTMode)
+        this->InitRealTimeMode();
+
     this->SetTheme((eTheme->getThemeMode() == ElaThemeType::ThemeMode::Light) ? Theme_e::Light : Theme_e::Dark);
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, [this](ElaThemeType::ThemeMode mode) {
         if (mode == ElaThemeType::ThemeMode::Light)
@@ -85,6 +89,108 @@ DataViewerPage::DataViewerPage(QWidget* parent)
             this->SetTheme(Theme_e::Dark);
         }
         });
+}
+
+void DataViewerPage::InitRealTimeMode()
+{
+    this->ui->DataWidget->show();
+    this->ui->WelcomeWidget->hide();
+    this->ui->pushButton_clean->hide();
+    this->ui->PushButton_load->hide();
+    this->ui->SquareZoomButton->hide();
+    this->ui->pushButton_savePDF->hide();
+    this->setAcceptDrops(false);
+    this->PlotHandle->setInteractions(QCP::iRangeZoom | QCP::iRangeDrag);
+    this->AggregatedDataModel__->setHorizontalHeaderLabels(QStringList(QString("    " + tr("Real-Time Data"))));
+}
+
+void DataViewerPage::SetUpRealTimeHeader(const QVector<QString>& HeaderName, const QVector<QVector<QString>>& HeaderContent)
+{
+    if (!this->RTMode)
+        return;
+
+    for (size_t i = 0; i < HeaderName.size(); i++)
+    {
+        QStringList HeaderContentList = HeaderContent[i].toList();
+        this->AddEmptyCurveGroup(HeaderName[i], HeaderContentList);
+    }
+    this->ui->DataListWidget->collapseAll();
+}
+
+void DataViewerPage::UpdateRealTimeData(const QString& GroupName, const QStringList& CurveNames, const QVector<double>& Data)
+{
+    if (!this->RTMode)
+        return;
+
+    if (!this->AggregatedDataGroup__.contains(GroupName))
+        return;
+
+    DataGroup_t& Group = this->AggregatedDataGroup__[GroupName];
+
+    int i = 0;
+
+    QCPRange Range = this->PlotHandle->yAxis->range();
+    Group.t.push_back(Group.t.size());
+    for (auto& curve : CurveNames)
+    {
+        if (!Group.Curves.contains(curve))
+            continue;
+
+        QVector<double>& CurveData = Group.Curves[curve];
+        CurveData.push_back(Data[i]);
+
+        if (Group.VisiableCurve.contains(curve))
+        {
+            Group.VisiableCurve[curve]->addData(Group.t.back(), Data[i]);
+
+            if (Data[i] > Range.upper)
+            {
+                Range.upper = Data[i];
+                this->PlotHandle->yAxis->setRange(Range);
+            }
+            else if (Data[i] < Range.lower)
+            {
+                Range.lower = Data[i];
+                this->PlotHandle->yAxis->setRange(Range);
+            }
+        }
+
+        i++;
+    }
+
+}
+
+void DataViewerPage::RefreshRealTimeData()
+{
+    if (!this->RTMode)
+        return;
+
+    QCPRange Range = this->PlotHandle->xAxis->range();
+    double rangeLength = Range.size();
+    double t = this->AggregatedDataGroup__.first().t.back();
+    if (t > Range.upper)
+    {
+        this->PlotHandle->xAxis->setRangeUpper(t);
+        this->PlotHandle->xAxis->setRangeLower(t - rangeLength);
+
+    }
+    if (this->isVisible())
+        this->PlotHandle->replot(QCustomPlot::rpQueuedRefresh);
+    else
+        qDebug() << "plot is not visible, skip replot";
+}
+
+void DataViewerPage::ResetRealTimeUI()
+{
+    if (!this->RTMode)
+        return;
+
+    QStringList keys = this->AggregatedDataGroup__.keys();
+    for (auto key : keys)
+    {
+        this->RemoveCurveGroup(key);
+    }
+    this->update();
 }
 
 DataViewerPage::~DataViewerPage()
@@ -172,7 +278,7 @@ void DataViewerPage::SetTheme(Theme_e theme)
 
 
     QPalette LabelPalette;
-	QPalette DataListBackgroundPalette;
+    QPalette DataListBackgroundPalette;
     if (theme == Theme_e::Light)
     {
         QColor GridLightColor(226, 226, 226);
@@ -209,10 +315,10 @@ void DataViewerPage::SetTheme(Theme_e theme)
         LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
         LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
 
-		QBrush brush_DataListBackground(QColor(0, 0, 0, 0));
-		brush_DataListBackground.setStyle(Qt::SolidPattern);
-		DataListBackgroundPalette.setBrush(QPalette::Active, QPalette::Base, brush_DataListBackground);
-		DataListBackgroundPalette.setBrush(QPalette::Inactive, QPalette::Base, brush_DataListBackground);
+        QBrush brush_DataListBackground(QColor(0, 0, 0, 0));
+        brush_DataListBackground.setStyle(Qt::SolidPattern);
+        DataListBackgroundPalette.setBrush(QPalette::Active, QPalette::Base, brush_DataListBackground);
+        DataListBackgroundPalette.setBrush(QPalette::Inactive, QPalette::Base, brush_DataListBackground);
 
         QColor ColorRefLine(120, 120, 120);
         this->PlotRefLine__->setPen(QPen(ColorRefLine, 2, Qt::SolidLine));
@@ -264,7 +370,7 @@ void DataViewerPage::SetTheme(Theme_e theme)
         this->WindowTheme = Theme_e::Dark;
     }
     this->ui->label_subtitle->setPalette(LabelPalette);
-	this->ui->DataListWidget->setPalette(DataListBackgroundPalette);
+    this->ui->DataListWidget->setPalette(DataListBackgroundPalette);
 
     QList<QColor> CurveColor;
     for (auto GroupItem = this->AggregatedDataGroup__.begin(); GroupItem != this->AggregatedDataGroup__.end(); GroupItem++)
@@ -282,6 +388,9 @@ void DataViewerPage::SetTheme(Theme_e theme)
 
 void DataViewerPage::dragEnterEvent(QDragEnterEvent* event)
 {
+    if (this->RTMode)
+        return;
+
     qDebug() << "drag enter";
     if (event->mimeData()->hasUrls() && event->mimeData()->urls().size() == 1)
     {
@@ -292,12 +401,15 @@ void DataViewerPage::dragEnterEvent(QDragEnterEvent* event)
 
 void DataViewerPage::dropEvent(QDropEvent* event)
 {
+    if (this->RTMode)
+        return;
+
     qDebug() << "DropEvent";
     auto urls = event->mimeData()->urls();
     auto ImageUrl = urls[0];
     qDebug() << ImageUrl;
     QString localpath = ImageUrl.toLocalFile();
-	this->doLoadFile(localpath);
+    this->doLoadFile(localpath);
 }
 
 bool DataViewerPage::event(QEvent* e)
@@ -565,6 +677,47 @@ bool DataViewerPage::AddCurveGroup(const QString& GroupName, zzs::CSVReader::Ptr
     return true;
 }
 
+bool DataViewerPage::AddEmptyCurveGroup(const QString& GroupName, const QVector<QString>& CurveName)
+{
+    if (GroupName.isEmpty()) return false;
+    if (this->AggregatedDataGroup__.contains(GroupName)) return false;
+
+    DataGroup_t ng;
+    QStandardItem* ParentModel = new QStandardItem(GroupName);
+    ParentModel->setCheckable(true);
+    ParentModel->setCheckState(Qt::CheckState::Unchecked);
+    ParentModel->setEditable(false);
+    ng.ParentModel = ParentModel;
+
+    for (auto& QKey : CurveName)
+    {
+        QVector<double> QCurve;
+        ng.Curves.insert(QKey, QCurve);
+        //linked model
+        QStandardItem* ChildModel = new QStandardItem(QKey);
+        ChildModel->setEditable(false);
+        ChildModel->setCheckable(true);
+        ChildModel->setCheckState(Qt::CheckState::Unchecked);
+        ParentModel->appendRow(ChildModel);
+        ng.LinkedModelItem.insert(QKey, ChildModel);
+    }
+
+    QVector<double> t;
+    ng.t = t;
+
+
+    this->AggregatedDataGroup__.insert(GroupName, ng);
+    this->AggregatedDataModel__->appendRow(ParentModel);
+
+    QStringList keys = this->AggregatedDataGroup__[GroupName].Curves.keys();
+    QString GroupKey = GroupName.split('.')[0];
+    for (auto key : keys)
+    {
+        this->ui->SearchBoxWidget->addSuggestion(GroupKey + "/" + key);
+    }
+    return true;
+}
+
 bool DataViewerPage::RemoveCurveGroup(const QString& GroupName)
 {
     if (!this->AggregatedDataGroup__.contains(GroupName)) return false;
@@ -724,7 +877,7 @@ void DataViewerPage::RefillAvailableColor()
     size_t MaxCapacity = this->UsedColorPair.size();
     size_t MaxIdx = this->UsedColorPair.lastKey();
 
-	size_t IdxOffset = MaxCapacity > MaxIdx ? MaxCapacity : MaxIdx;
+    size_t IdxOffset = MaxCapacity > MaxIdx ? MaxCapacity : MaxIdx;
     for (auto iter = this->UsedColorPair.cbegin(); iter != this->UsedColorPair.cend();iter++)
     {
         this->AvailableColorPair.insert(iter.key() + IdxOffset, iter.value());
@@ -809,7 +962,7 @@ void DataViewerPage::RemoveCurve(const QString& CurveGroup, const QString& Curve
     //qDebug() << this->UsedColorPair;
 
     auto tracer = this->AggregatedDataGroup__[CurveGroup].Tracer[CurveName];
-	tracer->setVisible(false);
+    tracer->setVisible(false);
     tracer->setGraph(nullptr);
     this->PlotHandle->removeItem(tracer);
     this->AggregatedDataGroup__[CurveGroup].Tracer.remove(CurveName);
@@ -880,92 +1033,92 @@ void DataViewerPage::LoadLocalFileSlot()
     if (file.isEmpty())
         return;
 
-	this->doLoadFile(file);
+    this->doLoadFile(file);
 }
 
 void DataViewerPage::LoadRobotFileSlot()
 {
-	QString file = RemoteFileSelector::getOpenFileName(this, tr("Open File"), QString("C:/"));
-	if (file.isEmpty())
-		return;
+    QString file = RemoteFileSelector::getOpenFileName(this, tr("Open File"), QString("C:/"));
+    if (file.isEmpty())
+        return;
 
     QThread* DownloadThread = new QThread(this);
-	SftpFileDownloader* Downloader = new SftpFileDownloader();
-	Downloader->moveToThread(DownloadThread);
-	DownloadThread->start();
-	bool DownloadSuccess = false;
+    SftpFileDownloader* Downloader = new SftpFileDownloader();
+    Downloader->moveToThread(DownloadThread);
+    DownloadThread->start();
+    bool DownloadSuccess = false;
 
     FluentProgressDialog* diag = new FluentProgressDialog(tr("Downloading data..."), tr("Cancel"), 0, 101, this);
     diag->setWindowFlag(Qt::WindowCloseButtonHint, false);
     diag->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     //diag->setAttribute(Qt::WA_DeleteOnClose);
-	
-	bool setCancel = false;
-    QObject::connect(diag, &FluentProgressDialog::canceled, this, [Downloader,&setCancel]() {
+
+    bool setCancel = false;
+    QObject::connect(diag, &FluentProgressDialog::canceled, this, [Downloader, &setCancel]() {
         setCancel = true;
         Downloader->CancelDownload();
         });
 
-    QObject::connect(Downloader, &SftpFileDownloader::DownloadFinished, this, [diag,&DownloadSuccess,this,&setCancel](bool success) {
-		DownloadSuccess = success;
-		qDebug() << "Download finished";
+    QObject::connect(Downloader, &SftpFileDownloader::DownloadFinished, this, [diag, &DownloadSuccess, this, &setCancel](bool success) {
+        DownloadSuccess = success;
+        qDebug() << "Download finished";
         if (!setCancel)
         {
-			qDebug() << "Download success";
+            qDebug() << "Download success";
             try
             {
                 diag->accept();
             }
             catch (const std::exception&)
             {
-				qDebug() << "exception";
-            } 
+                qDebug() << "exception";
+            }
         }
-            
+
         });
 
     QObject::connect(Downloader, &SftpFileDownloader::DownloadError, this, [this](QString error) {
-        
-        QTimer::singleShot(0, this, [this,error]() {
+
+        QTimer::singleShot(0, this, [this, error]() {
             FluentMessageBox::warningOk(this, tr("Failed to download file."), error);
             });
 
         });
 
-    QObject::connect(Downloader, &SftpFileDownloader::DownloadProgress, this, [this,diag,&setCancel](int progress) {
-        if(setCancel)
-			return;
+    QObject::connect(Downloader, &SftpFileDownloader::DownloadProgress, this, [this, diag, &setCancel](int progress) {
+        if (setCancel)
+            return;
         diag->UpdatePercentage(progress);
         });
 
     //get file name
-	QString filename = file.split("/").back();
-	QString ChachePath = ZSet->getLocalCachePath();
-	QString localpath = ChachePath + "/" + filename;
-	Downloader->DownloadFile(file, localpath);
+    QString filename = file.split("/").back();
+    QString ChachePath = ZSet->getLocalCachePath();
+    QString localpath = ChachePath + "/" + filename;
+    Downloader->DownloadFile(file, localpath);
     diag->show();
     diag->exec();
-    
-	DownloadThread->quit();
-	DownloadThread->wait();
+
+    DownloadThread->quit();
+    DownloadThread->wait();
     qApp->processEvents();
-	qDebug() << "Download thread quit";
-	delete DownloadThread;
+    qDebug() << "Download thread quit";
+    delete DownloadThread;
     delete Downloader;
     delete diag;
     qApp->processEvents();
 
-	if (setCancel)
-		return;
+    if (setCancel)
+        return;
 
     if (!DownloadSuccess)
         return;
 
-	this->doLoadFile(localpath);
+    this->doLoadFile(localpath);
     if (!ZSet->isChachingRemoteData())
     {
         //delete local file
-		QFile::remove(localpath);
+        QFile::remove(localpath);
     }
 }
 
@@ -1338,6 +1491,14 @@ void DataViewerPage::SearchClickedSlot(QString suggestText, QVariantMap suggestD
 
 void DataViewerPage::FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t time, size_t MaxIter)
 {
+    // if (this->RTMode)
+    // {
+    //     this->PlotHandle->xAxis->setRange(TargetRangeX);
+    //     this->PlotHandle->yAxis->setRange(TargetRangeY);
+    //     this->PlotHandle->replot(QCustomPlot::rpImmediateRefresh);
+    //     return; //do not animate in real time mode
+    // }
+
     qDebug() << "fake animation start";
     QCPRange CurrentRangeX = this->PlotHandle->xAxis->range();
     QCPRange CurrentRangeY = this->PlotHandle->yAxis->range();

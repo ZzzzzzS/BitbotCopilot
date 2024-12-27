@@ -21,7 +21,7 @@ zzs::BITBOT_TCP_PROTOCAL_V1::BITBOT_TCP_PROTOCAL_V1(const QJsonObject& cfg, QObj
 	this->RefreshTimer__->setInterval(100);
 	QObject::connect(this->RefreshTimer__, &QTimer::timeout, this, [this]() {
 		this->RequestPDO();
-	});
+		});
 }
 
 zzs::BITBOT_TCP_PROTOCAL_V1::~BITBOT_TCP_PROTOCAL_V1()
@@ -31,7 +31,7 @@ zzs::BITBOT_TCP_PROTOCAL_V1::~BITBOT_TCP_PROTOCAL_V1()
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::Connect(QString Host, uint16_t port, uint timeout)
 {
-	if (this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING || this->PDODataConnection__==CONNECTION_STATUS::CONNECTED)
+	if (this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING || this->PDODataConnection__ == CONNECTION_STATUS::CONNECTED)
 	{
 		qDebug() << this->PDOManager__->state();
 		return false;
@@ -59,7 +59,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Disconnect()
 		this->PDOHeaderConnection__ == CONNECTION_STATUS::CONNECTING ||
 		this->PDODataConnection__ == CONNECTION_STATUS::CONNECTING)
 		return false;
-	
+
 	QTimer::singleShot(0, this, [this]() {
 		this->PDOManager__->close();
 		});
@@ -75,15 +75,15 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::Disconnect()
 bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPairs)
 {
 	qDebug() << CommandPairs;
-	if(this->PDODataConnection__!=CONNECTION_STATUS::CONNECTED)
+	if (this->PDODataConnection__ != CONNECTION_STATUS::CONNECTED)
 		return false;
 	if (CommandPairs.isEmpty()) return false;
-	
+
 	QJsonObject json;
 	json.insert("type", "events");
 	QJsonArray KeyValueArray;
-	for (auto& [key,value] : CommandPairs.toStdMap())
-	{ 
+	for (auto& [key, value] : CommandPairs.toStdMap())
+	{
 		QString ButtonKey;
 		if (this->ReverseAvailableKeyPairs__.contains(key))
 		{
@@ -101,14 +101,14 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPair
 
 		QJsonValue ButtonValue;
 		QJsonObject SingleEvent;
-		if (value.type()==QMetaType::Float||value.type()==QMetaType::Double)
+		if (value.type() == QMetaType::Float || value.type() == QMetaType::Double)
 		{
 			double var = value.toDouble();
 			qint64* intjar = reinterpret_cast<qint64*>(&var);
 			ButtonValue = QJsonValue(*intjar); //some magical code to suit bitbot communication protocal.
 		}
-		else if (value.type()==QMetaType::Int || value.type()==QMetaType::UInt 
-			|| value.type()==QMetaType::Short || value.type()==QMetaType::UShort)
+		else if (value.type() == QMetaType::Int || value.type() == QMetaType::UInt
+			|| value.type() == QMetaType::Short || value.type() == QMetaType::UShort)
 		{
 			ButtonValue = QJsonValue(value.toLongLong());
 		}
@@ -136,11 +136,11 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPair
 
 	this->UserCommandArray = QJsonDocument(json).toJson(QJsonDocument::Compact);
 
-	QTimer::singleShot(0,this, [this]() {
+	QTimer::singleShot(0, this, [this]() {
 		this->PDOManager__->sendBinaryMessage(this->UserCommandArray);
 		});
 
-		return true;
+	return true;
 }
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::getStateList(QMap<int, QString>& States)
@@ -151,7 +151,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::getStateList(QMap<int, QString>& States)
 	return true;
 }
 
-bool zzs::BITBOT_TCP_PROTOCAL_V1::getAvailableKeys(QMap<QString, QString>& KeyPairs,bool reverse)
+bool zzs::BITBOT_TCP_PROTOCAL_V1::getAvailableKeys(QMap<QString, QString>& KeyPairs, bool reverse)
 {
 	if (this->ConnectionState__ != CONNECTION_STATUS::CONNECTED)
 		return false;
@@ -329,8 +329,8 @@ void zzs::BITBOT_TCP_PROTOCAL_V1::doConnect(QString Host, uint16_t port, uint ti
 
 bool zzs::BITBOT_TCP_PROTOCAL_V1::RequestPDO()
 {
-	
-	if(this->PDODataConnection__!=CONNECTION_STATUS::CONNECTED)
+
+	if (this->PDODataConnection__ != CONNECTION_STATUS::CONNECTED)
 		return false;
 	else
 	{
@@ -487,7 +487,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::ParsePDOHeader(const QByteArray& array)
 			ABSTRACT_DEVICE_HEADER DevHeader;
 			DevHeader.DeviceName = DevObj["name"].toString();
 			DevHeader.DeviceTypeName = DevObj["type"].toString();
-			
+
 			QJsonArray DevSensors = DevObj["headers"].toArray();
 			for (auto j : DevSensors)
 			{
@@ -525,7 +525,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::ParsePDOData(const QByteArray& array)
 		qDebug() << "failed to parse PDO data";
 		return false;
 	}
-	
+
 	QJsonObject root_obj = parser.object();
 
 	try
@@ -535,7 +535,7 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::ParsePDOData(const QByteArray& array)
 			qDebug() << "PDO data format is unsupported";
 			return false;
 		}
-		
+
 		QString DataString = root_obj["data"].toString();
 		//qDebug() << "received data string" << DataString;
 
@@ -561,6 +561,6 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::ParsePDOData(const QByteArray& array)
 		std::cerr << "[" << typeid(this).name() << "] exception: " << e.what() << std::endl;
 		return false;
 	}
-	
+
 	return true;
 }

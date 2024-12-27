@@ -16,6 +16,9 @@
 #include "../Communication/MetaCommunication.hpp"
 #include "../Utils/GamepadDriver/ZQGamepad.h"
 #include "../Utils/Settings/SettingsHandler.h"
+#include "widget/MetaRTDView.h"
+#include "ElaToggleSwitch.h"
+#include "UI/DataViewer/DataViewerPage.h"
 #include <QThread>
 #include <QVariant>
 #include <QVariantList>
@@ -35,7 +38,7 @@ public:
 
 	bool RunNewBitbot(bool LaunchBackend, bool dryrun);
 	bool AutoInitBitbot(bool dryrun);
-	
+
 	zzs::BITBOT_TCP_PROTOCAL_V1* getCommHandle();
 
 private:
@@ -53,6 +56,8 @@ private:
 	void removeAllwidget(QLayout* lay);
 
 	void ConnectionButtonClickedSlot();
+
+	void ShowGraphButtonToggled(bool checked);
 
 protected:
 	void keyPressEvent(QKeyEvent* event);
@@ -91,6 +96,10 @@ private:
 	QSpacerItem* horizontalSpacerright = nullptr;
 	QVector<RTDDeviceInfo*> DeviceListsUI__;
 	RTDDeviceInfo* UserInfoUI__ = nullptr;
+	DataViewerPage* RealTimeDataViewer__ = nullptr;
+	QWidget* RTC_RTDSelectorUI__ = nullptr;
+	ElaToggleSwitch* RTC_RTDSelectorSwitch__ = nullptr;
+	MetaRTDView* WarperRealTimeDataViewer__ = nullptr;
 
 	QVector<QString> AllHeaders;
 	QVector<QString> KernelHeaders;

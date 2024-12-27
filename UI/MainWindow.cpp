@@ -66,7 +66,7 @@ void MainWindow::InitWindow()
     else
         eTheme->setThemeMode(ElaThemeType::Light);
 
-	this->TrayIcon__ = new QSystemTrayIcon(QIcon(":/logo/Image/ProgramIcon.png"), this);
+    this->TrayIcon__ = new QSystemTrayIcon(QIcon(":/logo/Image/ProgramIcon.png"), this);
     this->TrayIcon__->show();
 }
 
@@ -247,8 +247,8 @@ void MainWindow::InitDockVirtualTrackpad()
         map.insert(Event, QVariant(KeyState));
         this->CommHandle__->SendUserCommand(map);
         });
-    
-    QObject::connect(this->VirtualTrackpad__,&VirtualTrackpad::VirtualButtonValueSet, this, [this](QString Event, double KeyState) {
+
+    QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualButtonValueSet, this, [this](QString Event, double KeyState) {
         QVariantMap map;
         map.insert(Event, QVariant(KeyState));
         this->CommHandle__->SendUserCommand(map);
@@ -281,21 +281,21 @@ void MainWindow::InitSSHConnection()
 {
     if (!ZSet->isBackendRemote())
         return;
-    
+
     this->SessionManager__ = zzs::SessionManager::getInstance();
     auto serverinfo = ZSet->getBackendConfig_ex();
-	this->SessionManager__->SetServerInfo(std::get<0>(serverinfo).toStdString(),
+    this->SessionManager__->SetServerInfo(std::get<0>(serverinfo).toStdString(),
         std::get<1>(serverinfo).toStdString(),
         std::get<2>(serverinfo).toStdString(),
         std::get<3>(serverinfo).toStdString());
     bool ok = this->SessionManager__->Connect();
     if (!ok)
         return;
-	this->TrayIcon__->showMessage("Bitbot Pilot", "Connecting to Robot", QSystemTrayIcon::MessageIcon::Information, 2000);
-	this->CheckSSHConnectionTimer__ = new QTimer(this);
-	this->CheckSSHConnectionTimer__->setInterval(3000);
+    this->TrayIcon__->showMessage("Bitbot Pilot", "Connecting to Robot", QSystemTrayIcon::MessageIcon::Information, 2000);
+    this->CheckSSHConnectionTimer__ = new QTimer(this);
+    this->CheckSSHConnectionTimer__->setInterval(3000);
     this->Connected__ = false;
-	QObject::connect(this->CheckSSHConnectionTimer__, &QTimer::timeout, this, [this]() {
+    QObject::connect(this->CheckSSHConnectionTimer__, &QTimer::timeout, this, [this]() {
         bool connected = this->SessionManager__->CheckConnection();
         if (connected && !this->Connected__)
         {
@@ -313,10 +313,10 @@ void MainWindow::InitSSHConnection()
             this->TrayIcon__->showMessage("Bitbot Pilot", "Error Occured: " + QString::fromStdString(this->SessionManager__->GetErrorMsg()), QSystemTrayIcon::MessageIcon::Warning, 2000);
         }
         this->Errored__ = error;
-	});
-    
-    
-	this->CheckSSHConnectionTimer__->start();
+        });
+
+
+    this->CheckSSHConnectionTimer__->start();
 }
 
 bool MainWindow::isDarkMode()
@@ -329,7 +329,9 @@ bool MainWindow::isDarkMode()
     return val == 0 ? true : false;
 #endif // Q_OS_WIN
 
-    return false;
+    const QPalette defaultPalette;
+    return defaultPalette.color(QPalette::WindowText).lightness()
+         > defaultPalette.color(QPalette::Window).lightness();
 }
 
 QString MainWindow::getMicaBackground()
@@ -338,9 +340,11 @@ QString MainWindow::getMicaBackground()
     QSettings wallpaper("HKEY_CURRENT_USER\\Control Panel\\Desktop", QSettings::NativeFormat);
     QString val = wallpaper.value("Wallpaper").toString();
     qDebug() << val;
-	if (QImage(val).isNull())
-		return QString();
+    if (QImage(val).isNull())
+        return QString();
     return val;
 #endif
+
+
     return QString();
 }

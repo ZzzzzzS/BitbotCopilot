@@ -11,18 +11,18 @@
 #include "tuple"
 #include "QAction"
 #include "ElaMenu.h"
-#include "UI/widget/DataViewerFlowIndicator.h"
+#include "DataViewerFlowIndicator.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class DataViewerPage;
+    class DataViewerPage;
 }
 QT_END_NAMESPACE
 
 enum Theme_e
 {
-    Light=0,
-    Dark=1
+    Light = 0,
+    Dark = 1
 };
 
 
@@ -42,9 +42,14 @@ class DataViewerPage : public QWidget
     Q_OBJECT
 
 public:
-    DataViewerPage(QWidget *parent = nullptr);
+    DataViewerPage(QWidget* parent = nullptr, bool RTMode = false);
     ~DataViewerPage();
     void SetTheme(Theme_e theme);
+
+    void SetUpRealTimeHeader(const QVector<QString>& HeaderName, const QVector<QVector<QString>>& HeaderContent);
+    void UpdateRealTimeData(const QString& GroupName, const QStringList& CurveNames, const QVector<double>& Data);
+    void RefreshRealTimeData();
+    void ResetRealTimeUI();
 
 protected:
     void dragEnterEvent(QDragEnterEvent* event);
@@ -53,8 +58,11 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 private:
-    void SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable,bool replot=true);
+    void InitRealTimeMode();
+
+    void SetCurveVisiable(const QString& CurveGroup, const QString& CurveName, bool Visiable, bool replot = true);
     bool AddCurveGroup(const QString& GroupName, zzs::CSVReader::Ptr csv_handle);
+    bool AddEmptyCurveGroup(const QString& GroupName, const QVector<QString>& CurveName);
     bool RemoveCurveGroup(const QString& GroupName);
     void InitColorList();
     void ModelItemClickedSlot(const QModelIndex& index);
@@ -63,14 +71,14 @@ private:
     void UpdateCurveTheme(const QString& CurveGroup, const QString& CurveName, Theme_e theme);
     void SetupCurve(const QString& CurveGroup, const QString& CurveName);
     void RemoveCurve(const QString& CurveGroup, const QString& CurveName);
-    
+
     void PlotHandleMouseWheelSlot(QWheelEvent* event);
     void RangeChangedSlot(const QCPRange& newRange);
-    std::tuple<double,double> ComputeDeltaDirection(double low, double high, double point, double vel,bool reverse);
+    std::tuple<double, double> ComputeDeltaDirection(double low, double high, double point, double vel, bool reverse);
 
     void LoadLocalFileSlot();
     void LoadRobotFileSlot();
-	void doLoadFile(const QString& file_path);
+    void doLoadFile(const QString& file_path);
     void RemoveButtonClickedSlot();
     void ListWidgetRightClickedSlot(const QPoint& pos);
 
@@ -86,7 +94,7 @@ private:
     void SearchClickedSlot(QString suggestText, QVariantMap suggestData);
 
     void FakeZoomAnimation(const QCPRange& TargetRangeX, const QCPRange& TargetRangeY, size_t time = 800, size_t MaxIter = 200);
-    
+
     void InitTouchEvents();
     void PlotTouchEventHandler(QTouchEvent* e);
     void PlotGestureEventHandler(QGestureEvent* g);
@@ -94,7 +102,7 @@ signals:
     void FileLoaded(bool);
 
 private:
-    Ui::DataViewerPage *ui;
+    Ui::DataViewerPage* ui;
 
     QMap<QString, DataGroup_t> AggregatedDataGroup__;
     QStandardItemModel* AggregatedDataModel__;
@@ -108,7 +116,7 @@ private:
     QMap<QString, QAction*> SearchActions;
     ElaMenu* SeachMenu;
 
-    bool SquareZoomMode__=false;
+    bool SquareZoomMode__ = false;
     bool isShowDataPoint__;
 
     QCPItemStraightLine* PlotRefLine__;
@@ -117,11 +125,13 @@ private:
     DataViewerFlowIndicator* PlotFlowIndcator__;
 
     QPointF TouchStartPoint__;
-    double TouchStartRotation__=0.0;
-    bool isMultiTouching__=false;
+    double TouchStartRotation__ = 0.0;
+    bool isMultiTouching__ = false;
 
     // hack scaling shift issue when touch end, do NOT move or change, unless you know what you are doing!
     QCPRange TouchRangeX__;
     QCPRange TouchRangeY__;
+
+    const bool RTMode;
 };
 #endif // DATAVIEWERPAGE_H

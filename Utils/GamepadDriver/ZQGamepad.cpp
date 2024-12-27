@@ -56,6 +56,7 @@ size_t ZQGamepad::CountConnectedGamepad()
 	auto set = this->GamepadBackendXInput->getAvailableGamepadID();
 	return set.size();
 #endif
+	return 0;
 }
 
 QSet<size_t> ZQGamepad::getAvailableGamepadID()
@@ -69,6 +70,7 @@ QSet<size_t> ZQGamepad::getAvailableGamepadID()
 	}
 	return Gamepads;
 #endif
+	return QSet<size_t>();
 }
 
 bool ZQGamepad::SetRumble(int id, quint16 LeftMotor, quint16 RightMotor, quint32 Duration)
@@ -76,6 +78,7 @@ bool ZQGamepad::SetRumble(int id, quint16 LeftMotor, quint16 RightMotor, quint32
 #ifdef Q_OS_WIN
 	return this->GamepadBackendXInput->setRumble(id, LeftMotor, RightMotor, Duration);
 #endif // QT_OS_WIN
+	return false;
 }
 
 

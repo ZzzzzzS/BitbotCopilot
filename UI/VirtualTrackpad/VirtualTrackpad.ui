@@ -618,7 +618,7 @@
   <customwidget>
    <class>SimpleTrackpad</class>
    <extends>QWidget</extends>
-   <header>SimpleTrackpad.h</header>
+   <header>./UI/VirtualTrackpad/SimpleTrackpad.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

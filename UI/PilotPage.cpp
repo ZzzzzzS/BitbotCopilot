@@ -21,7 +21,8 @@
 #include "widget/CustomImageLabel.hpp"
 #include "QGraphicsBlurEffect"
 #include "UI/widget/FluentMessageBox.hpp"
-
+#include "ElaToggleSwitch.h"
+#include "ElaText.h"
 
 
 PilotPage::PilotPage(QWidget* parent)
@@ -34,7 +35,7 @@ PilotPage::PilotPage(QWidget* parent)
     this->CentralWidget__ = new QWidget(this);
     this->CentralWidget__->setWindowTitle(" Bitbot Nav Deck");
     this->setPageTitleSpacing(10);
-    this->addCentralWidget(this->CentralWidget__, true, true, 0);
+    this->addCentralWidget(this->CentralWidget__, true, false, 0);
     this->InitConnectionWidget();
 
     this->ProcessDisconnetced();
@@ -145,15 +146,15 @@ void PilotPage::InitConnectionWidget()
     auto horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
     ElaText* icon = new ElaText(this->ConnectionAreaUI__);
-	QFont iconFont = icon->font();
-	iconFont.setFamily("ElaAwesome");
-	iconFont.setPixelSize(28);
+    QFont iconFont = icon->font();
+    iconFont.setFamily("ElaAwesome");
+    iconFont.setPixelSize(28);
     icon->setFixedSize(40, 40);
     icon->setText(QChar(ElaIconType::Computer));
-	icon->setFont(iconFont);
-	icon->setAlignment(Qt::AlignCenter);
+    icon->setFont(iconFont);
+    icon->setAlignment(Qt::AlignCenter);
     //icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"));
-	//icon->setScaledContents(true);
+    //icon->setScaledContents(true);
     ElaText* name = new ElaText(this->ConnectionAreaUI__);
     name->setText(tr("Frontend Manager"));
     QFont namefont;
@@ -161,16 +162,16 @@ void PilotPage::InitConnectionWidget()
     name->setFont(namefont);
     name->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
-	ElaText* subname = new ElaText(this->ConnectionAreaUI__);
+    ElaText* subname = new ElaText(this->ConnectionAreaUI__);
     subname->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     subname->setWordWrap(false);
-	subname->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
+    subname->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
     subname->setText(tr("Instantly access your robot states from remote"));
-	QFont subnamefont;
-	subnamefont.setPixelSize(10);
-	subname->setFont(subnamefont);
+    QFont subnamefont;
+    subnamefont.setPixelSize(10);
+    subname->setFont(subnamefont);
 
-    auto LamsetTheme= [subname](ElaThemeType::ThemeMode Mode) {
+    auto LamsetTheme = [subname](ElaThemeType::ThemeMode Mode) {
         QPalette LabelPalette;
         if (Mode == ElaThemeType::ThemeMode::Dark)
         {
@@ -187,18 +188,18 @@ void PilotPage::InitConnectionWidget()
             LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
         }
         subname->setPalette(LabelPalette);
-		};
-	LamsetTheme(eTheme->getThemeMode());
+        };
+    LamsetTheme(eTheme->getThemeMode());
     QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, LamsetTheme);
 
-	QVBoxLayout* iconLayout = new QVBoxLayout();
-	iconLayout->addWidget(name);
-	iconLayout->addWidget(subname);
+    QVBoxLayout* iconLayout = new QVBoxLayout();
+    iconLayout->addWidget(name);
+    iconLayout->addWidget(subname);
 
     horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
     horizontalLayout_3->addWidget(icon);
     horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
-	horizontalLayout_3->addLayout(iconLayout);
+    horizontalLayout_3->addLayout(iconLayout);
 
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
@@ -257,7 +258,7 @@ void PilotPage::InitConnectionWidget()
     horizontalLayout_2->addItem(horizontalSpacer);
 
     this->PushButton_Connect__ = new ElaPushButton(this->ConnectionAreaUI__);
-	this->PushButton_Connect__->setBorderRadius(5);
+    this->PushButton_Connect__->setBorderRadius(5);
     this->PushButton_Connect__->setObjectName(QString::fromUtf8("pushButton_Connect"));
     this->PushButton_Connect__->setFont(font);
     this->PushButton_Connect__->setText(tr("connect"));
@@ -273,15 +274,15 @@ void PilotPage::InitConnectionWidget()
     QColor ButtonDarkTextColor(0, 0, 0);
 
     this->PushButton_Connect__->setDarkDefaultColor(ButtonDarkDefaultColor);
-	this->PushButton_Connect__->setDarkHoverColor(ButtonDarkHoverColor);
-	this->PushButton_Connect__->setDarkPressColor(ButtonDarkPressColor);
-	this->PushButton_Connect__->setDarkTextColor(ButtonDarkTextColor);
-	this->PushButton_Connect__->setLightDefaultColor(ButtonLightDefaultColor);
-	this->PushButton_Connect__->setLightHoverColor(ButtonLightHoverColor);
-	this->PushButton_Connect__->setLightPressColor(ButtonLightPressColor);
-	this->PushButton_Connect__->setLightTextColor(ButtonLightTextColor);
-    
-	this->PushButton_Connect__->setFixedWidth(100);
+    this->PushButton_Connect__->setDarkHoverColor(ButtonDarkHoverColor);
+    this->PushButton_Connect__->setDarkPressColor(ButtonDarkPressColor);
+    this->PushButton_Connect__->setDarkTextColor(ButtonDarkTextColor);
+    this->PushButton_Connect__->setLightDefaultColor(ButtonLightDefaultColor);
+    this->PushButton_Connect__->setLightHoverColor(ButtonLightHoverColor);
+    this->PushButton_Connect__->setLightPressColor(ButtonLightPressColor);
+    this->PushButton_Connect__->setLightTextColor(ButtonLightTextColor);
+
+    this->PushButton_Connect__->setFixedWidth(100);
 
     horizontalLayout_2->addWidget(this->PushButton_Connect__);
 
@@ -468,7 +469,61 @@ void PilotPage::DrawConnectedUI()
     }
 
 
+
     QVBoxLayout* DeviceLayout = new QVBoxLayout();
+
+    if (this->RTC_RTDSelectorUI__ == nullptr)
+    {
+        this->RTC_RTDSelectorUI__ = new QWidget(this->CentralWidget__);
+        auto RTC_RTDText = new ElaText(this->RTC_RTDSelectorUI__);
+        RTC_RTDText->setText(tr("Graph Mode "));
+        RTC_RTDText->setAlignment(Qt::AlignRight | Qt::AlignTop);
+        RTC_RTDText->setTextStyle(ElaTextType::Body);
+        RTC_RTDSelectorSwitch__ = new ElaToggleSwitch(this->RTC_RTDSelectorUI__);
+        QHBoxLayout* RTC_RTDLayout = new QHBoxLayout();
+        RTC_RTDLayout->addSpacerItem(new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
+        RTC_RTDLayout->addWidget(RTC_RTDText);
+        RTC_RTDLayout->addWidget(RTC_RTDSelectorSwitch__);
+        RTC_RTDLayout->addSpacerItem(new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Minimum));
+        this->RTC_RTDSelectorUI__->setLayout(RTC_RTDLayout);
+        QObject::connect(this->RTC_RTDSelectorSwitch__, &ElaToggleSwitch::toggled, this, &PilotPage::ShowGraphButtonToggled);
+        DeviceLayout->addWidget(this->RTC_RTDSelectorUI__);
+
+        this->WarperRealTimeDataViewer__ = new MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW, this->CentralWidget__);
+        this->RealTimeDataViewer__ = new DataViewerPage(this->WarperRealTimeDataViewer__, true);
+        QGridLayout* WarpergridLayout = new QGridLayout(this->WarperRealTimeDataViewer__);
+        WarpergridLayout->addWidget(this->RealTimeDataViewer__);
+
+        DeviceLayout->addWidget(this->WarperRealTimeDataViewer__);
+        this->WarperRealTimeDataViewer__->hide();
+    }
+    else
+    {
+        this->WarperRealTimeDataViewer__->hide();
+        this->RTC_RTDSelectorUI__->show();
+        this->RTC_RTDSelectorSwitch__->setIsToggled(false);
+    }
+
+    {
+        QStringList DeviceGroup;
+        QVector<QStringList> DeviceSensors;
+        for (auto& i : this->DeviceHeaders)
+        {
+            DeviceGroup.push_back(i.DeviceName);
+            QStringList sensors;
+            for (auto& j : i.SensorsName)
+            {
+                sensors.push_back(j);
+            }
+            DeviceSensors.push_back(sensors);
+        }
+        DeviceGroup.push_back("User Info");
+        DeviceSensors.push_back(this->ExtraHeader);
+
+        this->RealTimeDataViewer__->SetUpRealTimeHeader(DeviceGroup, DeviceSensors);
+    }
+
+
     QMap<QString, QVector<QString>> DeviceSensors;
     QMap<QString, QVector<QString>> DeviceTypeList;
 
@@ -531,6 +586,30 @@ void PilotPage::DrawConnectedUI()
     this->ConnectedComponentLayout__->addLayout(DeviceLayout);
 
 }
+
+void PilotPage::ShowGraphButtonToggled(bool checked)
+{
+    if (checked)
+    {
+        this->WarperRealTimeDataViewer__->show();
+        this->UserInfoUI__->hide();
+        this->WarperRealTimeDataViewer__->setMinimumHeight(630);
+        for (auto i : this->DeviceListsUI__)
+        {
+            i->hide();
+        }
+    }
+    else
+    {
+        this->WarperRealTimeDataViewer__->hide();
+        this->UserInfoUI__->show();
+        for (auto i : this->DeviceListsUI__)
+        {
+            i->show();
+        }
+    }
+}
+
 void PilotPage::DrawDisconnectedUI()
 {
     if (this->KernelStatusUI__ != nullptr)
@@ -557,6 +636,19 @@ void PilotPage::DrawDisconnectedUI()
         this->GamepadStatusUI__->ResetUI();
     }
 
+    if (this->RTC_RTDSelectorUI__ != nullptr)
+    {
+        this->RTC_RTDSelectorUI__->hide();
+    }
+
+    if (this->WarperRealTimeDataViewer__ != nullptr)
+    {
+        this->WarperRealTimeDataViewer__->hide();
+        this->RealTimeDataViewer__->ResetRealTimeUI();
+        this->RTC_RTDSelectorSwitch__->setIsToggled(false);
+    }
+    qApp->processEvents();
+
     for (auto& i : this->DeviceListsUI__)
     {
         if (i != nullptr)
@@ -565,12 +657,14 @@ void PilotPage::DrawDisconnectedUI()
             i->ResetUI();
         }
     }
+    qApp->processEvents();
 
     if (this->UserInfoUI__ != nullptr)
     {
         this->UserInfoUI__->hide();
         this->UserInfoUI__->ResetUI();
     }
+    qApp->processEvents();
 
     qApp->processEvents();
 
@@ -627,7 +721,7 @@ void PilotPage::ProcessConnected()
 void PilotPage::ProcessConnectionError()
 {
     this->connected__ = false;
-    if (this->RobotStateUI__!=nullptr && this->RobotStateUI__->CurrentState() == QString("kernel_stopped"))
+    if (this->RobotStateUI__ != nullptr && this->RobotStateUI__->CurrentState() == QString("kernel_stopped"))
         this->SurpressConnectionError__ = true;
     this->DrawDisconnectedUI();
     if (this->SurpressConnectionError__)
@@ -653,8 +747,14 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
     PDOInfo = QVariantList(PDOInfo.begin() + 4, PDOInfo.end());
 
     QMap<QString, QVariantList> RemapPDOInfo;
+
+    QString DeviceGroupName;
+    QStringList DeviceSensorsName;
+    QVector<double> DeviceSensorsValue;
+
     for (size_t i = 0; i < this->DeviceHeaders.size(); i++)
     {
+        //for table mode
         QString CurrentTypeName = this->DeviceHeaders[i].DeviceTypeName;
         if (!RemapPDOInfo.contains(CurrentTypeName))
         {
@@ -665,6 +765,16 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
         {
             RemapPDOInfo[CurrentTypeName].push_back(PDOInfo[j]);
         }
+
+        //for graph mode
+        DeviceGroupName = this->DeviceHeaders[i].DeviceName;
+        for (size_t j = 0;j < this->DeviceHeaders[i].SensorsName.size();j++)
+        {
+            DeviceSensorsName.push_back(this->DeviceHeaders[i].SensorsName[j]);
+            DeviceSensorsValue.push_back(PDOInfo[j].toDouble());
+        }
+        this->RealTimeDataViewer__->UpdateRealTimeData(DeviceGroupName, DeviceSensorsName, DeviceSensorsValue);
+
         PDOInfo = QVariantList(PDOInfo.begin() + len, PDOInfo.end());
     }
 
@@ -685,8 +795,18 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
         else
         {
             this->UserInfoUI__->UpdateDeviceInfo(PDOInfo);
+
+            //for graph mode
+            QVector<double> UserSensorsValue;
+            for (size_t i = 0; i < UserDataSize; i++)
+            {
+                UserSensorsValue.push_back(PDOInfo[i].toDouble());
+            }
+            this->RealTimeDataViewer__->UpdateRealTimeData("User Info", this->ExtraHeader, UserSensorsValue);
+
         }
     }
+    this->RealTimeDataViewer__->RefreshRealTimeData(); //refresh graph mode data
 }
 
 void PilotPage::removeAllwidget(QLayout* lay)

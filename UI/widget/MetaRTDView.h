@@ -18,12 +18,12 @@ public:
 		EXTEND_WINDOW
 	};
 public:
-	MetaRTDView(RTDViewType type=RTDViewType::SMALL_WINDOW,QWidget *parent = nullptr);
+	MetaRTDView(RTDViewType type = RTDViewType::SMALL_WINDOW, QWidget* parent = nullptr);
 	~MetaRTDView();
 
 protected:
 	void paintEvent(QPaintEvent* event);
-	virtual void ResetUI() =0;
+	virtual void ResetUI();
 
 private:
 	void ThemeChangedSlot(ElaThemeType::ThemeMode mode);

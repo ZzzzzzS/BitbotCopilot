@@ -2,6 +2,7 @@
 #include "iostream"
 #include "thread"
 #include "future"
+#include "exception"
 
 zzs::SessionManager* zzs::SessionManager::getInstance()
 {
@@ -33,7 +34,7 @@ void zzs::SessionManager::SetServerInfo(const std::string& ip, const std::string
 	int verbosity = SSH_LOG_PROTOCOL;
 	ssh_options_set(this->m_sshSession, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
 
-	this->m_errorMsg=std::string("");
+	this->m_errorMsg = std::string("");
 	this->m_isError.store(false);
 }
 
@@ -44,7 +45,7 @@ bool zzs::SessionManager::CheckConnection()
 		return false;
 	}
 	auto rtn = ssh_is_connected(this->m_sshSession);
-	if (rtn !=0 && this->m_isConnected)
+	if (rtn != 0 && this->m_isConnected)
 	{
 		this->m_isConnected.store(true);
 		return true;
@@ -140,7 +141,7 @@ sftp_session zzs::SessionManager::CreateSftpSession()
 	if (sftp == nullptr)
 	{
 		this->m_isError.store(true);
-		this->m_errorMsg = std::string(std::string("Error allocating SFTP session")+ ssh_get_error(this->m_sshSession));
+		this->m_errorMsg = std::string(std::string("Error allocating SFTP session") + ssh_get_error(this->m_sshSession));
 		std::cout << "Error allocating SFTP session: " << ssh_get_error(this->m_sshSession) << "\n";
 		return nullptr;
 	}
@@ -220,7 +221,7 @@ zzs::SessionManager::SessionManager()
 		this->m_isError.store(true);
 		this->m_errorMsg = std::string("Error creating ssh session");
 		std::cout << "Error creating ssh session\n";
-		throw std::exception("Error creating ssh session");
+		throw std::runtime_error("Error creating ssh session");
 	}
 	this->m_errorMsg = std::string("");
 	this->m_isError.store(false);
@@ -233,7 +234,7 @@ zzs::SessionManager::~SessionManager()
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 
-	if(this->m_isConnected.load())
+	if (this->m_isConnected.load())
 	{
 		this->DisConnect();
 	}

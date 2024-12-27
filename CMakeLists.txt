@@ -69,8 +69,6 @@ set(UI_WIDGETS
     UI/widget/CustomSplashScreen.cpp
     UI/widget/CustomSplashScreen.h
     UI/widget/CustomImageLabel.hpp
-    UI/widget/DataViewerFlowIndicator.cpp
-    UI/widget/DataViewerFlowIndicator.h
     UI/widget/FluentLoadingWidget.cpp
     UI/widget/FluentLoadingWidget.h
     UI/widget/FluentMessageBox.hpp
@@ -80,6 +78,8 @@ set(DATA_VIEWER_UI
     UI/DataViewer/DataViewerPage.cpp
     UI/DataViewer/DataViewerPage.h
     UI/DataViewer/DataViewerPage.ui
+    UI/DataViewer/DataViewerFlowIndicator.cpp
+    UI/DataViewer/DataViewerFlowIndicator.h
     UI/DataViewer/RemoteFileSelector.cpp
     UI/DataViewer/RemoteFileSelector.h
 )
