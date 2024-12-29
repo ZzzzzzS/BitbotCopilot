@@ -259,7 +259,7 @@ bool zzs::SessionManager::doConnect()
 		return false;
 	}
 
-	if (ssh_session_is_known_server(this->m_sshSession) != SSH_SERVER_KNOWN_OK)
+	if (ssh_session_is_known_server(this->m_sshSession) != SSH_KNOWN_HOSTS_OK)
 	{
 		std::cout << "Server not known\n";
 		this->m_isConnected.store(false);

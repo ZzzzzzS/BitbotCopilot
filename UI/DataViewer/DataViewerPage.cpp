@@ -175,8 +175,6 @@ void DataViewerPage::RefreshRealTimeData()
     }
     if (this->isVisible())
         this->PlotHandle->replot(QCustomPlot::rpQueuedRefresh);
-    else
-        qDebug() << "plot is not visible, skip replot";
 }
 
 void DataViewerPage::ResetRealTimeUI()
@@ -1390,7 +1388,7 @@ void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
     //qDebug() << "mouse move2";
     //qDebug() << "mouse moved" << event->pos() << event->buttons();
     QPointF MousePos = event->pos();
-    QPoint MouseGlobalPos = event->globalPos();
+    QPoint MouseGlobalPos = event->globalPosition().toPoint();
     double CurX = this->PlotHandle->xAxis->pixelToCoord(MousePos.x());
     double TopY = this->PlotHandle->yAxis->pixelToCoord(0);
     double ButtomY = this->PlotHandle->yAxis->pixelToCoord(this->PlotHandle->height());
@@ -1574,19 +1572,19 @@ void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
     //qDebug() << "touch event";
     if (e->type() == QEvent::TouchBegin)
     {
-        if (e->touchPoints().size() > 1)
+        if (e->points().size() > 1)
         {
             this->PlotHandle->setInteraction(QCP::iRangeDrag, false);
             this->isMultiTouching__ = true;
             this->PlotFlowIndcator__->setVisible(false);
         }
 
-        auto TouchPoints = e->touchPoints();
+        auto TouchPoints = e->points();
         QPointF avg_center;
         for (auto& i : TouchPoints)
         {
-            qDebug() << i.startPos();
-            avg_center += i.startPos();
+            qDebug() << i.pressPosition();
+            avg_center += i.pressPosition();
         }
         this->TouchStartPoint__ = avg_center / TouchPoints.size();
 
@@ -1610,7 +1608,7 @@ void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
     }
     else if (e->type() == QEvent::TouchUpdate)
     {
-        auto TouchPoints = e->touchPoints();
+        auto TouchPoints = e->points();
         if (TouchPoints.size() > 1)
         {
             this->PlotHandle->setInteraction(QCP::iRangeDrag, false);
@@ -1619,8 +1617,8 @@ void DataViewerPage::PlotTouchEventHandler(QTouchEvent* e)
 
         if (TouchPoints.size() == 2)
         {
-            double y = std::abs(TouchPoints[0].pos().y() - TouchPoints[1].pos().y());
-            double x = std::abs(TouchPoints[0].pos().x() - TouchPoints[1].pos().x());
+            double y = std::abs(TouchPoints[0].position().y() - TouchPoints[1].position().y());
+            double x = std::abs(TouchPoints[0].position().x() - TouchPoints[1].position().x());
             if (x == 0)
                 this->TouchStartRotation__ = 1.57;
             else

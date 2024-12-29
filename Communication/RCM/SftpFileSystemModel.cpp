@@ -29,7 +29,7 @@ SftpFileSystemModel::~SftpFileSystemModel()
 
 bool SftpFileSystemModel::connect()
 {
-	if(this->isOperationInProgress())
+	if (this->isOperationInProgress())
 		return false;
 	emit this->TriggerConnect();
 	return true;
@@ -45,7 +45,7 @@ void SftpFileSystemModel::disconnect()
 
 QString SftpFileSystemModel::path() const
 {
-	if(this->isConnected())
+	if (this->isConnected())
 		return QString::fromStdString(this->CurrentPath__);
 	else
 		return QString();
@@ -72,7 +72,7 @@ bool SftpFileSystemModel::cd(const std::string& path)
 		return false;
 
 	emit this->TriggerCd(path);
-	
+
 	return true;
 }
 
@@ -96,9 +96,9 @@ bool SftpFileSystemModel::cdup()
 
 bool SftpFileSystemModel::Refresh()
 {
-	if(this->isOperationInProgress())
+	if (this->isOperationInProgress())
 		return false;
-	
+
 	emit this->TriggerRefresh();
 
 	return true;
@@ -129,18 +129,21 @@ bool SftpFileSystemModel::Forward()
 	std::string path = this->ForwardStack__.top();
 	this->isForwarding__ = true;
 	emit this->TriggerCd(path);
+	return true;
 }
 
 bool SftpFileSystemModel::Backward()
 {
 	if (!this->isConnected() || this->isOperationInProgress())
 		return false;
-	if(this->BackwardStack__.empty())
+	if (this->BackwardStack__.empty())
 		return false;
 
 	std::string path = this->BackwardStack__.top();
 	this->isBacking__ = true;
+	//qDebug() << "Backward to " << QString::fromStdString(path);
 	emit this->TriggerCd(path);
+	return true;
 }
 
 int SftpFileSystemModel::rowCount(const QModelIndex& parent) const
@@ -174,7 +177,7 @@ QVariant SftpFileSystemModel::data(const QModelIndex& index, int role) const
 {
 	QMutexLocker locker(&(mutex__));
 
-	if(this->DirInfoCache__.size()==0)
+	if (this->DirInfoCache__.size() == 0)
 		return QVariant();
 
 	if (role == Qt::DisplayRole)
@@ -240,7 +243,7 @@ QVariant SftpFileSystemModel::data(const QModelIndex& index, int role) const
 
 QVariant SftpFileSystemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if(orientation==Qt::Orientation::Vertical)
+	if (orientation == Qt::Orientation::Vertical)
 		return QVariant();
 	if (role == Qt::DisplayRole)
 	{
@@ -328,8 +331,8 @@ void SftpFileSystemModel::doCd(const std::string& path)
 				break;
 			}
 		}
-			
-		
+
+
 		//TODO: filter only .csv files
 		if (attr->type == SSH_FILEXFER_TYPE_DIRECTORY || attr->type == SSH_FILEXFER_TYPE_REGULAR)
 		{
@@ -350,7 +353,7 @@ void SftpFileSystemModel::doCd(const std::string& path)
 				sftp_attributes_free(attr);
 				continue;
 			}
-			
+
 			DirInfoCache.push_back(attr_copy);
 		}
 		sftp_attributes_free(attr);
@@ -388,7 +391,7 @@ void SftpFileSystemModel::doCd(const std::string& path)
 			this->BackwardStack__.pop();
 		}
 	}
-	
+
 	this->isRefreshing__ = false;
 	this->isForwarding__ = false;
 	this->isBacking__ = false;
@@ -407,5 +410,5 @@ void SftpFileSystemModel::doRefresh()
 		this->doCd(this->CurrentPath__);
 		this->isRefreshing__.store(false);
 	}
-		
+
 }

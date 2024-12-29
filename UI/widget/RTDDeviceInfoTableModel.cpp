@@ -55,7 +55,7 @@ void RTDDeviceInfoRTableModel::UpdateDeviceInfo(QVariantList data)
 	if (data.empty())	return;
 	if (this->_header.empty() || this->_dataList.empty()) return;
 
-	if (data.size() != this->_header.size() * (this->IncludeDeviceName?this->_DeviceName.size() : 1))
+	if (data.size() != this->_header.size() * (this->IncludeDeviceName ? this->_DeviceName.size() : 1))
 	{
 		throw std::runtime_error("data and headers are not equal!");
 	}
@@ -69,28 +69,28 @@ void RTDDeviceInfoRTableModel::UpdateDeviceInfo(QVariantList data)
 			QVariant d = data[i * RowLength + j];
 			QString item;
 
-			if (d.type() == QMetaType::QString)
+			if (d.typeId() == QMetaType::QString)
 			{
 				item = d.toString();
 			}
-			else if (d.type() == QMetaType::Int ||
-				d.type() == QMetaType::UInt ||
-				d.type() == QMetaType::Short ||
-				d.type() == QMetaType::UShort ||
-				d.type() == QMetaType::LongLong ||
-				d.type() == QMetaType::ULongLong ||
-				d.type() == QMetaType::Long ||
-				d.type() == QMetaType::ULong
+			else if (d.typeId() == QMetaType::Int ||
+				d.typeId() == QMetaType::UInt ||
+				d.typeId() == QMetaType::Short ||
+				d.typeId() == QMetaType::UShort ||
+				d.typeId() == QMetaType::LongLong ||
+				d.typeId() == QMetaType::ULongLong ||
+				d.typeId() == QMetaType::Long ||
+				d.typeId() == QMetaType::ULong
 				)
 			{
 				item = QString::number(d.toInt());
 			}
-			else if (d.type() == QMetaType::Float ||
-				d.type() == QMetaType::Double)
+			else if (d.typeId() == QMetaType::Float ||
+				d.typeId() == QMetaType::Double)
 			{
 				item = QString::number(d.toFloat());
 			}
-			else if (d.type() == QMetaType::Bool)
+			else if (d.typeId() == QMetaType::Bool)
 			{
 				item = d.toBool() ? "True" : "False";
 			}
@@ -101,7 +101,7 @@ void RTDDeviceInfoRTableModel::UpdateDeviceInfo(QVariantList data)
 			this->_dataList[i][j] = item;
 		}
 	}
-	emit this->dataChanged(this->index(0, 0), this->index(RowNumber-1, RowLength-1), { Qt::DisplayRole });
+	emit this->dataChanged(this->index(0, 0), this->index(RowNumber - 1, RowLength - 1), { Qt::DisplayRole });
 }
 
 void RTDDeviceInfoRTableModel::clear()
@@ -112,7 +112,7 @@ void RTDDeviceInfoRTableModel::clear()
 	this->_DeviceName.clear();
 	this->_dataList.clear();
 	this->endResetModel();
-}  
+}
 
 int RTDDeviceInfoRTableModel::rowCount(const QModelIndex& parent) const
 {

@@ -58,7 +58,7 @@ void MainWindow::InitWindow()
     setUserInfoCardPixmap(QPixmap(":/UI/Image/logo.png"));
     setUserInfoCardTitle("BITBOT Copilot");
     setUserInfoCardSubTitle("BIT Humanoid Group");
-    //setWindowTitle("Bitbot Pilot");
+    //setWindowTitle("Bitbot Copilot");
 
     this->InitMica();
     if (this->isDarkMode())
@@ -291,7 +291,7 @@ void MainWindow::InitSSHConnection()
     bool ok = this->SessionManager__->Connect();
     if (!ok)
         return;
-    this->TrayIcon__->showMessage("Bitbot Pilot", "Connecting to Robot", QSystemTrayIcon::MessageIcon::Information, 2000);
+    this->TrayIcon__->showMessage("Bitbot Copilot", "Connecting to Robot", QSystemTrayIcon::MessageIcon::Information, 2000);
     this->CheckSSHConnectionTimer__ = new QTimer(this);
     this->CheckSSHConnectionTimer__->setInterval(3000);
     this->Connected__ = false;
@@ -299,18 +299,18 @@ void MainWindow::InitSSHConnection()
         bool connected = this->SessionManager__->CheckConnection();
         if (connected && !this->Connected__)
         {
-            this->TrayIcon__->showMessage("Bitbot Pilot", "Connection with Robot is Established", QSystemTrayIcon::MessageIcon::Information, 5000);
+            this->TrayIcon__->showMessage("Bitbot Copilot", "Connection with Robot is Established", QSystemTrayIcon::MessageIcon::Information, 5000);
         }
         else if (!connected && this->Connected__)
         {
-            this->TrayIcon__->showMessage("Bitbot Pilot", "Connection with Robot is Lost", QSystemTrayIcon::MessageIcon::Warning, 5000);
+            this->TrayIcon__->showMessage("Bitbot Copilot", "Connection with Robot is Lost", QSystemTrayIcon::MessageIcon::Warning, 5000);
         }
         this->Connected__ = connected;
 
         bool error = this->SessionManager__->CheckError();
         if (error && !this->Errored__)
         {
-            this->TrayIcon__->showMessage("Bitbot Pilot", "Error Occured: " + QString::fromStdString(this->SessionManager__->GetErrorMsg()), QSystemTrayIcon::MessageIcon::Warning, 2000);
+            this->TrayIcon__->showMessage("Bitbot Copilot", "Error Occured: " + QString::fromStdString(this->SessionManager__->GetErrorMsg()), QSystemTrayIcon::MessageIcon::Warning, 2000);
         }
         this->Errored__ = error;
         });

@@ -101,18 +101,18 @@ bool zzs::BITBOT_TCP_PROTOCAL_V1::SendUserCommand(const QVariantMap& CommandPair
 
 		QJsonValue ButtonValue;
 		QJsonObject SingleEvent;
-		if (value.type() == QMetaType::Float || value.type() == QMetaType::Double)
+		if (value.typeId() == QMetaType::Float || value.typeId() == QMetaType::Double)
 		{
 			double var = value.toDouble();
 			qint64* intjar = reinterpret_cast<qint64*>(&var);
 			ButtonValue = QJsonValue(*intjar); //some magical code to suit bitbot communication protocal.
 		}
-		else if (value.type() == QMetaType::Int || value.type() == QMetaType::UInt
-			|| value.type() == QMetaType::Short || value.type() == QMetaType::UShort)
+		else if (value.typeId() == QMetaType::Int || value.typeId() == QMetaType::UInt
+			|| value.typeId() == QMetaType::Short || value.typeId() == QMetaType::UShort)
 		{
 			ButtonValue = QJsonValue(value.toLongLong());
 		}
-		else if (value.type() == QMetaType::Bool)
+		else if (value.typeId() == QMetaType::Bool)
 		{
 			ButtonValue = QJsonValue(value.toLongLong());
 		}
