@@ -28,7 +28,7 @@ DataViewerPage::DataViewerPage(QWidget* parent, bool RTMode)
     , RTMode(RTMode)
 {
     ui->setupUi(this);
-    this->setWindowTitle(tr("New Data Viewer"));
+    this->setWindowTitle(tr("Data Viewer"));
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     //this->setAttribute(Qt::WA_AcceptTouchEvents);
 
@@ -1026,7 +1026,7 @@ std::tuple<double, double> DataViewerPage::ComputeDeltaDirection(double low, dou
 
 void DataViewerPage::LoadLocalFileSlot()
 {
-    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), tr("~"), QString("*.csv"));
+    QString file = QFileDialog::getOpenFileName(this, tr("Open File"), "~", QString("*.csv"));
     if (file.isEmpty())
         return;
 

@@ -104,7 +104,7 @@ bool PilotPage::AutoInitBitbot(bool dryrun)
         | Qt::WindowMinMaxButtonsHint
         | Qt::WindowContextHelpButtonHint));
     QPushButton* cancel_button = new QPushButton(this->AutoRunDiag__);
-    cancel_button->setText(tr("cancel"));
+    cancel_button->setText(tr("Cancel"));
     //cancel_button->setEnabled(false); //取消的逻辑太复杂了，暂时先不让取消了
     this->AutoRunDiag__->setCancelButton(cancel_button);
     this->AutoRunDiag__->show();

@@ -281,7 +281,7 @@ void SftpFileSystemModel::doConnect()
 	else
 	{
 		this->connected__ = false;
-		emit this->error("Failed to connect to the server");
+		emit this->error(tr("Failed to connect to the server"));
 	}
 	emit this->connectStateChanged(this->connected__.load());
 	this->setOperationInProgress(false);
@@ -325,7 +325,7 @@ void SftpFileSystemModel::doCd(const std::string& path)
 				break;
 			else
 			{
-				QString Error = "Failed to read the directory, code is ";
+				QString Error = tr("Failed to read the directory, code is ");
 				Error += QString::number(sftp_get_error(this->SftpSession__));
 				emit this->error(Error);
 				break;

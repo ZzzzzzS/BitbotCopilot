@@ -46,8 +46,9 @@ int main(int argc, char* argv[])
     //        break;
     //    }
     //}
-    if (translator.load(":/BitbotCopilot_zh_CN.qm")) {
+    if (translator.load("./BitbotCopilot_zh_CN.qm")) {
         a.installTranslator(&translator);
+        qDebug() << "Load zh_CN.qm";
     }
 
     MainWindow w;
