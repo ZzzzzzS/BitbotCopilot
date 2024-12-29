@@ -748,9 +748,6 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
 
     QMap<QString, QVariantList> RemapPDOInfo;
 
-    QString DeviceGroupName;
-    QStringList DeviceSensorsName;
-    QVector<double> DeviceSensorsValue;
 
     for (size_t i = 0; i < this->DeviceHeaders.size(); i++)
     {
@@ -766,6 +763,9 @@ void PilotPage::ProcessPDO(QVariantList PDOInfo)
             RemapPDOInfo[CurrentTypeName].push_back(PDOInfo[j]);
         }
 
+        QString DeviceGroupName;
+        QStringList DeviceSensorsName;
+        QVector<double> DeviceSensorsValue;
         //for graph mode
         DeviceGroupName = this->DeviceHeaders[i].DeviceName;
         for (size_t j = 0;j < this->DeviceHeaders[i].SensorsName.size();j++)

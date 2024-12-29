@@ -138,7 +138,6 @@ void DataViewerPage::UpdateRealTimeData(const QString& GroupName, const QStringL
 
         QVector<double>& CurveData = Group.Curves[curve];
         CurveData.push_back(Data[i]);
-
         if (Group.VisiableCurve.contains(curve))
         {
             Group.VisiableCurve[curve]->addData(Group.t.back(), Data[i]);
