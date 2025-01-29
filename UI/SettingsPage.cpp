@@ -4,7 +4,7 @@
 SettingsPage::SettingsPage(QWidget* parent)
 {
 	QWidget* centralWidget = new QWidget(this);
-	centralWidget->setWindowTitle("Settings");
+	centralWidget->setWindowTitle(tr("Settings"));
 	QVBoxLayout* centerVLayout = new QVBoxLayout(centralWidget);
 	centerVLayout->setContentsMargins(0, 0, 0, 0);
 

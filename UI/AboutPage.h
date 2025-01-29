@@ -4,7 +4,6 @@
 #include "ElaWidget.h"
 #include "ElaTheme.h"
 
-
 class AboutPage : public ElaScrollPage
 {
 	Q_OBJECT

@@ -11,6 +11,8 @@
 #include <tuple>
 #include "ElaPlainTextEdit.h"
 #include "UI/widget/FluentMessageBox.hpp"
+#include "Communication/LocalCommand.hpp"
+#include "Communication/RCM/RemoteCommand.hpp"
 
 BackendManager::BackendManager(QWidget* parent)
     : MetaRTDView(MetaRTDView::RTDViewType::EXTEND_WINDOW, parent)
@@ -21,12 +23,18 @@ BackendManager::BackendManager(QWidget* parent)
 
     std::tie(this->ExecPath, this->ExecName) = ZSet->getBackendPathAndName();
     this->isRemote = ZSet->isBackendRemote();
+
     if (this->isRemote)
     {
-        std::tie(this->UserName, this->IP) = ZSet->getRemoteBackendUserNameAndIP();
+		QString CmdCombo = "pkill -9 " + this->ExecName + "; cd " + this->ExecPath + " && ./" + this->ExecName;
+        this->CmdHandle = new zzs::RemoteCommand(CmdCombo, QStringList(), this);
+    }
+    else
+    {
+		QString CmdCombo = this->ExecPath + "/" + this->ExecName;
+        this->CmdHandle = new zzs::LocalCommand(CmdCombo, QStringList(), this->ExecPath, this);
     }
 
-    this->BackendProcess__ = new QProcess(this);
     this->ui->label_icon->setText(QChar(ElaIconType::Server));
 	QFont font = this->ui->label_icon->font();
 	font.setPointSize(28);
@@ -36,60 +44,38 @@ BackendManager::BackendManager(QWidget* parent)
     //this->ui->textEdit_BackendInfo->setReadOnly(true);
     //this->ui->textEdit_BackendInfo->setBackgroundVisible(true);
 
-    QObject::connect(this->BackendProcess__, &QProcess::stateChanged, this, [this](QProcess::ProcessState newState) {
+    QObject::connect(this->CmdHandle, &zzs::MetaBackendCommander::StateChanged, this, [this](zzs::MetaBackendCommander::ProcessState newState) {
         switch (newState)
         {
-        case QProcess::NotRunning:
+        case zzs::MetaBackendCommander::ProcessState::NotRunning:
             this->ui->pushButton_connect->setEnabled(true);
             this->ui->pushButton_connect->setText(tr("Connect"));
             break;
-        case QProcess::Starting:
+        case zzs::MetaBackendCommander::ProcessState::Starting:
             break;
-        case QProcess::Running:
+        case zzs::MetaBackendCommander::ProcessState::Running:
         {
             this->ui->pushButton_connect->setEnabled(true);
             this->ui->pushButton_connect->setText(tr("Stop"));
-            emit this->ProcessStarted();
             break;
         }
-
         default:
             break;
         }
         });
 
-    QObject::connect(this->BackendProcess__, &QProcess::errorOccurred, this, [this](QProcess::ProcessError error) {
-        emit this->ProcessErrored();
-        QString ErrMsg = QMetaEnum::fromType<QProcess::ProcessError>().valueToKey(error);
+    QObject::connect(this->CmdHandle, &zzs::MetaBackendCommander::CommandError, this, [this](const QString& ErrMsg) {
         FluentMessageBox::warningOk(this, tr("Bitbot Backend Error"), tr("Bitbot backend error, backend ") + ErrMsg, QMessageBox::Ok);
         });
 
-    QObject::connect(this->BackendProcess__, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [this](int exitCode, QProcess::ExitStatus exitStatus) {
-        switch (exitStatus)
-        {
-        case QProcess::NormalExit:
-            emit this->ProcessFinished();
-            break;
-        case QProcess::CrashExit:
-            emit this->ProcessErrored();
-            break;
-        default:
-            break;
-        }
+    QObject::connect(this->CmdHandle, &zzs::MetaBackendCommander::CommandFinished, this, [this]() {
         this->ui->pushButton_connect->setEnabled(true);
         this->ui->pushButton_connect->setText(tr("Connect"));
         });
 
-
-    QObject::connect(this->BackendProcess__, &QProcess::readyReadStandardOutput, this, [this]() {
-        QByteArray msg = this->BackendProcess__->readAllStandardOutput();
-        this->ui->textEdit_BackendInfo->appendPlainText(QString(msg));
-        });
-
-    QObject::connect(this->BackendProcess__, &QProcess::readyReadStandardError, this, [this]() {
-        QByteArray err_msg = this->BackendProcess__->readAllStandardError();
-        this->ui->textEdit_BackendInfo->appendPlainText(QString("[WARNING] ") + QString(err_msg));
-        });
+    QObject::connect(this->CmdHandle, &zzs::MetaBackendCommander::CommandOutput, this, [this](QByteArray msg) {
+		this->ui->textEdit_BackendInfo->appendPlainText(QString(msg));
+	});
 
     QObject::connect(this->ui->textEdit_BackendInfo, &ElaPlainTextEdit::textChanged, this, [this]() {
         this->ui->textEdit_BackendInfo->moveCursor(QTextCursor::End);
@@ -106,11 +92,8 @@ BackendManager::BackendManager(QWidget* parent)
 
 BackendManager::~BackendManager()
 {
-    this->BackendProcess__->disconnect();
-    if (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning)
-    {
-        this->TerminateBackend();
-    }
+	if (this->CmdHandle->isRunning())
+		this->CmdHandle->Kill();
     delete ui;
 }
 
@@ -122,13 +105,13 @@ void BackendManager::ResetUI()
 
 bool BackendManager::isRunning()
 {
-    return (this->BackendProcess__->state() != QProcess::ProcessState::NotRunning);
+    return this->CmdHandle->isRunning();
 }
 
 bool BackendManager::StartBackend()
 {
-    if ((this->BackendProcess__->state() != QProcess::ProcessState::NotRunning))
-        return false;
+    if(this->CmdHandle->isRunning())
+		return false;
 
     this->ConnectionButtonClickedSlot();
     qApp->processEvents();
@@ -173,20 +156,7 @@ void BackendManager::closeEvent(QCloseEvent* event)
 
 void BackendManager::TerminateBackend()
 {
-    if (this->isRemote)
-    {
-        QString Cmd = "ssh";
-        QStringList args;
-        args.append("-o ConnectTimeout=2");
-        args.append(this->UserName + "@" + this->IP);
-        args.append("pkill");
-        args.append(this->ExecName);
-        QProcess::execute(Cmd, args);
-    }
-    else
-    {
-        this->BackendProcess__->terminate();
-    }
+    bool rc = this->CmdHandle->Stop();
 }
 
 void BackendManager::ConnectionButtonClickedSlot()
@@ -196,43 +166,15 @@ void BackendManager::ConnectionButtonClickedSlot()
         this->ui->textEdit_BackendInfo->clear();
         this->ui->pushButton_connect->setText(tr("Connecting"));
         this->ui->pushButton_connect->setEnabled(false);
-        //QStringList args;
-        //args.push_back("bitbot@192.168.8.112");
-        //args.push_back("/home/bitbot/cetc_robot_ganzhi_v2/build/bin/main_app");
-
-        QString Cmd;
-        QStringList args;
-        if (!this->isRemote)
-        {
-            Cmd = this->ExecPath + "/" + this->ExecName;  //FIXME: fix local run issue!
-        }
-        else
-        {
-            //Cmd = "wsl";
-            Cmd = "ssh";
-            args.append("-o ConnectTimeout=2");
-            args.append(this->UserName + "@" + this->IP);
-            args.append("pkill");
-            args.append(this->ExecName + ";");
-            args.append("cd");
-            args.append(this->ExecPath + ";");
-            args.append("./" + this->ExecName);
-        }
-
-        this->BackendProcess__->start(Cmd, args);
+        qApp->processEvents();
+        this->CmdHandle->Start();
     }
     else if (this->ui->pushButton_connect->text() == tr("Stop"))
     {
         this->ui->pushButton_connect->setText(tr("Force Stop"));
         this->ui->pushButton_connect->setEnabled(true);
-        //this->BackendProcess__->terminate();
-        /*QStringList args;
-        args.append("bitbot@192.168.8.112");
-        args.append("pkill");
-        args.append("main_app");
-        QProcess::execute("ssh", args);*/
-
         this->TerminateBackend();
+        qApp->processEvents();
     }
     else if (this->ui->pushButton_connect->text() == tr("Connecting"))
     {
@@ -241,7 +183,8 @@ void BackendManager::ConnectionButtonClickedSlot()
     else if (this->ui->pushButton_connect->text() == tr("Force Stop"))
     {
         this->ui->pushButton_connect->setEnabled(true);
-        this->BackendProcess__->kill();
+        this->CmdHandle->Kill();
+        qApp->processEvents();
     }
     else
     {

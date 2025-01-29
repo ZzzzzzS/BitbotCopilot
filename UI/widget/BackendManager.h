@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 #include <QWidget>
-#include <QProcess>
 #include "MetaRTDView.h"
 #include "ElaTheme.h"
+#include "Communication/MetaBackendCom.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,20 +23,13 @@ public:
     bool StartBackend();
     void TerminateBackend();
 
-signals:
-    void ProcessStarted();
-    void ProcessFinished();
-    void ProcessErrored();
-
 private:
     void ThemeChanged(ElaThemeType::ThemeMode themeMode);
     void closeEvent(QCloseEvent* event);
     void ConnectionButtonClickedSlot();
 private:
+	zzs::MetaBackendCommander* CmdHandle;
     bool isRemote = false;
-    QProcess* BackendProcess__;
-    QString UserName;
-    QString IP;
     QString ExecPath;
     QString ExecName;
     Ui::BackendManager* ui;

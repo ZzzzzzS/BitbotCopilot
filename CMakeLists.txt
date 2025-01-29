@@ -119,8 +119,11 @@ set(COM_FILES
     Communication/BitbotTcpProtocalV1.h
     Communication/BitbotTcpProtocalV1.cpp
     Communication/MetaCommunication.hpp
+    Communication/MetaBackendCom.hpp
+    Communication/LocalCommand.hpp
     Communication/RCM/SessionManager.cpp
     Communication/RCM/SessionManager.h
+    Communication/RCM/RemoteCommand.hpp
     Communication/RCM/SftpFileSystemModel.cpp
     Communication/RCM/SftpFileSystemModel.h
     Communication/RCM/SftpFileTransport.cpp

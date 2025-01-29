@@ -33,7 +33,7 @@ PilotPage::PilotPage(QWidget* parent)
     this->InitAutoRun();
 
     this->CentralWidget__ = new QWidget(this);
-    this->CentralWidget__->setWindowTitle(" Bitbot Nav Deck");
+    this->CentralWidget__->setWindowTitle(tr(" Bitbot Nav Deck"));
     this->setPageTitleSpacing(10);
     this->addCentralWidget(this->CentralWidget__, true, false, 0);
     this->InitConnectionWidget();

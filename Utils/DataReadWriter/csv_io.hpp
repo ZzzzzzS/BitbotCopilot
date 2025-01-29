@@ -210,7 +210,7 @@ namespace zzs
                 }
                 catch (const std::exception& e)
                 {
-                    //qDebug() << e.what();
+                    qDebug() << e.what();
                     return false;
                 }
                 
