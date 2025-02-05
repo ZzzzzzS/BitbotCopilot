@@ -35,7 +35,7 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>10</width>
+         <width>13</width>
          <height>20</height>
         </size>
        </property>
@@ -116,7 +116,6 @@
               <font>
                <family>Segoe UI</family>
                <pointsize>20</pointsize>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -924,19 +923,95 @@ Version: </string>
           </spacer>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="ElaPushButton" name="FeedBackButton">
+            <widget class="ElaPushButton" name="UpdatesButton">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>107</width>
                <height>35</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>107</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Segoe UI</family>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Check Updates</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="SimpleInfinateLoadingWidget" name="UpdateLoadingWidget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>35</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>35</width>
+               <height>35</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_13">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="ElaPushButton" name="FeedBackButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>107</width>
+               <height>35</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>107</width>
+               <height>16777215</height>
               </size>
              </property>
              <property name="font">
@@ -1009,6 +1084,12 @@ Version: </string>
    <class>ElaText</class>
    <extends>QLabel</extends>
    <header>ElaText.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SimpleInfinateLoadingWidget</class>
+   <extends>QWidget</extends>
+   <header>UI/widget/FluentLoadingWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

@@ -4,6 +4,8 @@
 #include "ElaWidget.h"
 #include "ElaTheme.h"
 
+class QSimpleUpdater;
+
 class AboutPage : public ElaScrollPage
 {
 	Q_OBJECT
@@ -28,8 +30,13 @@ public:
 
 private:
 	Ui::AboutPageCentralWidget* ui;
+	QSimpleUpdater* updater;
+private:
 	void ThirdpartyLicenseSlot();
+	void CheckUpdateSlot();
+	void InitUpdate();
 	void ThemeChangedSlot(ElaThemeType::ThemeMode theme);
+
 };
 
 class AboutPageLicenseWidget : public ElaWidget

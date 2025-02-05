@@ -6,10 +6,12 @@
 #include "QMessageBox"
 #include "QFile"
 #include "ElaScrollArea.h"
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QUrl>
 #include <QDebug>
+#include "QSimpleUpdater.h"
+#include "../Utils/Settings/SettingsHandler.h"
+#include "UI/widget/FluentMessageBox.hpp"
 
 AboutPage::AboutPage(QWidget* parent)
 {
@@ -32,6 +34,8 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 	ui->setupUi(this);
 	this->resize(380, 500);
 
+
+
 	QString InfoText = this->ui->VersionLabel->text();
 
 	QString dateTime = __DATE__;
@@ -53,7 +57,7 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 		QDesktopServices::openUrl(QUrl("https://github.com/ZzzzzzS/BitbotCopilot/issues"));
 		});
 	QObject::connect(this->ui->ThirdpartyButton, &QPushButton::clicked, this, &AboutPageCentralWidget::ThirdpartyLicenseSlot);
-	
+	this->InitUpdate();
 	QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, &AboutPageCentralWidget::ThemeChangedSlot);
 	this->ThemeChangedSlot(eTheme->getThemeMode());
 	//this->setIsFixedSize(true);
@@ -72,6 +76,48 @@ void AboutPageCentralWidget::ThirdpartyLicenseSlot()
 	ptr->setIsFixedSize(true);
 	ptr->setWindowModality(Qt::ApplicationModal);
 	ptr->show();
+}
+
+void AboutPageCentralWidget::CheckUpdateSlot()
+{
+	bool BetaVer = ZSet->isUpdateBetaChannel();
+	if (BetaVer)
+	{
+		FluentMessageBox::informationOk(this, tr("Beta Channel"), tr("You are using the beta channel, the update may be unstable"));
+	}
+
+	this->ui->UpdateLoadingWidget->start(true);
+	this->ui->UpdatesButton->setEnabled(false);
+	QString UpdateURL = BetaVer ? BETA_UPDATE_URL : UPDATE_URL;
+	updater->setModuleVersion(UpdateURL, BUILD_VERSION_COMMIT_HASH);
+	updater->setDownloadDir(UpdateURL, "./");
+	//updater->setModuleVersion(UpdateURL, "0433526");
+	updater->setNotifyOnFinish(UpdateURL, true);
+	updater->setNotifyOnUpdate(UpdateURL, true);
+	updater->setUseCustomAppcast(UpdateURL, false);
+	updater->setDownloaderEnabled(UpdateURL, true);
+	updater->setMandatoryUpdate(UpdateURL, false);
+
+	/* Check for updates */
+	updater->checkForUpdates(UpdateURL);
+}
+
+void AboutPageCentralWidget::InitUpdate()
+{
+	this->updater = QSimpleUpdater::getInstance();
+	QObject::connect(this->ui->UpdatesButton, &ElaPushButton::clicked, this, &AboutPageCentralWidget::CheckUpdateSlot);
+	QObject::connect(this->updater, &QSimpleUpdater::appcastDownloaded, this, [this](const QString& url, const QByteArray& data) {
+		qDebug() << "appcastDownloaded";
+		});
+	QObject::connect(this->updater, &QSimpleUpdater::checkingFinished, this, [this](const QString& url) {
+		qDebug() << "checkingFinished";
+		this->ui->UpdateLoadingWidget->start(false);
+		this->ui->UpdatesButton->setEnabled(true);
+		});
+
+	QObject::connect(this->updater, &QSimpleUpdater::downloadFinished, this, [this](const QString& url, const QString& filepath) {
+		qDebug() << "downloadFinished";
+		});
 }
 
 void AboutPageCentralWidget::ThemeChangedSlot(ElaThemeType::ThemeMode theme)
@@ -149,6 +195,16 @@ AboutPageLicenseWidget::AboutPageLicenseWidget()
 	QCP_license.open(QIODevice::ReadOnly);
 	QTextStream QCP_buffer(&QCP_license);
 	LicenseTextString += QCP_buffer.readAll();
+	LicenseTextString += seperater;
+
+	//QSimpleUpdater
+	LicenseTextString += QString("QSimpleUpdater\n");
+	LicenseTextString += QString("https://github.com/alex-spataru/QSimpleUpdater\n\n");
+	QFile QSU_license;
+	QSU_license.setFileName(":/license/licenses/LICENSE-QSimpleUpdater");
+	QSU_license.open(QIODevice::ReadOnly);
+	QTextStream QSU_buffer(&QSU_license);
+	LicenseTextString += QSU_buffer.readAll();
 	LicenseTextString += seperater;
 
 

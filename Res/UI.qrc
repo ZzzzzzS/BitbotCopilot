@@ -1,11 +1,12 @@
 <RCC>
     <qresource prefix="/include">
         <file>Font/ElaAwesome.ttf</file>
-		<file>Font/segoe_slboot.ttf</file>
+        <file>Font/segoe_slboot.ttf</file>
     </qresource>
     <qresource prefix="/license">
         <file>licenses/LICENSE-ElaWidget</file>
-		<file>licenses/LICENSE-QCustomPlot</file>
+        <file>licenses/LICENSE-QCustomPlot</file>
+        <file>licenses/LICENSE-QSimpleUpdater</file>
     </qresource>
     <qresource prefix="/UI">
         <file>Image/logo.png</file>
@@ -32,15 +33,15 @@
         <file>Image/backend_icon.png</file>
         <file>Image/frontend_icon.png</file>
         <file>Image/auto_launch.png</file>
-		<file>Image/DataViewerWelcom.svg</file>
-		<file>Image/vscode.png</file>
-	    <file>Image/TrackpadDisconnected.png</file>
-		<file>Image/file.png</file>
-		<file>Image/folder.png</file>
-		<file>Image/XboxGamepad/xbox_black_front.png</file>
-		<file>Image/XboxGamepad/xbox_black_top.png</file>
-		<file>Image/XboxGamepad/xbox_white_front.png</file>
-		<file>Image/XboxGamepad/xbox_white_top.png</file>
+        <file>Image/DataViewerWelcom.svg</file>
+        <file>Image/vscode.png</file>
+        <file>Image/TrackpadDisconnected.png</file>
+        <file>Image/file.png</file>
+        <file>Image/folder.png</file>
+        <file>Image/XboxGamepad/xbox_black_front.png</file>
+        <file>Image/XboxGamepad/xbox_black_top.png</file>
+        <file>Image/XboxGamepad/xbox_white_front.png</file>
+        <file>Image/XboxGamepad/xbox_white_top.png</file>
     </qresource>
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>

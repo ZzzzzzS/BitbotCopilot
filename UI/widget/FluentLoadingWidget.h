@@ -43,6 +43,7 @@ class SimpleInfinateLoadingWidget : public ElaText
 {
 	Q_OBJECT
 public:
+	SimpleInfinateLoadingWidget(QWidget* parent = nullptr);
 	SimpleInfinateLoadingWidget(size_t FontSize, QWidget* parent = nullptr);
 	~SimpleInfinateLoadingWidget();
 	void start(bool start);

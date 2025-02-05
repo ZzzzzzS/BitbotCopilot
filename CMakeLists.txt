@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(BitbotCopilot VERSION 0.1 LANGUAGES CXX)
 
@@ -25,6 +25,8 @@ message("libssh found: ${libssh_FOUND}")
 
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
+add_subdirectory(ThirdParty/QSimpleUpdater)
+
 set(TS_FILES 
     Res/Translation/BitbotCopilot_zh_CN.ts
     )
@@ -36,8 +38,23 @@ set(QCP_FILES
     ./ThirdParty/qcustomplot/SmoothGenerator.hpp
 )
 
+set(QSU_FILES
+    ./ThirdParty/QSimpleUpdater/etc/resources/qsimpleupdater.qrc
+    ./ThirdParty/QSimpleUpdater/include/QSimpleUpdater.h
+    ./ThirdParty/QSimpleUpdater/src/AuthenticateDialog.cpp
+    ./ThirdParty/QSimpleUpdater/src/AuthenticateDialog.h
+    ./ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui
+    ./ThirdParty/QSimpleUpdater/src/Downloader.cpp
+    ./ThirdParty/QSimpleUpdater/src/Downloader.h
+    ./ThirdParty/QSimpleUpdater/src/Downloader.ui
+    ./ThirdParty/QSimpleUpdater/src/QSimpleUpdater.cpp
+    ./ThirdParty/QSimpleUpdater/src/Updater.cpp
+    ./ThirdParty/QSimpleUpdater/src/Updater.h
+)
+
 set(THIRDPARTY_FILES
     ${QCP_FILES}
+    ${QSU_FILES}
 )
 
 set(UI_WIDGETS
@@ -155,6 +172,7 @@ include_directories(
     ./ThirdParty/ElaWidgetTools/src/include
     ./ThirdParty/qcustomplot
     ./UI/widget
+    ./ThirdParty/QSimpleUpdater/include
 )
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/Res/icon.rc")
@@ -170,7 +188,12 @@ OUTPUT_STRIP_TRAILING_WHITESPACE
 message("Build version ${GIT_HASH}")
 add_definitions(-DBUILD_VERSION_COMMIT_HASH="${GIT_HASH}")
 
-
+set(UPDATE_URL "" CACHE STRING "set software update request url")
+set(BETA_UPDATE_URL "" CACHE STRING "set software update request url of beta channel")
+message(STATUS "UPDATE_URL is set to ${UPDATE_URL}")
+message(STATUS "BETA_UPDATE_URL is set to ${BETA_UPDATE_URL}")
+add_definitions(-DUPDATE_URL="${UPDATE_URL}")
+add_definitions(-DBETA_UPDATE_URL="${BETA_UPDATE_URL}")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BitbotCopilot
@@ -202,8 +225,9 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-if(WIN32)
 
+
+if(WIN32)
 target_link_libraries(BitbotCopilot PRIVATE
                      elawidgettools
                      Qt${QT_VERSION_MAJOR}::Widgets 

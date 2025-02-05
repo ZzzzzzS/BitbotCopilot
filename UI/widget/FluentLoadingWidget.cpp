@@ -5,6 +5,7 @@
 #include "ElaTheme.h"
 #include "ElaPushButton.h"
 #include "QGridLayout"
+#include "QApplication"
 
 FluentLoadingWidget::FluentLoadingWidget(QWidget* parent)
 	:FluentLoadingWidget(QString(),0,0,parent)
@@ -146,6 +147,11 @@ void FluentProgressDialog::UpdateInfo(QString info)
 	this->LoadingWidget->UpdateInfo(info);
 }
 
+SimpleInfinateLoadingWidget::SimpleInfinateLoadingWidget(QWidget* parent)
+	:SimpleInfinateLoadingWidget(12, parent)
+{
+}
+
 SimpleInfinateLoadingWidget::SimpleInfinateLoadingWidget(size_t FontSize, QWidget* parent)
 	:ElaText(parent)
 {
@@ -206,6 +212,8 @@ void SimpleInfinateLoadingWidget::start(bool start)
 	{
 		this->RefreshTimer__->start();
 		this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
+		this->RefreshLoadingAnimation();
+		qApp->processEvents();
 		this->show();
 	}
 	else

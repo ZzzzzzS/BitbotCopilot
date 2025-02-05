@@ -4,7 +4,7 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="17"/>
+        <location filename="../../UI/AboutPage.cpp" line="19"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -17,12 +17,12 @@
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="124"/>
+        <location filename="../../UI/AboutPage.ui" line="123"/>
         <source>BITBOT Copilot</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="198"/>
+        <location filename="../../UI/AboutPage.ui" line="197"/>
         <source>Powered by Zishun.Zhou Copyright©2024
 BIT Humanoid Group
 Version: </source>
@@ -31,42 +31,80 @@ Version: </source>
 版本: </translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="372"/>
+        <location filename="../../UI/AboutPage.ui" line="371"/>
         <source>BitBot Copilot Software License Terms</source>
         <translation>Bitbot Copilot 软件许可条款</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="542"/>
+        <location filename="../../UI/AboutPage.ui" line="541"/>
         <source>BitBot Kernel Support</source>
         <translation>Bitbot 内核支持</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="712"/>
+        <location filename="../../UI/AboutPage.ui" line="711"/>
         <source>The Qt Software Acknowledgment</source>
         <translation>Qt致谢声明</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="888"/>
+        <location filename="../../UI/AboutPage.ui" line="887"/>
         <source>Third-Party Software Acknowledgment</source>
         <translation>第三方组件致谢声明</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="949"/>
+        <location filename="../../UI/AboutPage.ui" line="954"/>
+        <source>Check Updates</source>
+        <translation>检查更新</translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.ui" line="1024"/>
         <source>  Send feedback  </source>
         <translation>  发送反馈  </translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.cpp" line="86"/>
+        <source>Beta Channel</source>
+        <translation>Beta通道</translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.cpp" line="86"/>
+        <source>You are using the beta channel, the update may be unstable</source>
+        <translation>您正在使用Beta通道，更新功能可能会不稳定</translation>
     </message>
 </context>
 <context>
     <name>AboutPageLicenseWidget</name>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="117"/>
+        <location filename="../../UI/AboutPage.cpp" line="161"/>
         <source>Acknowledgment</source>
         <translation>致谢</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="167"/>
+        <location filename="../../UI/AboutPage.cpp" line="221"/>
         <source>OK</source>
         <translation>确定</translation>
+    </message>
+</context>
+<context>
+    <name>AuthenticateDialog</name>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>对话框</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui" line="26"/>
+        <source>Please provide the user name and password for the download location.</source>
+        <translation>请提供下载位置的用户名和密码。</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui" line="35"/>
+        <source>&amp;User name:</source>
+        <translation>&amp;用户名:</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui" line="48"/>
+        <source>&amp;Password:</source>
+        <translation>&amp;密码：</translation>
     </message>
 </context>
 <context>
@@ -313,6 +351,172 @@ Manager</source>
         <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1704"/>
         <source>Expand</source>
         <translation>展开</translation>
+    </message>
+</context>
+<context>
+    <name>Downloader</name>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="23"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="267"/>
+        <source>Updater</source>
+        <translation>更新器</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="90"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="114"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="349"/>
+        <source>Downloading updates</source>
+        <translation>正在下载更新</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="113"/>
+        <source>Time remaining: 0 minutes</source>
+        <translation>剩余时间： 0分钟</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="154"/>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="161"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="113"/>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="115"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="449"/>
+        <source>Time remaining</source>
+        <translation>剩余时间</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="115"/>
+        <source>unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="201"/>
+        <source>Error</source>
+        <translation>错误</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="201"/>
+        <source>Cannot find downloaded update!</source>
+        <translation>找不到已下载的更新!</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="219"/>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="220"/>
+        <source>Download complete!</source>
+        <translation>下载完成!</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="221"/>
+        <source>The installer will open separately</source>
+        <translation>更新程序将会独立运行</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="228"/>
+        <source>Click &quot;OK&quot; to begin installing the update</source>
+        <translation>点击“确定”开始安装更新</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="230"/>
+        <source>In order to install the update, you may need to quit the application.</source>
+        <translation>为了安装更新，您可能需要退出应用程序。</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="234"/>
+        <source>In order to install the update, you may need to quit the application. This is a mandatory update, exiting now will close the application.</source>
+        <translation>为了安装更新，您可能需要退出应用程序。这是一个强制性更新，现在退出将关闭应用程序。</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="253"/>
+        <source>Click the &quot;Open&quot; button to apply the update</source>
+        <translation>点击“打开”按钮以应用更新</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="271"/>
+        <source>Are you sure you want to cancel the download?</source>
+        <translation>您确定要取消下载吗？</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="274"/>
+        <source>Are you sure you want to cancel the download? This is a mandatory update, exiting now will close the application</source>
+        <translation>您确定要取消下载吗？这是一个强制性更新，现在退出将关闭应用程序</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="332"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="341"/>
+        <source>%1 bytes</source>
+        <translation>%1 字节</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="335"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="344"/>
+        <source>%1 KB</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="338"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="347"/>
+        <source>%1 MB</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="349"/>
+        <source>of</source>
+        <translation>/</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="395"/>
+        <source>Downloading Updates</source>
+        <translation>正在下载更新</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="396"/>
+        <source>Time Remaining</source>
+        <translation>剩余时间</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="396"/>
+        <source>Unknown</source>
+        <translation>未知</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="423"/>
+        <source>about %1 hours</source>
+        <translation>约%1小时</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="425"/>
+        <source>about one hour</source>
+        <translation>约1小时</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="434"/>
+        <source>%1 minutes</source>
+        <translation>%1分钟</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="436"/>
+        <source>1 minute</source>
+        <translation>1分钟</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="444"/>
+        <source>%1 seconds</source>
+        <translation>%1秒</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="446"/>
+        <source>1 second</source>
+        <translation>1秒</translation>
     </message>
 </context>
 <context>
@@ -972,6 +1176,39 @@ backend</source>
         <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="328"/>
         <source>Failed to read the directory, code is </source>
         <translation>路径读取失败，错误代码 </translation>
+    </message>
+</context>
+<context>
+    <name>Updater</name>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="446"/>
+        <source>Would you like to download the update now?</source>
+        <translation>您希望现在下载更新吗?</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="449"/>
+        <source>Would you like to download the update now?&lt;br /&gt;This is a mandatory update, exiting now will close the application.</source>
+        <translation>您希望现在下载更新吗?&lt;br /&gt;这是一个强制性更新，现在退出将关闭应用程序。</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="454"/>
+        <source>&lt;strong&gt;Change log:&lt;/strong&gt;&lt;br/&gt;%1</source>
+        <translation>&lt;strong&gt;更新日志:&lt;/strong&gt;&lt;br/&gt;%1</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="457"/>
+        <source>Version %1 of %2 has been released!</source>
+        <translation>%2 的 %1 版本现已发布!</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="495"/>
+        <source>No updates are available for the moment</source>
+        <translation>目前没有可用的更新</translation>
+    </message>
+    <message>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Updater.cpp" line="497"/>
+        <source>Congratulations! You are running the latest version of %1</source>
+        <translation>祝贺! 您现在正在运行%1的最新版本</translation>
     </message>
 </context>
 <context>

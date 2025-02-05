@@ -87,6 +87,12 @@ bool SettingsHandler::isChachingRemoteData()
 	return is_chache;
 }
 
+bool SettingsHandler::isUpdateBetaChannel()
+{
+	bool is_beta = this->WRSettings("COMMON/BETA_CHANNEL", false).toBool();
+    return is_beta;
+}
+
 QString SettingsHandler::getLocalCachePath()
 {
 	QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();

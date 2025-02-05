@@ -33,6 +33,7 @@ public:
 	bool isVIP();
 	bool isBackendRemote();
 	bool isChachingRemoteData();
+	bool isUpdateBetaChannel();
 	QString getLocalCachePath();
 	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
 
