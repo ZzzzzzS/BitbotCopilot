@@ -339,7 +339,7 @@ void PilotPage::InitCommHandle()
 }
 void PilotPage::InitUserInput()
 {
-    this->GamepadHandle__ = new ZQGamepad(125, this);
+    this->GamepadHandle__ = new ZQGamepad(50, this);
     this->GamepadHandle__->start();
 
     QObject::connect(this->GamepadHandle__, &ZQGamepad::ConnectionChanged, this, [this](int id, bool Connected) {

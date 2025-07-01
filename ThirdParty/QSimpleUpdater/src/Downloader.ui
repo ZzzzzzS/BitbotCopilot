@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item>
-          <widget class="ElaProgressBar" name="progressBar">
+          <widget class="QProgressBar" name="progressBar">
            <property name="minimumSize">
             <size>
              <width>320</width>
@@ -185,7 +185,6 @@
   <customwidget>
    <class>ElaProgressBar</class>
    <extends>QProgressBar</extends>
-   <header>ElaProgressBar.h</header>
   </customwidget>
  </customwidgets>
  <resources>
