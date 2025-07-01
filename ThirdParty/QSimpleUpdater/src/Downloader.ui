@@ -106,7 +106,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QProgressBar" name="progressBar">
+          <widget class="ElaProgressBar" name="progressBar">
            <property name="minimumSize">
             <size>
              <width>320</width>
@@ -181,6 +181,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ElaProgressBar</class>
+   <extends>QProgressBar</extends>
+   <header>ElaProgressBar.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../etc/resources/qsimpleupdater.qrc"/>
  </resources>
