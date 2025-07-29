@@ -25,7 +25,6 @@ CustomSplashScreen::CustomSplashScreen(size_t waitTime, QWidget* parent)
     this->OrgLogo->setDevicePixelRatio(this->devicePixelRatio());
 
     this->CloseTimer = new QTimer(this);
-    this->CloseTimer->singleShot(waitTime, this, &CustomSplashScreen::close);
 
     this->RefreshTimer = new QTimer(this);
     this->RefreshTimer->setInterval(30);
@@ -38,6 +37,9 @@ CustomSplashScreen::CustomSplashScreen(size_t waitTime, QWidget* parent)
         this->update();
         });
     this->RefreshTimer->start();
+    this->CloseTimer->singleShot(waitTime, this, &CustomSplashScreen::close);
+    this->CloseTimer->singleShot(2 * waitTime, this, &CustomSplashScreen::close);
+    this->CloseTimer->singleShot(3 * waitTime, this, &CustomSplashScreen::close);
 }
 
 CustomSplashScreen::~CustomSplashScreen()

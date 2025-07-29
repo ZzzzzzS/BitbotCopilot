@@ -57,7 +57,7 @@ namespace zzs
     public:
         ZGAMEPAD_XINPUT(UINT FPS)
             :CallingRate__(1000 / FPS),
-            JoystickCallingDivider__(25),
+            JoystickCallingDivider__(10),
             GamepadStateChangedCallback__(nullptr),
             ButtonClickedCallback__(nullptr),
             JoystickMoveCallback__(nullptr),

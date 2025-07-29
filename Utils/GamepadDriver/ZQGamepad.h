@@ -3,6 +3,8 @@
 #include <QObject>
 #include <QSet>
 #include <QMap>
+#include "QGamepad"
+#include "QGamepadManager"
 
 namespace zzs
 {
@@ -70,4 +72,11 @@ private:
 
     void InitButtonNameMap();
     QMap<Q_XSX_JOYSTICK_ENUM, QString> GamepadButtonNameMap;
+
+    QGamepadManager* GamepadManager__;
+    QMap<int, QGamepad*> GamepadMap__;
+
+    void RefreshConnectedGamepad();
+    void RegisterGamepad(int id);
+
 };

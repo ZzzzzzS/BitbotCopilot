@@ -309,8 +309,8 @@ void zzs::BITBOT_TCP_PROTOCAL_V1::doConnect(QString Host, uint16_t port, uint ti
 		qDebug() << this->PDOManager__->closeReason();
 		qDebug() << this->PDOManager__->closeCode();
 
-		if (error == QAbstractSocket::NetworkError)
-			return; //ignore this error, this error happen sometimes, I don't known why, but seems it has no influence. 
+		// if (error == QAbstractSocket::NetworkError)
+		// 	return; //ignore this error, this error happen sometimes, I don't known why, but seems it has no influence. 
 
 		this->RefreshTimer__->stop();
 		this->PDOManager__->abort();

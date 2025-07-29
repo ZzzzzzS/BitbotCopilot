@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.24)
 
 project(BitbotCopilot VERSION 0.1 LANGUAGES CXX)
 
@@ -8,28 +8,39 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-if (MSVC)
+if(MSVC)
     add_compile_options(/MP)
     add_definitions(-D_WINSOCKAPI_)
 endif()
 
+
+
 add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools  WebSockets Network Svg PrintSupport OpenGL)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(libssh CONFIG REQUIRED)
 message("Qt version: ${QT_VERSION_MAJOR}, ${QT_VERSION_MINOR}, ${QT_VERSION_PATCH}")
 message("libssh found: ${libssh_FOUND}")
 
+include(FetchContent)
+FetchContent_Declare(
+    qtgamepadlegacy
+    URL file://${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/qtgamepadlegacy.zip
+    OVERRIDE_FIND_PACKAGE # 让 find_package(Qt6Gamepad) 指向刚构建好的库
+)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+FetchContent_MakeAvailable(qtgamepadlegacy)
 
 
 add_subdirectory(ThirdParty/ElaWidgetTools/src)
 add_subdirectory(ThirdParty/QSimpleUpdater)
 
-set(TS_FILES 
+set(TS_FILES
     Res/Translation/BitbotCopilot_zh_CN.ts
-    )
+)
 
 add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 set(QCP_FILES
@@ -109,7 +120,7 @@ set(VIRTUAL_TRACK_PAD_UI
     UI/VirtualTrackpad/SimpleTrackpad.h
 )
 
-set(UI_FILES 
+set(UI_FILES
     UI/MainWindow.cpp
     UI/MainWindow.h
     UI/AboutPage.cpp
@@ -158,13 +169,13 @@ set(UTIL_FILES
 
 
 set(PROJECT_SOURCES
-        main.cpp
-        ${UI_FILES}
-        ${TS_FILES}
-        ${UTIL_FILES}
-        ${COM_FILES}
-        ${THIRDPARTY_FILES}
-        Res/UI.qrc
+    main.cpp
+    ${UI_FILES}
+    ${TS_FILES}
+    ${UTIL_FILES}
+    ${COM_FILES}
+    ${THIRDPARTY_FILES}
+    Res/UI.qrc
 )
 
 include_directories(
@@ -182,8 +193,8 @@ execute_process(
     WORKING_DIRECTORY
     ${CMAKE_CURRENT_LIST_DIR}
     OUTPUT_VARIABLE GIT_HASH
-    
-OUTPUT_STRIP_TRAILING_WHITESPACE
+
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message("Build version ${GIT_HASH}")
 add_definitions(-DBUILD_VERSION_COMMIT_HASH="${GIT_HASH}")
@@ -201,10 +212,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         ${app_icon_resource_windows}
     )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET BitbotCopilot APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+    # Define target properties for Android with Qt 6 as:
+    #    set_property(TARGET BitbotCopilot APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+    #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+    # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
     #qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} )
     qt6_add_translations(BitbotCopilot TS_FILES ${TS_FILES} QM_FILES_OUTPUT_VARIABLE qm_files)
@@ -213,8 +224,8 @@ else()
         add_library(BitbotCopilot SHARED
             ${PROJECT_SOURCES}
         )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+        # Define properties for Android with Qt 5 after find_package() calls as:
+        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
         add_executable(BitbotCopilot
             ${PROJECT_SOURCES}
@@ -228,33 +239,34 @@ endif()
 
 
 if(WIN32)
-target_link_libraries(BitbotCopilot PRIVATE
-                     elawidgettools
-                     Qt${QT_VERSION_MAJOR}::Widgets 
-                     Qt${QT_VERSION_MAJOR}::WebSockets
-                     Qt${QT_VERSION_MAJOR}::Network
-                     Qt${QT_VERSION_MAJOR}::Svg
-                     Qt${QT_VERSION_MAJOR}::PrintSupport
-                     Qt${QT_VERSION_MAJOR}::OpenGL
-                    XInput
-                    Opengl32
-                    glu32
-                    ssh
-                     )
+    target_link_libraries(BitbotCopilot PRIVATE
+        elawidgettools
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::WebSockets
+        Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Svg
+        Qt${QT_VERSION_MAJOR}::PrintSupport
+        Qt${QT_VERSION_MAJOR}::OpenGL
+        Qt${QT_VERSION_MAJOR}::GamepadLegacy
+        XInput
+        Opengl32
+        glu32
+        ssh
+    )
 
 elseif(LINUX)
 
-target_link_libraries(BitbotCopilot PRIVATE
-                     elawidgettools
-                     Qt${QT_VERSION_MAJOR}::Widgets 
-                     Qt${QT_VERSION_MAJOR}::WebSockets
-                     Qt${QT_VERSION_MAJOR}::Network
-                     Qt${QT_VERSION_MAJOR}::Svg
-                     Qt${QT_VERSION_MAJOR}::PrintSupport
-                     Qt${QT_VERSION_MAJOR}::OpenGL
-                     OpenGL
-                     ssh
-                     )
+    target_link_libraries(BitbotCopilot PRIVATE
+        elawidgettools
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::WebSockets
+        Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Svg
+        Qt${QT_VERSION_MAJOR}::PrintSupport
+        Qt${QT_VERSION_MAJOR}::OpenGL
+        OpenGL
+        ssh
+    )
 endif()
 
 
@@ -262,7 +274,7 @@ endif()
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.BitbotCopilot)
+    set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.BitbotCopilot)
 endif()
 set_target_properties(BitbotCopilot PROPERTIES
     ${BUNDLE_ID_OPTION}

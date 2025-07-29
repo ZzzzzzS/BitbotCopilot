@@ -1,0 +1,29 @@
+{
+  "dependencies": [
+    {
+      "name": "qtbase",
+      "features": [
+        "default-features",
+        "network",
+        "opengl"
+      ],
+      "version>=": "6.6.0"
+    },
+    {
+      "name": "qtsvg",
+      "version>=": "6.6.0"
+    },
+    {
+      "name": "qtwebsockets",
+      "version>=": "6.6.0"
+    },
+    {
+      "name": "qttools",
+      "version>=": "6.6.0"
+    },
+    {
+      "name": "libssh"
+    }
+  ],
+  "builtin-baseline": "c591ac6466a55ef0a05a3d56bb1489ca36e50102"
+}
