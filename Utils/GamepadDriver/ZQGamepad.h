@@ -6,6 +6,7 @@
 #include "QGamepad"
 #include "QGamepadManager"
 #include "tuple"
+#include "QTimer"
 
 namespace zzs
 {
