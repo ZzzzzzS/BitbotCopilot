@@ -23,7 +23,7 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets N
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(libssh CONFIG REQUIRED)
 message("Qt version: ${QT_VERSION_MAJOR}, ${QT_VERSION_MINOR}, ${QT_VERSION_PATCH}")
-message("libssh found: ${libssh_FOUND}")
+message("libssh version: ${libssh_VERSION}")
 
 include(FetchContent)
 FetchContent_Declare(
@@ -31,7 +31,7 @@ FetchContent_Declare(
     URL file://${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/qtgamepadlegacy.zip
     OVERRIDE_FIND_PACKAGE # 让 find_package(Qt6Gamepad) 指向刚构建好的库
 )
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0")
+
 FetchContent_MakeAvailable(qtgamepadlegacy)
 
 
@@ -264,6 +264,7 @@ elseif(LINUX)
         Qt${QT_VERSION_MAJOR}::Svg
         Qt${QT_VERSION_MAJOR}::PrintSupport
         Qt${QT_VERSION_MAJOR}::OpenGL
+        Qt${QT_VERSION_MAJOR}::GamepadLegacy
         OpenGL
         ssh
     )
@@ -294,3 +295,15 @@ install(TARGETS BitbotCopilot
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(BitbotCopilot)
 endif()
+
+message("
+Bitbot Copilot is a bitbot GUI tool for robot control and data visualization.")
+message("Visit https://github.com/ZzzzzzS/BitbotCopilot for detailed documentation.")
+message("+------------------------------------------------------------------------------------------+
+| BBBB   III  TTTTT  BBBB    OOO   TTTTT       CCCC   OOO   PPPP   III  L      OOO   TTTTT |
+| B   B   I     T    B   B  O   O    T        C      O   O  P   P   I   L     O   O    T   |
+| BBBB    I     T    BBBB   O   O    T        C      O   O  PPPP    I   L     O   O    T   |
+| B   B   I     T    B   B  O   O    T        C      O   O  P       I   L     O   O    T   |
+| BBBB   III    T    BBBB    OOO     T         CCCC   OOO   P      III  LLLLL  OOO     T   |
++------------------------------------------------------------------------------------------+
+")

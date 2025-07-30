@@ -10,7 +10,7 @@ namespace zzs
 	{
 		Q_OBJECT
 	public:
-		LocalCommand(const QString& cmd, const QStringList& args,const QString& WorkingDir=QString(), QObject* parent = nullptr)
+		LocalCommand(const QString& cmd, const QStringList& args, const QString& WorkingDir = QString(), QObject* parent = nullptr)
 			:MetaBackendCommander(cmd, args, parent),
 			Process__(new QProcess(this))
 		{
@@ -39,7 +39,8 @@ namespace zzs
 				}
 				});
 		}
-		virtual ~LocalCommand() override
+
+		virtual ~LocalCommand()
 		{
 			this->Process__->close();
 			delete this->Process__;

@@ -18,14 +18,13 @@ namespace zzs
 			Running
 		};
 	public:
-		MetaBackendCommander(const QString& cmd, const QStringList& args,QObject* parent) 
-		:Command__(cmd), Arguments__(args)
+		MetaBackendCommander(const QString& cmd, const QStringList& args, QObject* parent)
+			:Command__(cmd), Arguments__(args)
 		{
 			qRegisterMetaType<ProcessState>("BackendState");
 		}
 
-		virtual ~MetaBackendCommander() = 0
-		{}
+		virtual ~MetaBackendCommander() {}
 
 		virtual bool Start() = 0;
 		virtual bool Stop() = 0;

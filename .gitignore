@@ -129,6 +129,7 @@ CMakeLists.txt.user*
 .vscode/
 .vs/
 build/
+builds/
 out/
 CMakePresets.json
 CMakeUserPresets.json

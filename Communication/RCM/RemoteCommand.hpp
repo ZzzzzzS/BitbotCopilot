@@ -12,7 +12,7 @@ namespace zzs
 	{
 		Q_OBJECT
 	public:
-		RemoteCommand(const QString& cmd, const QStringList& args, QObject* parent = nullptr, size_t refreshInterval=20, size_t BufferSZ=4096)
+		RemoteCommand(const QString& cmd, const QStringList& args, QObject* parent = nullptr, size_t refreshInterval = 20, size_t BufferSZ = 4096)
 			:MetaBackendCommander(cmd, args, parent),
 			Channel__(nullptr), BufferSize__(BufferSZ), Buffer__(new char[BufferSZ])
 		{
@@ -20,7 +20,8 @@ namespace zzs
 			this->RefreshTimer__->setInterval(refreshInterval);
 			connect(this->RefreshTimer__, &QTimer::timeout, this, &RemoteCommand::RefreshChannel);
 		}
-		virtual ~RemoteCommand() override
+
+		virtual ~RemoteCommand()
 		{
 			if (this->Channel__ != nullptr)
 				RCM->DistoryChannel(this->Channel__);
@@ -44,7 +45,7 @@ namespace zzs
 			}
 
 
-			int rc= ssh_channel_open_session(this->Channel__);
+			int rc = ssh_channel_open_session(this->Channel__);
 			if (rc != SSH_OK)
 			{
 				RCM->DistoryChannel(this->Channel__);
@@ -92,7 +93,7 @@ namespace zzs
 				return false;
 			}
 
-		
+
 			int rc = ssh_channel_request_send_signal(this->Channel__, cmd);
 			if (rc != SSH_OK)
 			{
