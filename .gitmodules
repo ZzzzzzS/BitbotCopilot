@@ -1,4 +1,4 @@
 [submodule "ThirdParty/ElaWidgetTools"]
 	path = ThirdParty/ElaWidgetTools
-	url = git@github.com:ZzzzzzS/ElaWidgetTools.git
+	url = https://github.com/ZzzzzzS/ElaWidgetTools
 	branch = BitbotCopilotUI
