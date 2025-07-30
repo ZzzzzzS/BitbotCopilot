@@ -24,6 +24,8 @@ enum class Q_XSX_JOYSTICK_ENUM
 
     ButtonSwitch,//6
     ButtonMenu,//7
+    ButtonXbox,
+    ButtonShare,
 
     ButtonLeftStick,//8
     ButtonRightStick,//9
@@ -63,7 +65,7 @@ signals:
 
 private:
 
-#ifdef Q_OS_WIN
+#ifdef USE_DIRECT_XINPUT
     /*void ConnectionChangeCallback(DWORD id, BOOL connected);
     void ButtonChangeCallback(std::vector<std::tuple<UINT, INT, BOOL>> states);
     void JoystickMoveCallback(std::vector<std::tuple<UINT, INT, FLOAT>> states);*/

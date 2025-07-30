@@ -21,11 +21,11 @@ private:
 	const size_t shadowBorderWidth = 0;
 	QPixmap* logo;
 	QPixmap* OrgLogo;
-	QTimer* CloseTimer;
 
 	QTimer* RefreshTimer;
 	size_t LoadingAnimationCounter__;
 	unsigned short loadingIdx;
+	size_t time_cnt=0;
 
 #define USE_WINDOWS10_STYLE
 #ifdef USE_WINDOWS10_STYLE

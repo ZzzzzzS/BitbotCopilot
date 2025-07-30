@@ -275,7 +275,7 @@ namespace zzs
             auto [rx, ry] = this->RemoveJoystickDeadZone(GamepadState.sThumbRX, GamepadState.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE / 10);
             auto lt = this->RemoveTriggerDeadZone(GamepadState.bLeftTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD / 6);
             auto rt = this->RemoveTriggerDeadZone(GamepadState.bRightTrigger, XINPUT_GAMEPAD_TRIGGER_THRESHOLD / 6);
-            std::array<FLOAT, JOYSTICK_NUM> arr = { lx,ly,rx,ry,lt,rt };
+            std::array<FLOAT, JOYSTICK_NUM> arr = { -lx,ly,-rx,ry,lt,rt };
             return arr;
         }
 

@@ -372,7 +372,9 @@ void PilotPage::InitUserInput()
 
     QObject::connect(this->GamepadHandle__, &ZQGamepad::ButtonClicked, this, [this](int id, Q_XSX_JOYSTICK_ENUM button, bool ButtonState) {
         QString ButtonName;
+        
         ButtonName = this->GamepadHandle__->name(button);
+        qDebug()<<ButtonName<<(ButtonState==true?" clicked":" released");
         if (!this->KeyEventMap.contains(ButtonName))
             return;
 

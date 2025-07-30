@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     eApp->init();
     QFontDatabase::addApplicationFont(":/include/Font/segoe_slboot.ttf");
     a.processEvents();
-    CustomSplashScreen* screen = new CustomSplashScreen(4000);
+    CustomSplashScreen* screen = new CustomSplashScreen(3000);
     screen->show();
     a.processEvents();
 
