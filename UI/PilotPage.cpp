@@ -369,12 +369,34 @@ void PilotPage::InitUserInput()
         this->CommHandle__->SendUserCommand(map);
         }, Qt::QueuedConnection);
 
+    QObject::connect(this->GamepadHandle__, &ZQGamepad::JoysticksMoved, this, [this](QVector<std::tuple<int, Q_XSX_JOYSTICK_ENUM, double>> states) {
+        QVariantMap map;
+        for (const auto& state : states)
+        {
+            int id = std::get<0>(state);
+            Q_XSX_JOYSTICK_ENUM axis = std::get<1>(state);
+            double value = std::get<2>(state);
+            QString JoystickName = this->GamepadHandle__->name(axis);
+
+            if (this->GamepadStatusUI__ != nullptr)
+            {
+                this->GamepadStatusUI__->JoystickMoved(id, axis, value);
+            }
+
+            if (!this->KeyEventMap.contains(JoystickName))
+                continue;
+
+            map.insert(this->KeyEventMap[JoystickName], QVariant(value));
+        }
+        this->CommHandle__->SendUserCommand(map);
+        }, Qt::QueuedConnection);
+
 
     QObject::connect(this->GamepadHandle__, &ZQGamepad::ButtonClicked, this, [this](int id, Q_XSX_JOYSTICK_ENUM button, bool ButtonState) {
         QString ButtonName;
-        
+
         ButtonName = this->GamepadHandle__->name(button);
-        qDebug()<<ButtonName<<(ButtonState==true?" clicked":" released");
+        qDebug() << ButtonName << (ButtonState == true ? " clicked" : " released");
         if (!this->KeyEventMap.contains(ButtonName))
             return;
 

@@ -5,6 +5,7 @@
 #include <QMap>
 #include "QGamepad"
 #include "QGamepadManager"
+#include "tuple"
 
 namespace zzs
 {
@@ -62,6 +63,7 @@ signals:
     void ConnectionChanged(int id, bool Connected);
     void ButtonClicked(int id, Q_XSX_JOYSTICK_ENUM button, int ButtonState);
     void JoystickMoved(int id, Q_XSX_JOYSTICK_ENUM axis, float value);
+    void JoysticksMoved(QVector<std::tuple<int, Q_XSX_JOYSTICK_ENUM, double>> states);
 
 private:
 
@@ -77,7 +79,10 @@ private:
 
     QGamepadManager* GamepadManager__;
     QMap<int, QGamepad*> GamepadMap__;
+    QMap<int, std::array<double, 6>> GamepadAxisValueMap__;
+    QTimer* GamepadRefreshTimer__;
 
+    void RefreshJoystickStates();
     void RefreshConnectedGamepad();
     void RegisterGamepad(int id);
 

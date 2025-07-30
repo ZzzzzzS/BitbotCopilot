@@ -5,6 +5,7 @@
 #endif // QT_OS_WIN
 #include "QDebug"
 #include "QGamepad"
+#include "QTimer"
 
 ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 	:QObject(parent)
@@ -12,6 +13,8 @@ ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 {
 	this->InitButtonNameMap();
 	qRegisterMetaType<Q_XSX_JOYSTICK_ENUM>("Q_XSX_JOYSTICK_ENUM");
+	qRegisterMetaType<QVector<Q_XSX_JOYSTICK_ENUM>>("QVector<Q_XSX_JOYSTICK_ENUM>");
+	qRegisterMetaType<QVector<std::tuple<int, Q_XSX_JOYSTICK_ENUM, float>>>("QVector<std::tuple<int, Q_XSX_JOYSTICK_ENUM, float>>");
 #ifdef USE_DIRECT_XINPUT
 	this->GamepadBackendXInput = new zzs::ZGAMEPAD_XINPUT(cps);
 	this->GamepadBackendXInput->RegistCallback(
@@ -36,8 +39,11 @@ ZQGamepad::ZQGamepad(uint cps, QObject* parent)
 
 #else
 	this->GamepadManager__ = QGamepadManager::instance();
+	this->GamepadRefreshTimer__ = new QTimer(this);
+	QObject::connect(this->GamepadRefreshTimer__, &QTimer::timeout, this, &ZQGamepad::RefreshJoystickStates);
 	QObject::connect(this->GamepadManager__, &QGamepadManager::connectedGamepadsChanged, this, &ZQGamepad::RefreshConnectedGamepad);
 	this->RefreshConnectedGamepad();
+	this->GamepadRefreshTimer__->start(1000 / cps);
 #endif // QT_OS_WIN
 
 }
@@ -132,10 +138,69 @@ void ZQGamepad::InitButtonNameMap()
 	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerRight, QString("GAMEPAD_RT"));
 }
 
+void ZQGamepad::RefreshJoystickStates()
+{
+	QVector<std::tuple<int, Q_XSX_JOYSTICK_ENUM, double>> states;
+	for (auto i = this->GamepadAxisValueMap__.begin(); i != this->GamepadAxisValueMap__.end(); ++i)
+	{
+		int id = i.key();
+		auto gamepad = this->GamepadMap__.value(id);
+		if (gamepad)
+		{
+			std::array<double, 6> axisValues = {
+				gamepad->axisLeftX(),
+				gamepad->axisLeftY(),
+				gamepad->axisRightX(),
+				gamepad->axisRightY(),
+				gamepad->buttonL2(),
+				gamepad->buttonR2()
+			};
+
+
+
+			constexpr double threshold = 0.01; // Define a threshold for axis value change
+			if (std::abs(i.value()[0] - axisValues[0]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, axisValues[0]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, axisValues[0]);
+			}
+			if (std::abs(i.value()[1] - axisValues[1]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, axisValues[1]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, axisValues[1]);
+			}
+			if (std::abs(i.value()[2] - axisValues[2]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, axisValues[2]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, axisValues[2]);
+			}
+			if (std::abs(i.value()[3] - axisValues[3]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, axisValues[3]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, axisValues[3]);
+			}
+			if (std::abs(i.value()[4] - axisValues[4]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, axisValues[4]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, axisValues[4]);
+			}
+			if (std::abs(i.value()[5] - axisValues[5]) > threshold)
+			{
+				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, axisValues[5]);
+				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, axisValues[5]);
+			}
+			// Update the axis values in the map
+
+			i.value() = axisValues;
+		}
+	}
+	emit this->JoysticksMoved(states);
+}
+
 void ZQGamepad::RefreshConnectedGamepad()
 {
 	QList<int> connectedGamepads = this->GamepadManager__->connectedGamepads();
-	qDebug()<<"connected gamepads"<<connectedGamepads.size();
+	qDebug() << "connected gamepads" << connectedGamepads.size();
 	QList<int> CurrentGamepadList = this->GamepadMap__.keys();
 
 	QList<int> NewGamepadList;
@@ -165,6 +230,7 @@ void ZQGamepad::RefreshConnectedGamepad()
 	for (int id : RemovedGamepadList)
 	{
 		this->GamepadMap__.remove(id);
+		this->GamepadAxisValueMap__.remove(id);
 		emit this->ConnectionChanged(id, false);
 	}
 
@@ -174,6 +240,17 @@ void ZQGamepad::RegisterGamepad(int id)
 {
 	auto gamepad = new QGamepad(id, this);
 	this->GamepadMap__.insert(id, gamepad);
+
+	std::array<double, 6> axisValues = {
+		gamepad->axisLeftX(),
+		gamepad->axisLeftY(),
+		gamepad->axisRightX(),
+		gamepad->axisRightY(),
+		gamepad->buttonL2(),
+		gamepad->buttonR2()
+	};
+	this->GamepadAxisValueMap__.insert(id, axisValues);
+
 
 	QObject::connect(gamepad, &QGamepad::buttonAChanged, this, [this, id](bool value) {
 		emit this->ButtonClicked(id, Q_XSX_JOYSTICK_ENUM::Button_A, this->GamepadMap__[id]->buttonA());
@@ -227,24 +304,24 @@ void ZQGamepad::RegisterGamepad(int id)
 		emit this->ButtonClicked(id, Q_XSX_JOYSTICK_ENUM::ButtonPadRight, this->GamepadMap__[id]->buttonRight());
 		});
 
-	QObject::connect(gamepad, &QGamepad::axisLeftXChanged, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, -value);
-		});
-	QObject::connect(gamepad, &QGamepad::axisLeftYChanged, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, -value);
-		});
-	QObject::connect(gamepad, &QGamepad::axisRightXChanged, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, -value);
-		});
-	QObject::connect(gamepad, &QGamepad::axisRightYChanged, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, -value);
-		});
-	QObject::connect(gamepad, &QGamepad::buttonL2Changed, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, value);
-		});
-	QObject::connect(gamepad, &QGamepad::buttonR2Changed, this, [this, id](double value) {
-		emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, value);
-		});
+	// QObject::connect(gamepad, &QGamepad::axisLeftXChanged, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, -value);
+	// 	});
+	// QObject::connect(gamepad, &QGamepad::axisLeftYChanged, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, -value);
+	// 	});
+	// QObject::connect(gamepad, &QGamepad::axisRightXChanged, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, -value);
+	// 	});
+	// QObject::connect(gamepad, &QGamepad::axisRightYChanged, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, -value);
+	// 	});
+	// QObject::connect(gamepad, &QGamepad::buttonL2Changed, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, value);
+	// 	});
+	// QObject::connect(gamepad, &QGamepad::buttonR2Changed, this, [this, id](double value) {
+	// 	emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, value);
+	// 	});
 
 }
 
