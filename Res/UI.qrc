@@ -7,6 +7,7 @@
         <file>licenses/LICENSE-ElaWidget</file>
         <file>licenses/LICENSE-QCustomPlot</file>
         <file>licenses/LICENSE-QSimpleUpdater</file>
+        <file>licenses/LICENSE-QtGamepadLegacy</file>
     </qresource>
     <qresource prefix="/UI">
         <file>Image/logo.png</file>
@@ -46,5 +47,8 @@
     <qresource prefix="/logo">
         <file>Image/ProgramIcon.png</file>
         <file>Image/ProgramIcon.ico</file>
+    </qresource>
+    <qresource prefix="/i18n">
+        <file>Translation/BitbotCopilot_zh_CN.qm</file>
     </qresource>
 </RCC>

@@ -28,7 +28,14 @@ MainWindow::MainWindow(QWidget* parent)
     ElaStatusBar* statusBar = new ElaStatusBar(this);
     QString dateTime = __DATE__;
     dateTime.replace(" ", "");
-    QDate BuildDate = QLocale(QLocale::English).toDate(dateTime, "MMMdyyyy");
+    dateTime.replace(" ", "");
+    dateTime.replace(" ", "");
+    if (dateTime.length() == 8)
+    {
+        dateTime.insert(3, "0");
+    }
+
+    QDate BuildDate = QLocale(QLocale::English).toDate(dateTime, "MMMddyyyy");
     qDebug() << BuildDate;
     QString InfoText = BuildDate.toString(Qt::ISODate) + "-";
     InfoText += QString(BUILD_VERSION_COMMIT_HASH);

@@ -40,6 +40,12 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 
 	QString dateTime = __DATE__;
 	dateTime.replace(" ", "");
+	dateTime.replace(" ", "");
+	dateTime.replace(" ", "");
+	if (dateTime.length() == 8)
+	{
+		dateTime.insert(3, "0");
+	}
 	QDate BuildDate = QLocale(QLocale::English).toDate(dateTime, "MMMdyyyy");
 	qDebug() << BuildDate;
 	InfoText += BuildDate.toString(Qt::ISODate) + "-";
@@ -131,14 +137,14 @@ void AboutPageCentralWidget::ThemeChangedSlot(ElaThemeType::ThemeMode theme)
 		palette1.setBrush(QPalette::Active, QPalette::ButtonText, brush2);
 		palette1.setBrush(QPalette::Inactive, QPalette::ButtonText, brush2);
 
-		
+
 		QBrush brush_versionLabel(QColor(206, 206, 206, 255));
 		brush_versionLabel.setStyle(Qt::SolidPattern);
 		palette_versionLabel.setBrush(QPalette::Active, QPalette::WindowText, brush_versionLabel);
 		palette_versionLabel.setBrush(QPalette::Inactive, QPalette::WindowText, brush_versionLabel);
 	}
 	else
-	{	
+	{
 		QBrush brush2(QColor(1, 63, 146, 255));
 		brush2.setStyle(Qt::SolidPattern);
 		palette1.setBrush(QPalette::Active, QPalette::ButtonText, brush2);
@@ -162,7 +168,7 @@ AboutPageLicenseWidget::AboutPageLicenseWidget()
 {
 	this->setWindowTitle(tr("Acknowledgment"));
 	ElaScrollArea* CencralScroll = new ElaScrollArea(this);
-	CencralScroll->setIsGrabGesture(true,0);
+	CencralScroll->setIsGrabGesture(true, 0);
 	CencralScroll->setWidgetResizable(true);
 	auto scrollAreaWidgetContents = new QWidget();
 	scrollAreaWidgetContents->setStyleSheet(R"(background-color:rgba(0,0,0,0);)");
@@ -172,9 +178,9 @@ AboutPageLicenseWidget::AboutPageLicenseWidget()
 	gridLayout->addWidget(LicenseText, 0, 0, 1, 1);
 	CencralScroll->setWidget(scrollAreaWidgetContents);
 
-	QString seperater= QString("\n\n------------------------------------------------------------------\n");
+	QString seperater = QString("\n\n------------------------------------------------------------------\n");
 
-	QString LicenseTextString=QString("Third-Party Software Acknowledgment");
+	QString LicenseTextString = QString("Third-Party Software Acknowledgment");
 	LicenseTextString += seperater;
 
 	//ElaWidgetTools
@@ -205,6 +211,16 @@ AboutPageLicenseWidget::AboutPageLicenseWidget()
 	QSU_license.open(QIODevice::ReadOnly);
 	QTextStream QSU_buffer(&QSU_license);
 	LicenseTextString += QSU_buffer.readAll();
+	LicenseTextString += seperater;
+
+	//qtgamepadlegacy
+	LicenseTextString += QString("QtGamepadLegacy\n");
+	LicenseTextString += QString("https://github.com/pumphaus/qtgamepadlegacy\n\n");
+	QFile QGP_license;
+	QGP_license.setFileName(":/license/licenses/LICENSE-QtGamepadLegacy");
+	QGP_license.open(QIODevice::ReadOnly);
+	QTextStream QGP_buffer(&QGP_license);
+	LicenseTextString += QGP_buffer.readAll();
 	LicenseTextString += seperater;
 
 

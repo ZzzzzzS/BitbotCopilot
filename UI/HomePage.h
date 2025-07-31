@@ -26,7 +26,7 @@ private:
 	ElaReminderCard* LaunchBitbotCard;
 	ElaReminderCard* AutoRunBitbotCard;
 	ElaReminderCard* DataViewerCard;
-	ElaReminderCard* LaunchVSCCard;
+	//ElaReminderCard* LaunchVSCCard;
 
 	ElaAcrylicUrlCard* UrlCard2;
 	ElaAcrylicUrlCard* UrlCard1;

@@ -46,17 +46,17 @@ std::tuple<QString, QString> SettingsHandler::getBackendPathAndName()
 std::tuple<QString, QString, QString, QString> SettingsHandler::getBackendConfig_ex()
 {
     QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
-	QString Port = this->WRSettings("BACKEND/PORT", 22).toString();
+    QString Port = this->WRSettings("BACKEND/PORT", 22).toString();
     QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot").toString();
-	QString UserPasswd = this->WRSettings("BACKEND/PASSWD", "bitbot").toString();
+    QString UserPasswd = this->WRSettings("BACKEND/PASSWD", "bitbot").toString();
 
-	return std::make_tuple(IP, Port, UserName, UserPasswd);
+    return std::make_tuple(IP, Port, UserName, UserPasswd);
 }
 
 QString SettingsHandler::getBackendDataRootPath()
 {
-	QString Path = this->WRSettings("BACKEND/DATAPATH", "~").toString();
-	return Path;
+    QString Path = this->WRSettings("BACKEND/DATAPATH", "/home").toString();
+    return Path;
 }
 
 bool SettingsHandler::isVIP()
@@ -66,7 +66,7 @@ bool SettingsHandler::isVIP()
 
 bool SettingsHandler::isBackendRemote()
 {
-    QString protocal = this->WRSettings("BACKEND/PROTOCAL", "ssh").toString();
+    QString protocal = this->WRSettings("BACKEND/PROTOCAL", "local").toString();
     if (protocal == QString("ssh"))
     {
         return true;
@@ -84,19 +84,19 @@ bool SettingsHandler::isBackendRemote()
 bool SettingsHandler::isChachingRemoteData()
 {
     bool is_chache = this->WRSettings("BACKEND/DATAVIEWERCACHE", true).toBool();
-	return is_chache;
+    return is_chache;
 }
 
 bool SettingsHandler::isUpdateBetaChannel()
 {
-	bool is_beta = this->WRSettings("COMMON/BETA_CHANNEL", false).toBool();
+    bool is_beta = this->WRSettings("COMMON/BETA_CHANNEL", false).toBool();
     return is_beta;
 }
 
 QString SettingsHandler::getLocalCachePath()
 {
-	QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();
-	return Path;
+    QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();
+    return Path;
 }
 
 std::tuple<QString, QString> SettingsHandler::getRemoteBackendUserNameAndIP()

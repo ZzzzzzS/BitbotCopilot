@@ -38,15 +38,17 @@ int main(int argc, char* argv[])
     a.processEvents();
 
     QTranslator translator;
-    //const QStringList uiLanguages = QLocale::system().uiLanguages();
-    //for (const QString& locale : uiLanguages) {
-    //    const QString baseName = "BitbotCopilot_" + QLocale(locale).name();
-    //    if (translator.load(":/i18n/" + baseName)) {
-    //        a.installTranslator(&translator);
-    //        break;
-    //    }
-    //}
-    if (translator.load("./BitbotCopilot_zh_CN.qm")) {
+    // qDebug() << QLocale::system().language();
+    // const QStringList uiLanguages = QLocale::system().uiLanguages();
+    // for (const QString& locale : uiLanguages) {
+    //     qDebug() << locale;
+    //     const QString baseName = "BitbotCopilot_" + QLocale(locale).name();
+    //     if (translator.load(":/i18n/Translation" + baseName)) {
+    //         a.installTranslator(&translator);
+    //         break;
+    //     }
+    // }
+    if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::Chinese) {
         a.installTranslator(&translator);
         qDebug() << "Load zh_CN.qm";
     }
