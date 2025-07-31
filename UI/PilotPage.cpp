@@ -365,7 +365,7 @@ void PilotPage::InitUserInput()
             return;
 
         QVariantMap map;
-        map.insert(this->KeyEventMap[JoystickName], QVariant(value));
+        map.insert(this->KeyEventMap[JoystickName], QVariant(static_cast<int>(value * 32768.0)));
         this->CommHandle__->SendUserCommand(map);
         }, Qt::QueuedConnection);
 
@@ -386,7 +386,7 @@ void PilotPage::InitUserInput()
             if (!this->KeyEventMap.contains(JoystickName))
                 continue;
 
-            map.insert(this->KeyEventMap[JoystickName], QVariant(value));
+            map.insert(this->KeyEventMap[JoystickName], QVariant(static_cast<int>(value * 32768.0)));
         }
         this->CommHandle__->SendUserCommand(map);
         }, Qt::QueuedConnection);

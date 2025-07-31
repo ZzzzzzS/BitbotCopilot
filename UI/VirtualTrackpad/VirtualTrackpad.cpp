@@ -33,18 +33,18 @@ VirtualTrackpad::VirtualTrackpad(QWidget* parent)
 	this->ui->widget_RightTrack->SetName(tr("Right Trackpad "));
 
 	QObject::connect(this->ui->widget_LeftTrack, &SimpleTrackpad::TouchPositionChanged, this, [this](QPointF p) {
-		emit this->VirtualTrackpadMoved("GAMEPAD_LX", p.x(), "GAMEPAD_LY", p.y());
+		emit this->VirtualTrackpadMoved("GAMEPAD_JOYSTICK_LX", p.x(), "GAMEPAD_JOYSTICK_LY", p.y());
 		qDebug() << "L" << p;
-	});
+		});
 
 	QObject::connect(this->ui->widget_RightTrack, &SimpleTrackpad::TouchPositionChanged, this, [this](QPointF p) {
-		emit this->VirtualTrackpadMoved("GAMEPAD_RX", p.x(), "GAMEPAD_RY", p.y());
+		emit this->VirtualTrackpadMoved("GAMEPAD_JOYSTICK_RX", p.x(), "GAMEPAD_JOYSTICK_RY", p.y());
 		qDebug() << "R" << p;
-	});
+		});
 
 	//this->ui->widget_disconnect->hide();
 	//this->ui->widget_connected->show();
-	
+
 	this->SetupKeyValueMode();
 
 	this->SetTheme(eTheme->getThemeMode());
@@ -140,9 +140,9 @@ void VirtualTrackpad::UpdateAvailableButton(const QMap<QString, QString>& button
 		wid->setFont(f);
 		this->ButtonsLayout__->addWidget(wid);
 		this->ButtonList__.insert(wid, key);
-		
+
 		QObject::connect(wid, &ElaPushButton::pressed, this, [this, key]() {
-			emit this->VirtualButtonPressed(key,1);
+			emit this->VirtualButtonPressed(key, 1);
 			qDebug() << key << " pressed";
 			});
 		QObject::connect(wid, &ElaPushButton::released, this, [this, key]() {
@@ -163,7 +163,7 @@ void VirtualTrackpad::SetTheme(ElaThemeType::ThemeMode mode)
 		LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
 		LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
 
-		QBrush brush_mainLabel(QColor(255,255,255, 255));
+		QBrush brush_mainLabel(QColor(255, 255, 255, 255));
 		brush_mainLabel.setStyle(Qt::SolidPattern);
 		MainLabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_mainLabel);
 		MainLabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_mainLabel);
@@ -175,7 +175,7 @@ void VirtualTrackpad::SetTheme(ElaThemeType::ThemeMode mode)
 		LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
 		LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
 
-		QBrush brush_mainLabel(QColor(0,0,0, 255));
+		QBrush brush_mainLabel(QColor(0, 0, 0, 255));
 		brush_mainLabel.setStyle(Qt::SolidPattern);
 		MainLabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_mainLabel);
 		MainLabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_mainLabel);
@@ -235,7 +235,7 @@ void VirtualTrackpad::setValueMode(bool mode)
 		this->ui->ButtonModeScrollArea->setVisible(true);
 		this->ui->ValueModeWidget->setVisible(false);
 		this->ui->ToggleButtonModeSwitch->setText(tr("Key List Mode"));
-		
+
 	}
 }
 

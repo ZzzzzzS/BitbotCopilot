@@ -256,8 +256,8 @@ void MainWindow::InitDockVirtualTrackpad()
 
     QObject::connect(this->VirtualTrackpad__, &VirtualTrackpad::VirtualTrackpadMoved, this, [this](QString Axis1, double value1, QString Axis2, double value2) {
         QVariantMap map;
-        map.insert(Axis1, QVariant(value1));
-        map.insert(Axis2, QVariant(value2));
+        map.insert(Axis1, QVariant(static_cast<int>(value1 * 32768.0)));
+        map.insert(Axis2, QVariant(static_cast<int>(value2 * 32768.0)));
         this->CommHandle__->SendUserCommand(map);
         });
 

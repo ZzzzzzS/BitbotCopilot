@@ -130,12 +130,12 @@ void ZQGamepad::InitButtonNameMap()
 	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::ButtonPadRight, QString("GAMEPAD_HAT_RIGHT"));
 
 
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftX, QString("GAMEPAD_LX"));
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftY, QString("GAMEPAD_LY"));
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightX, QString("GAMEPAD_RX"));
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightY, QString("GAMEPAD_RY"));
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerLeft, QString("GAMEPAD_LT"));
-	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerRight, QString("GAMEPAD_RT"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftX, QString("GAMEPAD_JOYSTICK_LX"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickLeftY, QString("GAMEPAD_JOYSTICK_LY"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightX, QString("GAMEPAD_JOYSTICK_RX"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::JoystickRightY, QString("GAMEPAD_JOYSTICK_RY"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerLeft, QString("GAMEPAD_JOYSTICK_LT"));
+	this->GamepadButtonNameMap.insert(Q_XSX_JOYSTICK_ENUM::TriggerRight, QString("GAMEPAD_JOYSTICK_RT"));
 }
 
 void ZQGamepad::RefreshJoystickStates()
@@ -148,10 +148,10 @@ void ZQGamepad::RefreshJoystickStates()
 		if (gamepad)
 		{
 			std::array<double, 6> axisValues = {
-				gamepad->axisLeftX(),
-				gamepad->axisLeftY(),
-				gamepad->axisRightX(),
-				gamepad->axisRightY(),
+				-gamepad->axisLeftX(),
+				-gamepad->axisLeftY(),
+				-gamepad->axisRightX(),
+				-gamepad->axisRightY(),
 				gamepad->buttonL2(),
 				gamepad->buttonR2()
 			};
@@ -161,32 +161,26 @@ void ZQGamepad::RefreshJoystickStates()
 			constexpr double threshold = 0.01; // Define a threshold for axis value change
 			if (std::abs(i.value()[0] - axisValues[0]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, axisValues[0]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftX, axisValues[0]);
 			}
 			if (std::abs(i.value()[1] - axisValues[1]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, axisValues[1]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickLeftY, axisValues[1]);
 			}
 			if (std::abs(i.value()[2] - axisValues[2]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, axisValues[2]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickRightX, axisValues[2]);
 			}
 			if (std::abs(i.value()[3] - axisValues[3]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, axisValues[3]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::JoystickRightY, axisValues[3]);
 			}
 			if (std::abs(i.value()[4] - axisValues[4]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, axisValues[4]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::TriggerLeft, axisValues[4]);
 			}
 			if (std::abs(i.value()[5] - axisValues[5]) > threshold)
 			{
-				//emit this->JoystickMoved(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, axisValues[5]);
 				states.emplace_back(id, Q_XSX_JOYSTICK_ENUM::TriggerRight, axisValues[5]);
 			}
 			// Update the axis values in the map
