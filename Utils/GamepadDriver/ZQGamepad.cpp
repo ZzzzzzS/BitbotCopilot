@@ -188,7 +188,8 @@ void ZQGamepad::RefreshJoystickStates()
 			i.value() = axisValues;
 		}
 	}
-	emit this->JoysticksMoved(states);
+	if(!states.empty())
+		emit this->JoysticksMoved(states);
 }
 
 void ZQGamepad::RefreshConnectedGamepad()
