@@ -24,7 +24,7 @@ QString RemoteFileSelector::getOpenFileName(QWidget* parent, const QString& capt
 	RemoteFileSelector* selector = new RemoteFileSelector(parent, caption, dir);
 	//selector->setAttribute(Qt::WA_DeleteOnClose);
 	QString file;
-	QObject::connect(selector, &RemoteFileSelector::FileSelected, [&file,selector](const QString& fileSelected) {
+	QObject::connect(selector, &RemoteFileSelector::FileSelected, [&file, selector](const QString& fileSelected) {
 		file = fileSelected;
 		selector->close();
 		qDebug() << "FileSelected";
@@ -35,7 +35,7 @@ QString RemoteFileSelector::getOpenFileName(QWidget* parent, const QString& capt
 		selector->close();
 		});
 
-	QObject::connect(selector, &RemoteFileSelector::Error, [&file, selector,parent](const QString& error) {
+	QObject::connect(selector, &RemoteFileSelector::Error, [&file, selector, parent](const QString& error) {
 		file = QString();
 		FluentMessageBox::warningOk(parent, "Error:", error);
 		});
@@ -164,7 +164,7 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 
 	//create signal slots and cfg
 	this->ShowConnectedUI(false);
-	
+
 	QObject::connect(this->FileSystemModel__, &SftpFileSystemModel::error, this, &RemoteFileSelector::Error);
 	QObject::connect(this->FileSystemModel__, &SftpFileSystemModel::connectStateChanged, this, [this](bool conn) {
 		qDebug() << "connectStateChanged";
@@ -184,9 +184,9 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 				this->LoadingWidget__->start(false);
 				this->update(0, 0, this->width(), this->height());
 				qApp->processEvents();
-			});
+				});
 		}
-	});
+		});
 
 	QObject::connect(this->FileSystemModel__, &SftpFileSystemModel::pathChanged, this, &RemoteFileSelector::PathChanged);
 	QObject::connect(this->ForwardButton__, &ElaPushButton::clicked, this, &RemoteFileSelector::ForwardButtonClicked);
@@ -194,7 +194,7 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 	QObject::connect(this->UpButton__, &ElaPushButton::clicked, this, &RemoteFileSelector::UpButtonClicked);
 	QObject::connect(this->RefreshButton__, &ElaPushButton::clicked, this, &RemoteFileSelector::RefreshButtonClicked);
 	QObject::connect(this->FileList__, &QListView::doubleClicked, this, &RemoteFileSelector::FileDoubleClicked);
-	QObject::connect(this->FileTable__,&QTableView::doubleClicked, this, &RemoteFileSelector::FileDoubleClicked);
+	QObject::connect(this->FileTable__, &QTableView::doubleClicked, this, &RemoteFileSelector::FileDoubleClicked);
 
 	QObject::connect(this->ShowList__, &ElaPushButton::clicked, this, [this]() {
 		this->ShowListMode__ = !this->ShowListMode__;
@@ -212,9 +212,9 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 			this->FileTable__->setVisible(false);
 			this->ShowList__->setText(QChar(ElaIconType::Bars));
 		}
-		
-	});
-	
+
+		});
+
 
 	eApp->syncMica(this);
 	this->ThemeChanged(this->_themeMode);
@@ -228,10 +228,11 @@ RemoteFileSelector::RemoteFileSelector(QWidget* parent, const QString& caption, 
 
 RemoteFileSelector::~RemoteFileSelector()
 {
+	qDebug() << "RemoteFileSelector::~RemoteFileSelector";
 	this->FileSystemThread__->quit();
 	this->FileSystemThread__->wait();
-	this->FileSystemModel__->deleteLater();
-	//delete this->FileSystemModel__;
+	//this->FileSystemModel__->deleteLater();
+	delete this->FileSystemModel__;
 }
 
 void RemoteFileSelector::paintEvent(QPaintEvent* event)
@@ -254,9 +255,9 @@ void RemoteFileSelector::paintEvent(QPaintEvent* event)
 	QColor color = (eTheme->getThemeMode() == ElaThemeType::Light) ? QColor(255, 255, 255, 250) : QColor(0x4B, 0x4B, 0x4B, 128);
 	painter.setBrush(color);
 	QRect pathBarRect = this->PathBar__->rect();
-	pathBarRect.setHeight(pathBarRect.height()+10);
+	pathBarRect.setHeight(pathBarRect.height() + 10);
 	pathBarRect.setWidth(pathBarRect.width() + 10);
-	pathBarRect.moveTo(this->PathBar__->x()-10,this->PathBar__->y()-5);
+	pathBarRect.moveTo(this->PathBar__->x() - 10, this->PathBar__->y() - 5);
 	painter.drawRoundedRect(pathBarRect, 5, 5);
 	painter.restore();
 
@@ -276,7 +277,7 @@ void RemoteFileSelector::paintEvent(QPaintEvent* event)
 		//FileRect.setHeight(FileRect.height() + 10);
 		FileRect.setHeight(this->height());
 		FileRect.setWidth(this->width());
-		if(this->ShowListMode__)
+		if (this->ShowListMode__)
 			FileRect.moveTo(0, this->FileTable__->y() - 10);
 		else
 			FileRect.moveTo(0, this->FileList__->y() - 10);
@@ -457,7 +458,7 @@ void RemoteFileSelector::ShowConnectedUI(bool show)
 	else
 	{
 		this->DisconnectedWidget__->setVisible(true);
-		this->PathBar__->setBreadcrumbList(QStringList({tr("Connection Lost")}));
+		this->PathBar__->setBreadcrumbList(QStringList({ tr("Connection Lost") }));
 		this->FileList__->setVisible(false);
 		this->FileTable__->setVisible(false);
 	}
@@ -476,7 +477,7 @@ void RemoteFileSelector::EnableButton(bool enable)
 	else
 	{
 		this->RefreshButton__->setEnabled(true);
-		this->ShowList__->setEnabled(this->FileSystemModel__->rowCount()!=0);
+		this->ShowList__->setEnabled(this->FileSystemModel__->rowCount() != 0);
 		this->UpButton__->setEnabled(!this->FileSystemModel__->isCurrentPathRoot());
 		this->ForwardButton__->setEnabled(this->FileSystemModel__->CanForward());
 		this->BackwardButton__->setEnabled(this->FileSystemModel__->CanBackward());
@@ -523,7 +524,7 @@ void RemoteFileSelector::FileDoubleClicked(const QModelIndex& index)
 	qDebug() << "FileDoubleClicked";
 	qDebug() << index.data().toString();
 	sftp_attributes_struct_ex* x = (sftp_attributes_struct_ex*)index.internalPointer();
-	if (x->type == SSH_FILEXFER_TYPE_DIRECTORY)	
+	if (x->type == SSH_FILEXFER_TYPE_DIRECTORY)
 	{
 		std::string path = this->FileSystemModel__->path().toStdString() + "/" + x->name;
 		this->FileSystemModel__->cd(path);
@@ -559,7 +560,7 @@ RemoteFileSelectorDisConnectedWidget::RemoteFileSelectorDisConnectedWidget(QWidg
 	this->Icon__->setScaledContents(true);
 	this->Icon__->setFixedSize(96, 96);
 	this->Icon__->setAlignment(Qt::AlignHCenter);
-	
+
 	QHBoxLayout* IconLay = new QHBoxLayout();
 	IconLay->addSpacerItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum));
 	IconLay->addWidget(this->Icon__);

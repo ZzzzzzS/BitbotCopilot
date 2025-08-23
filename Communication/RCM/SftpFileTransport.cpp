@@ -44,7 +44,8 @@ void SftpFileDownloader::CancelDownload()
 void SftpFileDownloader::doDownload(const QString& remotePath, const QString& localPath)
 {
 	QMutexLocker locker(&m_mutex);
-	this->SftpSession__ = zzs::SessionManager::getInstance()->CreateSftpSession();
+	if (RCM)
+		this->SftpSession__ = zzs::SessionManager::getInstance()->CreateSftpSession();
 
 	if (this->SftpSession__ == nullptr)
 	{
@@ -94,7 +95,7 @@ void SftpFileDownloader::doDownload(const QString& remotePath, const QString& lo
 		return;
 	}
 
-	char* buffer=new char[MAX_XFER_BUF_SIZE];
+	char* buffer = new char[MAX_XFER_BUF_SIZE];
 	uint64_t totalBytesRead = 0;
 	bool success = true;
 	while (totalBytesRead < fileSize)

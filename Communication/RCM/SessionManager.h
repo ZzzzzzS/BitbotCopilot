@@ -17,7 +17,7 @@ namespace zzs
 	public:
 		static SessionManager* getInstance();
 		static void destoryInstance();
-	
+
 	public:
 		void SetServerInfo(const std::string& ip, const std::string& port, const std::string& user, const std::string& pwd);
 		bool CheckConnection();
@@ -44,7 +44,7 @@ namespace zzs
 
 		std::set<sftp_session> m_sftpSessions_set;
 		std::set<ssh_channel> m_channels_set;
-		
+
 		std::atomic_bool m_isConnected;
 		std::atomic_bool m_isConnecting;
 		std::atomic_bool m_isError;
@@ -55,4 +55,5 @@ namespace zzs
 	};
 
 	static SessionManager* m_instance = nullptr;
+	static bool is_instance_destroyed = false;
 };

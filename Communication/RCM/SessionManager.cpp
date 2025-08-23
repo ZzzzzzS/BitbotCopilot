@@ -3,9 +3,14 @@
 #include "thread"
 #include "future"
 #include "exception"
+#include "QDebug"
 
 zzs::SessionManager* zzs::SessionManager::getInstance()
 {
+	if (is_instance_destroyed)
+	{
+		return nullptr;
+	}
 	if (m_instance == nullptr)
 	{
 		m_instance = new SessionManager();
@@ -20,6 +25,7 @@ void zzs::SessionManager::destoryInstance()
 		delete m_instance;
 		m_instance = nullptr;
 	}
+	is_instance_destroyed = true;
 }
 
 void zzs::SessionManager::SetServerInfo(const std::string& ip, const std::string& port, const std::string& user, const std::string& pwd)
@@ -97,6 +103,7 @@ bool zzs::SessionManager::Connect()
 		return false;
 	}
 
+	this->m_isConnecting.store(true);
 	this->m_connectFuture = std::async(std::launch::async, &SessionManager::doConnect, this);
 	return true;
 }
@@ -111,6 +118,7 @@ void zzs::SessionManager::DisConnect()
 	this->m_errorMsg = std::string("");
 	if (!this->m_isConnected.load())
 	{
+		qDebug() << "Not connected to SSH server, will not disconnect.";
 		return;
 	}
 
@@ -125,11 +133,22 @@ void zzs::SessionManager::DisConnect()
 	}
 
 	ssh_disconnect(this->m_sshSession);
+	qDebug() << "Disconnected from SSH server: " << ssh_get_disconnect_message(this->m_sshSession);
 	this->m_isConnected.store(false);
 }
 
 sftp_session zzs::SessionManager::CreateSftpSession()
 {
+	if (this->m_channels_set.empty() && this->m_sftpSessions_set.empty())
+	{
+		qDebug() << "No active sessions or channels, connecting...";
+		this->Connect();
+		while (this->m_isConnecting.load())
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+	}
+
 	if (!this->CheckConnection())
 	{
 		this->m_isError.store(true);
@@ -167,15 +186,33 @@ void zzs::SessionManager::DistorySftpSession(sftp_session sftp)
 	{
 		sftp_free(sftp);
 		this->m_sftpSessions_set.erase(sftp);
+		qDebug() << "SFTP session destroyed.";
+
+		// If no active sessions or channels, disconnect
+		if (this->m_sftpSessions_set.empty() && this->m_channels_set.empty())
+		{
+			qDebug() << "No active sessions or channels, disconnecting...";
+			this->DisConnect();
+		}
 	}
 	else
 	{
-		std::cout << "Error distorying SFTP session: Object dose not exist\n";
+		std::cout << "Error destroying SFTP session: Object does not exist\n";
 	}
 }
 
 ssh_channel zzs::SessionManager::CreateChannel()
 {
+	if (this->m_channels_set.empty() && this->m_sftpSessions_set.empty())
+	{
+		qDebug() << "No active sessions or channels, connecting...";
+		this->Connect();
+		while (this->m_isConnecting.load())
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+	}
+
 	if (!this->m_isConnected.load())
 	{
 		this->m_isError.store(true);
@@ -188,7 +225,7 @@ ssh_channel zzs::SessionManager::CreateChannel()
 	{
 		this->m_isError.store(true);
 		this->m_errorMsg = std::string(std::string("Error creating channel") + ssh_get_error(this->m_sshSession));
-		std::cout << "Error creating channel: " << ssh_get_error(this->m_sshSession) << "\n";
+		qDebug() << "Error creating channel: " << ssh_get_error(this->m_sshSession) << "\n";
 		return nullptr;
 	}
 
@@ -204,10 +241,18 @@ void zzs::SessionManager::DistoryChannel(ssh_channel channel)
 	{
 		ssh_channel_free(channel);
 		this->m_channels_set.erase(channel);
+		qDebug() << "Channel destroyed.";
+
+		// If no active sessions or channels, disconnect
+		if (this->m_sftpSessions_set.empty() && this->m_channels_set.empty())
+		{
+			qDebug() << "No active sessions or channels, disconnecting...";
+			this->DisConnect();
+		}
 	}
 	else
 	{
-		std::cout << "Error distorying channel: Object dose not exist\n";
+		std::cout << "Error destroying channel: Object does not exist\n";
 	}
 }
 
@@ -246,11 +291,28 @@ bool zzs::SessionManager::doConnect()
 	this->m_isConnecting.store(true);
 	this->m_errorMsg = std::string("");
 	this->m_isError.store(false);
+	qDebug() << "Connecting to remote server...";
+	if (this->m_sshSession != nullptr)
+	{
+		//重新生成一个session对象，不然会有bug
+		qDebug() << "Reconnecting to remote server...";
+		ssh_free(this->m_sshSession);
+		this->m_sshSession = ssh_new();
+		if (this->m_sshSession == nullptr)
+		{
+			this->m_isError.store(true);
+			this->m_errorMsg = std::string("Error creating ssh session");
+			std::cout << "Error creating ssh session\n";
+			throw std::runtime_error("Error creating ssh session");
+		}
+		this->SetServerInfo(this->m_ip, this->m_port, this->m_user, this->m_pwd);
+	}
+
 	int rc = ssh_connect(this->m_sshSession);
 	if (rc != SSH_OK)
 	{
 		auto rtn = ssh_is_connected(this->m_sshSession);
-		std::cout << "Error connecting: " << ssh_get_error(this->m_sshSession) << "\n";
+		qDebug() << "Error connecting: " << ssh_get_error(this->m_sshSession) << "\n";
 		this->m_isConnected.store(false);
 		this->m_isConnecting.store(false);
 		this->m_isError.store(true);
@@ -258,21 +320,64 @@ bool zzs::SessionManager::doConnect()
 
 		return false;
 	}
+	qDebug() << "Connected to remote server";
 
-	if (ssh_session_is_known_server(this->m_sshSession) != SSH_KNOWN_HOSTS_OK)
+	if (auto rtn = ssh_session_is_known_server(this->m_sshSession); rtn == SSH_KNOWN_HOSTS_CHANGED)
 	{
-		std::cout << "Server not known\n";
+		qDebug() << "Host key for server changed\n";
 		this->m_isConnected.store(false);
 		this->m_isConnecting.store(false);
 		this->m_isError.store(true);
-		this->m_errorMsg = std::string("Server not known");
+		this->m_errorMsg = std::string("Host key for server changed, possible attack.");
+
+		return false;
+	}
+	else if (rtn == SSH_KNOWN_HOSTS_OTHER)
+	{
+		qDebug() << "The host key for this server was not found but an other type of key exists.\n";
+		qDebug() << "An attacker might change the default server key to confuse your client into thinking the key does not exist\n";
+		this->m_isConnected.store(false);
+		this->m_isConnecting.store(false);
+		this->m_isError.store(true);
+		this->m_errorMsg = std::string("The host key for this server was not found but an other type of key exists.");
+
+		return false;
+	}
+	else if (rtn == SSH_KNOWN_HOSTS_UNKNOWN || rtn == SSH_KNOWN_HOSTS_NOT_FOUND)
+	{
+		qDebug() << "The host key for this server is unknown.\n";
+		ssh_session_update_known_hosts(this->m_sshSession);
+	}
+	else if (rtn == SSH_KNOWN_HOSTS_ERROR)
+	{
+		qDebug() << "Error checking the known hosts file.\n";
+		this->m_isConnected.store(false);
+		this->m_isConnecting.store(false);
+		this->m_isError.store(true);
+		this->m_errorMsg = std::string("Error checking the known hosts file");
+
+		return false;
+	}
+	else if (rtn == SSH_KNOWN_HOSTS_OK)
+	{
+		//ok
+		qDebug() << "The server is known and the key has not changed.";
+	}
+	else
+	{
+		qDebug() << "Unknown return value from ssh_is_known_server: " << rtn << "\n";
+		this->m_isConnected.store(false);
+		this->m_isConnecting.store(false);
+		this->m_isError.store(true);
+		this->m_errorMsg = std::string("Unknown return value from ssh_is_known_server");
 
 		return false;
 	}
 
+
 	if (ssh_userauth_password(this->m_sshSession, this->m_user.c_str(), this->m_pwd.c_str()) != SSH_AUTH_SUCCESS)
 	{
-		std::cout << "Error authenticating with password: " << ssh_get_error(this->m_sshSession) << "\n";
+		qDebug() << "Error authenticating with password: " << ssh_get_error(this->m_sshSession) << "\n";
 		this->m_isConnected.store(false);
 		this->m_isConnecting.store(false);
 		this->m_isError.store(true);
@@ -280,7 +385,7 @@ bool zzs::SessionManager::doConnect()
 
 		return false;
 	}
-	std::cout << "Connected\n";
+	qDebug() << "ssh Connected\n";
 	this->m_isConnected.store(true);
 	this->m_isConnecting.store(false);
 	this->m_isError.store(false);

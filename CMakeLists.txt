@@ -15,9 +15,11 @@ if(MSVC)
     add_definitions(-D_WINSOCKAPI_)
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .exe / .dll
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .dll（共享库）
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .lib / .a
 
-
-add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
+#add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)

@@ -24,6 +24,7 @@ SftpFileSystemModel::SftpFileSystemModel(const QString RootPath, QObject* parent
 
 SftpFileSystemModel::~SftpFileSystemModel()
 {
+	qDebug() << "Destroying SftpFileSystemModel";
 	doDisconnect();
 }
 
@@ -272,8 +273,18 @@ void SftpFileSystemModel::setOperationInProgress(bool inProgress)
 void SftpFileSystemModel::doConnect()
 {
 	qDebug() << "doConnect";
+	if (RCM == nullptr)
+	{
+		emit this->error(tr("RCM is not initialized"));
+		return;
+	}
 	this->setOperationInProgress(true);
-	this->SftpSession__ = zzs::SessionManager::getInstance()->CreateSftpSession();
+	sftp_session session = zzs::SessionManager::getInstance()->CreateSftpSession();
+	if (this->SftpSession__ != nullptr && RCM != nullptr)
+	{
+		zzs::SessionManager::getInstance()->DistorySftpSession(this->SftpSession__);
+	}
+	this->SftpSession__ = session;
 	if (this->SftpSession__ != nullptr)
 	{
 		this->connected__ = true;
@@ -290,7 +301,7 @@ void SftpFileSystemModel::doConnect()
 void SftpFileSystemModel::doDisconnect()
 {
 	this->setOperationInProgress(true);
-	if (this->SftpSession__ != nullptr)
+	if (this->SftpSession__ != nullptr && RCM != nullptr)
 		zzs::SessionManager::getInstance()->DistorySftpSession(this->SftpSession__);
 	this->SftpSession__ = nullptr;
 	this->connected__ = false;
@@ -299,7 +310,7 @@ void SftpFileSystemModel::doDisconnect()
 
 void SftpFileSystemModel::doCd(const std::string& path)
 {
-	if (this->SftpSession__ == nullptr)
+	if (this->SftpSession__ == nullptr || RCM == nullptr)
 		return;
 
 	this->setOperationInProgress(true);
@@ -402,7 +413,6 @@ void SftpFileSystemModel::doCd(const std::string& path)
 
 void SftpFileSystemModel::doRefresh()
 {
-	this->doDisconnect();
 	this->doConnect();
 	if (this->isConnected())
 	{

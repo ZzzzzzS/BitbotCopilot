@@ -60,9 +60,9 @@ class SftpFileSystemModel : public QAbstractItemModel
 {
 	Q_OBJECT
 public:
-	SftpFileSystemModel(const QString RootPath,QObject* parent = nullptr);
+	SftpFileSystemModel(const QString RootPath, QObject* parent = nullptr);
 	~SftpFileSystemModel();
-	
+
 	bool connect();
 	void disconnect();
 
@@ -105,7 +105,7 @@ private:
 	std::atomic_bool isForwarding__;
 	std::atomic_bool isBacking__;
 	std::atomic_bool isRefreshing__;
-	
+
 	mutable QMutex mutex__;
 	std::vector<sftp_attributes_struct_ex> DirInfoCache__;
 	std::string CurrentPath__;

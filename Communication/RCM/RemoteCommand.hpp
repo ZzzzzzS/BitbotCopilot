@@ -23,19 +23,24 @@ namespace zzs
 
 		virtual ~RemoteCommand()
 		{
-			if (this->Channel__ != nullptr)
+			qDebug() << "Destroying RemoteCommand";
+			if (this->Channel__ != nullptr && RCM != nullptr)
 				RCM->DistoryChannel(this->Channel__);
 			delete[] this->Buffer__;
 		}
 
 		virtual bool isRunning() override
 		{
-			return this->Channel__ != nullptr;
+			return this->Channel__ != nullptr && RCM != nullptr;
 		}
 
 		virtual bool Start() override
 		{
 			emit this->StateChanged(ProcessState::Starting);
+			if (RCM == nullptr)
+			{
+				return false;
+			}
 			this->Channel__ = RCM->CreateChannel();
 			if (this->Channel__ == nullptr)
 			{
@@ -86,6 +91,11 @@ namespace zzs
 	private:
 		bool doKill(const char* cmd)
 		{
+			if (RCM == nullptr)
+			{
+				return false;
+			}
+
 			if (this->Channel__ == nullptr)
 			{
 				emit this->CommandError(tr("The channel is not running"));
@@ -101,6 +111,9 @@ namespace zzs
 				emit this->StateChanged(ProcessState::Running);
 				return false;
 			}
+
+
+
 			this->RefreshTimer__->stop();
 			qApp->processEvents();
 
@@ -114,6 +127,11 @@ namespace zzs
 
 		void RefreshChannel()
 		{
+			if (RCM == nullptr)
+			{
+				return;
+			}
+
 			if (this->Channel__ == nullptr)
 				return;
 			int nbytes = ssh_channel_read_nonblocking(this->Channel__, this->Buffer__, this->BufferSize__, 0);
@@ -128,6 +146,7 @@ namespace zzs
 			}
 			else if (nbytes == SSH_EOF)
 			{
+				qDebug() << "SSH channel reached EOF, now closing.";
 				ssh_channel_close(this->Channel__);
 				RCM->DistoryChannel(this->Channel__);
 				this->Channel__ = nullptr;

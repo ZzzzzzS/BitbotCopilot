@@ -15,6 +15,11 @@
 
 #include <chrono>
 #include <thread>
+
+#ifdef Q_OS_WIN32
+#include "WinBase.h"
+#endif
+
 int main(int argc, char* argv[])
 {
     //    SetProcessDPIAware(); // call before the main event loop
@@ -56,9 +61,20 @@ int main(int argc, char* argv[])
     MainWindow w;
     screen->exec();
     w.show();
+    //w.showMaximized();
     //screen->close();
     a.processEvents();
     delete screen;
 
-    return a.exec();
+#ifdef Q_OS_WIN32
+    EXECUTION_STATE s = SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
+#endif // Q_OS_WIN32
+    int rtn = a.exec();
+
+#ifdef Q_OS_WIN32
+    SetThreadExecutionState(ES_CONTINUOUS);
+#endif // Q_OS_WIN32
+
+
+    return rtn;
 }

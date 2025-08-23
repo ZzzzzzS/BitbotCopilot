@@ -22,6 +22,9 @@
       "version>=": "6.6.0"
     },
     {
+      "name": "qtquickcontrols2"
+    },
+    {
       "name": "libssh"
     }
   ],
