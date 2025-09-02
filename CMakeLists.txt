@@ -15,11 +15,25 @@ if(MSVC)
     add_definitions(-D_WINSOCKAPI_)
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .exe / .dll
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .dll（共享库）
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)   # .lib / .a
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .exe / .dll
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .dll（共享库）
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .lib / .a
 
-#add_definitions(-DPRERELEASE_BUILD) # uncomment this line in final release
+add_definitions(-DPRERELEASE_BUILD)
+# add update url from a file
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/update_url.txt")
+    file(READ "${CMAKE_CURRENT_SOURCE_DIR}/update_url.txt" UPDATE_URL)
+    string(STRIP "${UPDATE_URL}" UPDATE_URL)
+    if(UPDATE_URL)
+        message(STATUS "Found update URL: ${UPDATE_URL}")
+        add_definitions(-DUPDATE_CHANNEL="${UPDATE_URL}")
+    else()
+        message(WARNING "No update URL found.")
+        add_definitions(-DUPDATE_CHANNEL="")
+    endif()
+else()
+    message(WARNING "No update file is given.")
+endif()
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools WebSockets Network Svg PrintSupport OpenGL)
@@ -166,6 +180,7 @@ set(UTIL_FILES
     Utils/GamepadDriver/ZGamepad_XInput.hpp
     Utils/Settings/SettingsHandler.cpp
     Utils/Settings/SettingsHandler.h
+    Utils/Settings/parser.hpp
     Utils/DataReadWriter/csv_io.hpp
 )
 
@@ -200,13 +215,6 @@ execute_process(
 )
 message("Build version ${GIT_HASH}")
 add_definitions(-DBUILD_VERSION_COMMIT_HASH="${GIT_HASH}")
-
-set(UPDATE_URL "" CACHE STRING "set software update request url")
-set(BETA_UPDATE_URL "" CACHE STRING "set software update request url of beta channel")
-message(STATUS "UPDATE_URL is set to ${UPDATE_URL}")
-message(STATUS "BETA_UPDATE_URL is set to ${BETA_UPDATE_URL}")
-add_definitions(-DUPDATE_URL="${UPDATE_URL}")
-add_definitions(-DBETA_UPDATE_URL="${BETA_UPDATE_URL}")
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BitbotCopilot

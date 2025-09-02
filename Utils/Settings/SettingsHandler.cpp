@@ -4,6 +4,8 @@
 #include <QSettings>
 #include <QString>
 #include <QList>
+#include <QDir>
+#include <QSet>
 
 SettingsHandler* SettingsHandler::getInstance()
 {
@@ -21,12 +23,53 @@ SettingsHandler* SettingsHandler::getInstance()
 SettingsHandler::SettingsHandler(QObject* parent)
     : QObject(parent)
 {
-    this->settings__ = new QSettings("./settings.ini", QSettings::IniFormat, this);
+    QDir profile_dir("./profile");
+    if (!profile_dir.exists())
+        profile_dir.mkdir("./");
+
+    QFile default_user_profile("./settings.ini");
+    bool compatmode = false;
+    if (default_user_profile.exists())
+    {
+        bool rtn = default_user_profile.copy("./profile/default_user.ini");
+        if (rtn)
+        {
+            default_user_profile.remove();
+        }
+        else
+        {
+            if (QFile profile2("./profile/default_user.ini"); profile2.exists())
+            {
+                default_user_profile.remove();
+            }
+            else
+            {
+                compatmode = true;
+            }
+        }
+    }
+
+    this->UserListSettings__ = new QSettings("./profile/common_settings.ini", QSettings::IniFormat, this);
+    QString UserProfileName = this->WRSettings("CURRENT_USER_PROFILE", "default_user.ini", this->UserListSettings__).toString();
+    if (UserProfileName.contains("common_settings.ini")) //防止注入
+        UserProfileName = "default_user.ini";
+
+
+    QStringList Profiles = this->getUserList();
+    Profiles.append(UserProfileName);
+    this->updateUserList(Profiles);
+
+    UserProfileName = QString("./profile/") + UserProfileName;
+    UserProfileName = compatmode ? QString("./settings.ini") : UserProfileName;
+    this->settings__ = new QSettings(UserProfileName, QSettings::IniFormat, this);
+    this->getUpdateChannel();
+
 }
 
 SettingsHandler::~SettingsHandler()
 {
     this->settings__->sync();
+    this->UserListSettings__->sync();
 }
 
 std::tuple<QString, uint16_t> SettingsHandler::getIPAndPort()
@@ -59,11 +102,6 @@ QString SettingsHandler::getBackendDataRootPath()
     return Path;
 }
 
-bool SettingsHandler::isVIP()
-{
-    return this->WRSettings("COMMON/VIP", true).toBool();
-}
-
 bool SettingsHandler::isBackendRemote()
 {
     QString protocal = this->WRSettings("BACKEND/PROTOCAL", "local").toString();
@@ -87,10 +125,10 @@ bool SettingsHandler::isChachingRemoteData()
     return is_chache;
 }
 
-bool SettingsHandler::isUpdateBetaChannel()
+QString SettingsHandler::getUpdateChannel()
 {
-    bool is_beta = this->WRSettings("COMMON/BETA_CHANNEL", false).toBool();
-    return is_beta;
+    QString channel = this->WRSettings("COMMON/UPDATECHANNEL", UPDATE_CHANNEL, this->UserListSettings__).toString();
+    return channel;
 }
 
 QString SettingsHandler::getLocalCachePath()
@@ -138,4 +176,69 @@ QVariant SettingsHandler::WRSettings(QString key, QVariant default_value)
     this->settings__->setValue(key, var);
     this->settings__->sync();
     return var;
+}
+
+QVariant SettingsHandler::WRSettings(QString key, QVariant default_value, QSettings* domain)
+{
+    QVariant var = domain->value(key, default_value);
+    domain->setValue(key, var);
+    domain->sync();
+    return var;
+}
+
+
+
+QStringList SettingsHandler::getUserList()
+{
+    size_t num = this->UserListSettings__->beginReadArray("USER_PROFILES");
+    if (num <= 0)
+    {
+        this->UserListSettings__->endArray();
+        return QStringList();
+    }
+
+    QStringList rtn;
+    for (size_t i = 0; i < num; i++)
+    {
+        this->UserListSettings__->setArrayIndex(i);
+        QString profile_path = this->UserListSettings__->value("PROFILE_PATH").toString();
+        rtn.append(profile_path);
+    }
+    this->UserListSettings__->endArray();
+    return rtn;
+}
+
+bool SettingsHandler::updateUserList(const QStringList& users)
+{
+    QSet<QString> ProfileSet;
+    for (auto user : users)
+    {
+        ProfileSet.insert(user);
+    }
+
+    this->UserListSettings__->remove("USER_PROFILES");
+    this->UserListSettings__->beginWriteArray("USER_PROFILES", ProfileSet.size());
+    size_t i = 0;
+    for (auto user : ProfileSet)
+    {
+        this->UserListSettings__->setArrayIndex(i++);
+        this->UserListSettings__->setValue("PROFILE_PATH", user);
+    }
+    this->UserListSettings__->endArray();
+    this->UserListSettings__->sync();
+    return true;
+}
+
+bool SettingsHandler::updateCurrentUserProfile(const QString& profile)
+{
+    if (profile.contains("common_settings")) //防止注入
+        return false;
+    this->UserListSettings__->setValue("CURRENT_USER_PROFILE", profile);
+
+    QStringList Profiles = this->getUserList();
+    Profiles.append(profile);
+    this->updateUserList(Profiles);
+
+
+    return true;
 }

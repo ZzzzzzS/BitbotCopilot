@@ -12,6 +12,10 @@
 #include "QSimpleUpdater.h"
 #include "../Utils/Settings/SettingsHandler.h"
 #include "UI/widget/FluentMessageBox.hpp"
+#include "QSslSocket"
+#include "QFileInfo"
+#include "QDir"
+#include "QProcess"
 
 AboutPage::AboutPage(QWidget* parent)
 {
@@ -86,23 +90,21 @@ void AboutPageCentralWidget::ThirdpartyLicenseSlot()
 
 void AboutPageCentralWidget::CheckUpdateSlot()
 {
-	bool BetaVer = ZSet->isUpdateBetaChannel();
-	if (BetaVer)
-	{
-		FluentMessageBox::informationOk(this, tr("Beta Channel"), tr("You are using the beta channel, the update may be unstable"));
-	}
-
+	qDebug() << "QSslSocket=" << QSslSocket::sslLibraryBuildVersionString();
+	qDebug() << "OpenSSL支持情况:" << QSslSocket::supportsSsl();
 	this->ui->UpdateLoadingWidget->start(true);
 	this->ui->UpdatesButton->setEnabled(false);
-	QString UpdateURL = BetaVer ? BETA_UPDATE_URL : UPDATE_URL;
+	QString UpdateURL = ZSet->getUpdateChannel();
 	updater->setModuleVersion(UpdateURL, BUILD_VERSION_COMMIT_HASH);
-	updater->setDownloadDir(UpdateURL, "./");
+	qDebug() << "Update URL:" << UpdateURL;
+	updater->setDownloadDir(UpdateURL, "./BitbotCopilot_SxS");
 	//updater->setModuleVersion(UpdateURL, "0433526");
 	updater->setNotifyOnFinish(UpdateURL, true);
 	updater->setNotifyOnUpdate(UpdateURL, true);
 	updater->setUseCustomAppcast(UpdateURL, false);
 	updater->setDownloaderEnabled(UpdateURL, true);
 	updater->setMandatoryUpdate(UpdateURL, false);
+	updater->setUseCustomInstallProcedures(UpdateURL, true);
 
 	/* Check for updates */
 	updater->checkForUpdates(UpdateURL);
@@ -123,6 +125,37 @@ void AboutPageCentralWidget::InitUpdate()
 
 	QObject::connect(this->updater, &QSimpleUpdater::downloadFinished, this, [this](const QString& url, const QString& filepath) {
 		qDebug() << "downloadFinished";
+		QFileInfo info(QCoreApplication::applicationFilePath());
+		QString currentProgramName = info.fileName();
+		QString currentProgramPath = info.absolutePath();
+		QString currentProgramBaseName = info.baseName();
+		QString currentProgramSuffix = info.suffix();
+
+		QString NewName = currentProgramBaseName + "-" + QString(BUILD_VERSION_COMMIT_HASH);
+		if (!currentProgramSuffix.isEmpty())
+		{
+			NewName += "." + currentProgramSuffix;
+		}
+
+		QString NewPath = currentProgramPath + "/BitbotCopilot_SxS/";
+
+		// Create the new directory if it doesn't exist
+		QDir dir;
+		if (!dir.exists(NewPath))
+		{
+			dir.mkpath(NewPath);
+		}
+
+		QString NewFilePath = NewPath + NewName;
+
+		QStringList args;
+		args << "--upgrade_mode" << "--upgrade_from=" + QCoreApplication::applicationFilePath() << "--upgrade_to=" + NewFilePath;
+
+		bool rtn = QProcess::startDetached(filepath, args, QFileInfo(filepath).absolutePath());
+		if (rtn)
+			qApp->quit();
+		else
+			QMessageBox::critical(this, tr("Upgrade failed"), tr("Failed to launch upgrade program, try again later."), QMessageBox::Ok);
 		});
 }
 

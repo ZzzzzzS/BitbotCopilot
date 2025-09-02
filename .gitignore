@@ -144,3 +144,4 @@ CMakeSettings.json
 data/
 .VSCodeCounter/
 vcpkg_installed/
+update_url.txt

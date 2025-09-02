@@ -30,10 +30,12 @@ public:
 	std::tuple<QString, QString> getBackendPathAndName();
 	std::tuple<QString, QString, QString, QString> getBackendConfig_ex();
 	QString getBackendDataRootPath();
-	bool isVIP();
+	QStringList getUserList();
+	bool updateUserList(const QStringList& profilesPath);
+	bool updateCurrentUserProfile(const QString& profile);
 	bool isBackendRemote();
 	bool isChachingRemoteData();
-	bool isUpdateBetaChannel();
+	QString getUpdateChannel();
 	QString getLocalCachePath();
 	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
 
@@ -41,5 +43,7 @@ public:
 
 private:
 	QVariant WRSettings(QString key, QVariant default_value);
+	QVariant WRSettings(QString key, QVariant default_value, QSettings* domain);
 	QSettings* settings__;
+	QSettings* UserListSettings__;
 };
