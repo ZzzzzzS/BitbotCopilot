@@ -9,6 +9,18 @@
         <file>licenses/LICENSE-QSimpleUpdater</file>
         <file>licenses/LICENSE-QtGamepadLegacy</file>
     </qresource>
+    <qresource prefix="/avatar">
+        <file>robot_avatar/robot-0.png</file>
+        <file>robot_avatar/robot-1.png</file>
+        <file>robot_avatar/robot-2.png</file>
+        <file>robot_avatar/robot-3.png</file>
+        <file>robot_avatar/robot-4.png</file>
+        <file>robot_avatar/robot-5.png</file>
+        <file>robot_avatar/robot-6.png</file>
+        <file>robot_avatar/robot-7.png</file>
+        <file>robot_avatar/robot-8.png</file>
+        <file>robot_avatar/robot-9.png</file>
+    </qresource>
     <qresource prefix="/UI">
         <file>Image/logo.png</file>
         <file>Image/Home_Background.png</file>

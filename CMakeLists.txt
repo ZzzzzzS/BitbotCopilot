@@ -153,6 +153,8 @@ set(UI_FILES
     UI/AboutPage.ui
     UI/SettingsPage.cpp
     UI/SettingsPage.h
+    UI/ProfileSelector.cpp
+    UI/ProfileSelector.h
 
     ${UI_WIDGETS}
     ${DATA_VIEWER_UI}

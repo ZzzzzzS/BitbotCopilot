@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
     a.processEvents();
 
     QTranslator translator;
+    qDebug() << QLocale::system().language();
     if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::Chinese) {
         a.installTranslator(&translator);
         qDebug() << "Load zh_CN.qm";

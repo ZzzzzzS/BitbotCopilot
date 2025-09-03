@@ -6,6 +6,7 @@
 #include <QList>
 #include <QDir>
 #include <QSet>
+#include <QRandomGenerator>
 
 SettingsHandler* SettingsHandler::getInstance()
 {
@@ -31,14 +32,14 @@ SettingsHandler::SettingsHandler(QObject* parent)
     bool compatmode = false;
     if (default_user_profile.exists())
     {
-        bool rtn = default_user_profile.copy("./profile/default_user.ini");
+        bool rtn = default_user_profile.copy("./profile/Unnamed_Robot.ini");
         if (rtn)
         {
             default_user_profile.remove();
         }
         else
         {
-            if (QFile profile2("./profile/default_user.ini"); profile2.exists())
+            if (QFile profile2("./profile/Unnamed_Robot.ini"); profile2.exists())
             {
                 default_user_profile.remove();
             }
@@ -50,9 +51,9 @@ SettingsHandler::SettingsHandler(QObject* parent)
     }
 
     this->UserListSettings__ = new QSettings("./profile/common_settings.ini", QSettings::IniFormat, this);
-    QString UserProfileName = this->WRSettings("CURRENT_USER_PROFILE", "default_user.ini", this->UserListSettings__).toString();
+    QString UserProfileName = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
     if (UserProfileName.contains("common_settings.ini")) //防止注入
-        UserProfileName = "default_user.ini";
+        UserProfileName = "Unnamed_Robot.ini";
 
 
     QStringList Profiles = this->getUserList();
@@ -102,9 +103,13 @@ QString SettingsHandler::getBackendDataRootPath()
     return Path;
 }
 
-bool SettingsHandler::isBackendRemote()
+bool SettingsHandler::isBackendRemote(QSettings* domain)
 {
-    QString protocal = this->WRSettings("BACKEND/PROTOCAL", "local").toString();
+    QString protocal;
+    if (domain == nullptr)
+        protocal = this->WRSettings("BACKEND/PROTOCAL", "local").toString();
+    else
+        protocal = this->WRSettings("BACKEND/PROTOCAL", "local", domain).toString();
     if (protocal == QString("ssh"))
     {
         return true;
@@ -135,6 +140,60 @@ QString SettingsHandler::getLocalCachePath()
 {
     QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();
     return Path;
+}
+
+//return Display_robotname, display_robot_ip, display_robot_avatar_path
+std::tuple<QString, QString, QString> SettingsHandler::getUserProfileInfo()
+{
+    QString UserName = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+    QString ip;
+    if (this->isBackendRemote())
+    {
+        ip = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
+    }
+    else
+    {
+        ip = tr("local computer");
+    }
+
+    // generate a random number from 1-11
+    int random_number = QRandomGenerator::global()->bounded(0, 10);
+    QString DefaultRandomAvatar = QString(":/avatar/robot_avatar/robot-%1.png").arg(random_number);
+
+    QString Avatar = this->WRSettings("PROFILE/AVATAR", DefaultRandomAvatar).toString();
+
+    return std::make_tuple(UserName, ip, Avatar);
+}
+
+QList<std::tuple<QString, QString, QString>> SettingsHandler::getUserProfileInfos(bool exclude_current_profile)
+{
+    QStringList users = this->getUserList(exclude_current_profile);
+    QList<std::tuple<QString, QString, QString>> InfoList;
+
+    for (auto&& user : users)
+    {
+        QString Profile_path = QString("./profile/") + user;
+        QSettings setting = QSettings(Profile_path, QSettings::IniFormat, nullptr);
+
+        QString ip;
+        if (this->isBackendRemote(&setting))
+        {
+            ip = this->WRSettings("BACKEND/IP", "127.0.0.1", &setting).toString();
+        }
+        else
+        {
+            ip = tr("local computer");
+        }
+
+        int random_number = QRandomGenerator::global()->bounded(0, 10);
+        QString DefaultRandomAvatar = QString(":/avatar/robot_avatar/robot-%1.png").arg(random_number);
+
+        QString Avatar = this->WRSettings("PROFILE/AVATAR", DefaultRandomAvatar, &setting).toString();
+
+        auto tuple = std::make_tuple(user, ip, Avatar);
+        InfoList.append(tuple);
+    }
+    return InfoList;
 }
 
 std::tuple<QString, QString> SettingsHandler::getRemoteBackendUserNameAndIP()
@@ -188,8 +247,10 @@ QVariant SettingsHandler::WRSettings(QString key, QVariant default_value, QSetti
 
 
 
-QStringList SettingsHandler::getUserList()
+QStringList SettingsHandler::getUserList(bool exclude_current_profile)
 {
+    QString Current_Profile_Name = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+
     size_t num = this->UserListSettings__->beginReadArray("USER_PROFILES");
     if (num <= 0)
     {
@@ -202,6 +263,11 @@ QStringList SettingsHandler::getUserList()
     {
         this->UserListSettings__->setArrayIndex(i);
         QString profile_path = this->UserListSettings__->value("PROFILE_PATH").toString();
+        if (exclude_current_profile && profile_path == Current_Profile_Name)
+        {
+            continue;
+        }
+
         rtn.append(profile_path);
     }
     this->UserListSettings__->endArray();
@@ -231,9 +297,12 @@ bool SettingsHandler::updateUserList(const QStringList& users)
 
 bool SettingsHandler::updateCurrentUserProfile(const QString& profile)
 {
+    if (profile.isEmpty())
+        return false;
+
     if (profile.contains("common_settings")) //防止注入
         return false;
-    this->UserListSettings__->setValue("CURRENT_USER_PROFILE", profile);
+    this->UserListSettings__->setValue("CURRENT_PROFILE/CURRENT_USER_PROFILE", profile);
 
     QStringList Profiles = this->getUserList();
     Profiles.append(profile);

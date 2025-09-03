@@ -7,6 +7,7 @@
 #include "QDebug"
 #include "QFile"
 #include "QThread"
+#include "QFileInfo"
 
 #define ZCP CmdParser::getInstance()
 #define ZCP_INIT CmdParser::getInstance()

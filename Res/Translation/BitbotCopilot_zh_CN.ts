@@ -4,7 +4,7 @@
 <context>
     <name>AboutPage</name>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="19"/>
+        <location filename="../../UI/AboutPage.cpp" line="23"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -22,11 +22,19 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="197"/>
         <source>Powered by Zishun.Zhou Copyright©2024
 BIT Humanoid Group
 Version: </source>
-        <translation>由周子顺提供技术支持 版权所有©2024
+        <translation type="vanished">由周子顺提供技术支持 版权所有©2024
+北京理工大学仿人机器人团队
+版本: </translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.ui" line="197"/>
+        <source>Powered by Zishun.Zhou Copyright©2025
+BIT Humanoid Group
+Version: </source>
+        <translation>由@ZZS提供技术支持 版权所有©2024
 北京理工大学仿人机器人团队
 版本: </translation>
     </message>
@@ -61,25 +69,33 @@ Version: </source>
         <translation>  发送反馈  </translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="86"/>
         <source>Beta Channel</source>
-        <translation>Beta通道</translation>
+        <translation type="vanished">Beta通道</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="86"/>
         <source>You are using the beta channel, the update may be unstable</source>
-        <translation>您正在使用Beta通道，更新功能可能会不稳定</translation>
+        <translation type="vanished">您正在使用Beta通道，更新功能可能会不稳定</translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.cpp" line="158"/>
+        <source>Upgrade failed</source>
+        <translation>升级失败</translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.cpp" line="158"/>
+        <source>Failed to launch upgrade program, try again later.</source>
+        <translation>启动升级程序失败，请稍后再试。</translation>
     </message>
 </context>
 <context>
     <name>AboutPageLicenseWidget</name>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="161"/>
+        <location filename="../../UI/AboutPage.cpp" line="202"/>
         <source>Acknowledgment</source>
         <translation>致谢</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="221"/>
+        <location filename="../../UI/AboutPage.cpp" line="272"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -176,7 +192,7 @@ Manager</source>
 <context>
     <name>CustomSplashScreen</name>
     <message>
-        <location filename="../../UI/widget/CustomSplashScreen.cpp" line="89"/>
+        <location filename="../../UI/widget/CustomSplashScreen.cpp" line="90"/>
         <source>Starting Bitbot Copilot...</source>
         <translation>正在启动Bitbot Copilot...</translation>
     </message>
@@ -362,24 +378,24 @@ Manager</source>
         <translation>更新器</translation>
     </message>
     <message>
-        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="90"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="104"/>
         <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="114"/>
         <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="349"/>
         <source>Downloading updates</source>
         <translation>正在下载更新</translation>
     </message>
     <message>
-        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="113"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="127"/>
         <source>Time remaining: 0 minutes</source>
         <translation>剩余时间： 0分钟</translation>
     </message>
     <message>
-        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="154"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="168"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="161"/>
+        <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.ui" line="175"/>
         <location filename="../../ThirdParty/QSimpleUpdater/src/Downloader.cpp" line="113"/>
         <source>Stop</source>
         <translation>停止</translation>
@@ -642,24 +658,20 @@ Manager</source>
         <translation>一键启动Bitbot并初始化</translation>
     </message>
     <message>
-        <location filename="../../UI/HomePage.cpp" line="57"/>
         <source>Launch Robot VSCode</source>
-        <translation>启动机器人VSCode</translation>
+        <translation type="vanished">启动机器人VSCode</translation>
     </message>
     <message>
-        <location filename="../../UI/HomePage.cpp" line="58"/>
         <source>Launch VSCode on robot side</source>
-        <translation>在机器人上启动VSCode</translation>
+        <translation type="vanished">在机器人上启动VSCode</translation>
     </message>
     <message>
-        <location filename="../../UI/HomePage.cpp" line="62"/>
         <source>unsupported function</source>
-        <translation>不支持的功能</translation>
+        <translation type="vanished">不支持的功能</translation>
     </message>
     <message>
-        <location filename="../../UI/HomePage.cpp" line="62"/>
         <source>this function is not supported yet!</source>
-        <translation>该功能暂未实现！</translation>
+        <translation type="vanished">该功能暂未实现！</translation>
     </message>
     <message>
         <location filename="../../UI/HomePage.cpp" line="52"/>
@@ -686,85 +698,103 @@ backend</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="36"/>
+        <location filename="../../UI/MainWindow.cpp" line="47"/>
         <source>BETA VERSION! FOR EVALUATION PURPOSE ONLY!   BUILD VERSION: </source>
         <translation>测试版本! 仅供评估使用!    构建版本: </translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="60"/>
         <source>BIT Humanoid Group</source>
-        <translation>北京理工大学仿人机器人团队</translation>
+        <translation type="vanished">北京理工大学仿人机器人团队</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="77"/>
+        <location filename="../../UI/MainWindow.cpp" line="92"/>
         <source>Home</source>
         <translation>主页</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="81"/>
+        <location filename="../../UI/MainWindow.cpp" line="96"/>
         <source>Nav Deck</source>
         <translation>导航台</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="84"/>
+        <location filename="../../UI/MainWindow.cpp" line="99"/>
         <source>Data Viewer</source>
         <translation>数据查看器</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="91"/>
-        <location filename="../../UI/MainWindow.cpp" line="238"/>
+        <location filename="../../UI/MainWindow.cpp" line="106"/>
+        <location filename="../../UI/MainWindow.cpp" line="271"/>
         <source>Virtual Trackpad</source>
         <translation>虚拟触控板</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="110"/>
+        <location filename="../../UI/MainWindow.cpp" line="125"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="128"/>
+        <location filename="../../UI/MainWindow.cpp" line="143"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="142"/>
         <location filename="../../UI/MainWindow.cpp" line="157"/>
+        <location filename="../../UI/MainWindow.cpp" line="172"/>
         <source>Failed to Attach Bitbot</source>
         <translation>附加到Bitbot实例失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="142"/>
         <location filename="../../UI/MainWindow.cpp" line="157"/>
+        <location filename="../../UI/MainWindow.cpp" line="172"/>
         <source>Failed to attach Bitbot backend, nav deck is already running, please disconnect it first</source>
         <translation>附加到Bitbot后端实例失败，导航台已经启动，请先断开连接</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="171"/>
+        <location filename="../../UI/MainWindow.cpp" line="186"/>
         <source>Failed to Auto Initialize Bitbot</source>
         <translation>自动初始化机器人失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="171"/>
+        <location filename="../../UI/MainWindow.cpp" line="186"/>
         <source>Failed to auto run new bitbot task, nav deck is already running or launch list is not configured.</source>
         <translation>新bitbot任务自动启动失败，导航台已经在运行，或者自动启动列表未配置。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="294"/>
-        <source>Connecting to Robot</source>
-        <translation>正在连接到机器人</translation>
+        <location filename="../../UI/MainWindow.cpp" line="203"/>
+        <location filename="../../UI/MainWindow.cpp" line="210"/>
+        <source>Failed to switch robot profile.</source>
+        <translation>切换机器人配置失败。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="302"/>
+        <location filename="../../UI/MainWindow.cpp" line="203"/>
+        <source>robot profile dose not exist or contain error(s).</source>
+        <translation>机器人配置不存在或存在错误。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="210"/>
+        <source>launching failed.</source>
+        <translation>启动失败。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="339"/>
+        <source>Connection with Robot is Lost or Closed</source>
+        <translation>机器人连接已断开或已关闭</translation>
+    </message>
+    <message>
+        <source>Connecting to Robot</source>
+        <translation type="vanished">正在连接到机器人</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="335"/>
         <source>Connection with Robot is Established</source>
         <translation>已连接到机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="306"/>
         <source>Connection with Robot is Lost</source>
-        <translation>与机器人的连接已丢失</translation>
+        <translation type="vanished">与机器人的连接已丢失</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="313"/>
+        <location filename="../../UI/MainWindow.cpp" line="346"/>
         <source>Error Occured: </source>
         <translation>错误： </translation>
     </message>
@@ -821,91 +851,140 @@ backend</source>
         <translation>即刻远程查看您的机器人的状态</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="392"/>
-        <location filename="../../UI/PilotPage.cpp" line="857"/>
+        <location filename="../../UI/PilotPage.cpp" line="416"/>
+        <location filename="../../UI/PilotPage.cpp" line="881"/>
         <source>Disconnect</source>
         <translation>断开连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="479"/>
+        <location filename="../../UI/PilotPage.cpp" line="503"/>
         <source>Graph Mode </source>
         <translation>曲线模式 </translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="672"/>
-        <location filename="../../UI/PilotPage.cpp" line="845"/>
+        <location filename="../../UI/PilotPage.cpp" line="696"/>
+        <location filename="../../UI/PilotPage.cpp" line="869"/>
         <source>Connect</source>
         <translation>连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="730"/>
-        <location filename="../../UI/PilotPage.cpp" line="849"/>
+        <location filename="../../UI/PilotPage.cpp" line="754"/>
+        <location filename="../../UI/PilotPage.cpp" line="873"/>
         <source>Connection Failed</source>
         <translation>连接失效</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="730"/>
-        <location filename="../../UI/PilotPage.cpp" line="849"/>
+        <location filename="../../UI/PilotPage.cpp" line="754"/>
+        <location filename="../../UI/PilotPage.cpp" line="873"/>
         <source>Failed to connected to BitBot, please check you network connection!</source>
         <translation>连接到Bitbot失败，请检查您的网络连接！</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="853"/>
-        <location filename="../../UI/PilotPage.cpp" line="864"/>
+        <location filename="../../UI/PilotPage.cpp" line="877"/>
+        <location filename="../../UI/PilotPage.cpp" line="888"/>
         <source>connecting</source>
         <translation>正在连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="861"/>
+        <location filename="../../UI/PilotPage.cpp" line="885"/>
         <source>Disconnect Failed</source>
         <translation>断开连接失败</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="861"/>
+        <location filename="../../UI/PilotPage.cpp" line="885"/>
         <source>Failed to disconnect to Bitbot, try again later</source>
         <translation>断开Bitbot后端失败，请稍后再试</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="866"/>
+        <location filename="../../UI/PilotPage.cpp" line="890"/>
         <source>System is Busy</source>
         <translation>系统忙</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="866"/>
+        <location filename="../../UI/PilotPage.cpp" line="890"/>
         <source>System is busy, connect/disconnect request will be ignored</source>
         <translation>系统忙，连接/断开请求将会被忽略</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="870"/>
+        <location filename="../../UI/PilotPage.cpp" line="894"/>
         <source>Catastrophic Failure</source>
         <translation>灾难性错误</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="870"/>
+        <location filename="../../UI/PilotPage.cpp" line="894"/>
         <source>Unknown Button Status</source>
         <translation>未知的按键状态</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="953"/>
+        <location filename="../../UI/PilotPage.cpp" line="977"/>
         <source>Failed to Auto Initialize Bitbot</source>
         <translation>自动初始化Bitbot失败</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="953"/>
+        <location filename="../../UI/PilotPage.cpp" line="977"/>
         <source>Failed to auto initialize Bitbot, check your connection and try again later.</source>
         <translation>自动初始化Bitbot失败，请检查您的连接并稍后再试。</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="976"/>
-        <location filename="../../UI/PilotPage.cpp" line="1004"/>
+        <location filename="../../UI/PilotPage.cpp" line="1000"/>
+        <location filename="../../UI/PilotPage.cpp" line="1028"/>
         <source>Processing Command: </source>
         <translation>正在处理指令: </translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="976"/>
-        <location filename="../../UI/PilotPage.cpp" line="1004"/>
+        <location filename="../../UI/PilotPage.cpp" line="1000"/>
+        <location filename="../../UI/PilotPage.cpp" line="1028"/>
         <source>...</source>
         <translation>...</translation>
+    </message>
+</context>
+<context>
+    <name>ProfileSelector</name>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="30"/>
+        <source>robot profiles</source>
+        <translation>机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="33"/>
+        <source>Select your robot profile</source>
+        <translation>选择您的机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="45"/>
+        <source>Use this profile</source>
+        <translation>使用此配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="83"/>
+        <source>Continue</source>
+        <translation>继续</translation>
+    </message>
+    <message>
+        <source>Use current profile</source>
+        <translation type="vanished">使用此配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="55"/>
+        <source>Use a different profile</source>
+        <translation>使用其他配置</translation>
+    </message>
+    <message>
+        <source>select</source>
+        <translation type="vanished">选择</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../main.cpp" line="47"/>
+        <source>Upgrade Failed</source>
+        <translation>升级失败</translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="47"/>
+        <source>Program upgrade failed, try again later or contact publisher for more information.</source>
+        <translation>程序升级失败，请稍后再试或联系发行商获取更多信息。</translation>
     </message>
 </context>
 <context>
@@ -1122,7 +1201,7 @@ backend</source>
         <translation>正在关闭远程文件选择器，请稍候...</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="460"/>
+        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="461"/>
         <source>Connection Lost</source>
         <translation>连接丢失</translation>
     </message>
@@ -1130,16 +1209,24 @@ backend</source>
 <context>
     <name>RemoteFileSelectorDisConnectedWidget</name>
     <message>
-        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="546"/>
+        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="547"/>
         <source>Robot is not connected, please check your connection or remote configuration.</source>
         <translatorcomment>机器人未连接，请检查您的网络连接或远程配置。</translatorcomment>
         <translation>机器人未连接，请检查您的网络连接或远程配置。</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="547"/>
+        <location filename="../../UI/DataViewer/RemoteFileSelector.cpp" line="548"/>
         <source>Robot is not connected</source>
         <translatorcomment>机器人未连接</translatorcomment>
         <translation>机器人未连接</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsHandler</name>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="152"/>
+        <source>local computer</source>
+        <translation>本地计算机</translation>
     </message>
 </context>
 <context>
@@ -1153,27 +1240,32 @@ backend</source>
 <context>
     <name>SftpFileSystemModel</name>
     <message>
-        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="251"/>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="252"/>
         <source>Name</source>
         <translation>文件名</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="253"/>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="254"/>
         <source>Date Modified</source>
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="255"/>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="256"/>
         <source>Size</source>
         <translation>占用空间</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="284"/>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="278"/>
+        <source>RCM is not initialized</source>
+        <translation>RCM未初始化</translation>
+    </message>
+    <message>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="295"/>
         <source>Failed to connect to the server</source>
         <translation>连接到服务器失败</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="328"/>
+        <location filename="../../Communication/RCM/SftpFileSystemModel.cpp" line="339"/>
         <source>Failed to read the directory, code is </source>
         <translation>路径读取失败，错误代码 </translation>
     </message>
@@ -1315,32 +1407,32 @@ backend</source>
 <context>
     <name>zzs::RemoteCommand</name>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="41"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="47"/>
         <source>Failed to create the remote channel</source>
         <translation>创建远程通道失败</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="52"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="58"/>
         <source>Failed to open the remote channel</source>
         <translation>打开远程通道失败</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="69"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="75"/>
         <source>Failed to execute the command</source>
         <translation>执行命令失败</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="90"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="101"/>
         <source>The channel is not running</source>
         <translation>远程通道未运行</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="99"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="110"/>
         <source>Failed to send the stop signal</source>
         <translation>发送停止信号失败</translation>
     </message>
     <message>
-        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="124"/>
+        <location filename="../../Communication/RCM/RemoteCommand.hpp" line="143"/>
         <source>Failed to read the output</source>
         <translation>读取远程输出失败</translation>
     </message>

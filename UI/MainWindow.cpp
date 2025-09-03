@@ -9,6 +9,10 @@
 #include "UI/widget/FluentMessageBox.hpp"
 #include "ElaStatusBar.h"
 #include "QSystemTrayIcon"
+#include "Utils/Settings/SettingsHandler.h"
+#include "UI/ProfileSelector.h"
+#include "UI/widget/FluentMessageBox.hpp"
+#include "QProcess"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -62,9 +66,13 @@ void MainWindow::InitWindow()
     this->resize(1366, 768);
     this->setMinimumWidth(700);
 
-    setUserInfoCardPixmap(QPixmap(":/UI/Image/logo.png"));
-    setUserInfoCardTitle("BITBOT Copilot");
-    setUserInfoCardSubTitle(tr("BIT Humanoid Group"));
+    auto [UserName, ip, Avatar] = ZSet->getUserProfileInfo();
+
+    //setUserInfoCardPixmap(QPixmap(":/UI/Image/logo.png"));
+    qDebug() << Avatar;
+    setUserInfoCardPixmap(QPixmap(Avatar));
+    setUserInfoCardTitle(UserName.split(".ini").first());
+    setUserInfoCardSubTitle(QString("ip: ") + ip);
     //setWindowTitle("Bitbot Copilot");
 
     this->InitMica();
@@ -183,6 +191,24 @@ void MainWindow::InitSignalSlot()
 
     QObject::connect(this->HomePage__, &HomePage::ViewDataSignal, this, [this]() {
         this->navigation(this->ViewDataPage__->property("ElaPageKey").toString());
+        });
+
+    QObject::connect(this, &MainWindow::userInfoCardClicked, this, [this]() {
+        QString profile = ProfileSelector::Select();
+        if (profile.isEmpty())
+            return;
+
+        if (!ZSet->updateCurrentUserProfile(profile))
+        {
+            FluentMessageBox::warningOk(this, tr("Failed to switch robot profile."), tr("robot profile dose not exist or contain error(s)."));
+        }
+        else
+        {
+            if (QProcess::startDetached(QCoreApplication::applicationFilePath(), QStringList() << "--no_splash", QCoreApplication::applicationDirPath()))
+                qApp->quit();
+            else
+                FluentMessageBox::warningOk(this, tr("Failed to switch robot profile."), tr("launching failed."));
+        }
         });
 
 }

@@ -30,13 +30,16 @@ public:
 	std::tuple<QString, QString> getBackendPathAndName();
 	std::tuple<QString, QString, QString, QString> getBackendConfig_ex();
 	QString getBackendDataRootPath();
-	QStringList getUserList();
+	QStringList getUserList(bool exclude_current_profile = false);
 	bool updateUserList(const QStringList& profilesPath);
 	bool updateCurrentUserProfile(const QString& profile);
-	bool isBackendRemote();
+	bool isBackendRemote(QSettings* domain = nullptr);
 	bool isChachingRemoteData();
 	QString getUpdateChannel();
 	QString getLocalCachePath();
+	std::tuple<QString, QString, QString> getUserProfileInfo();
+	QList<std::tuple<QString, QString, QString>> getUserProfileInfos(bool exclude_current_profile = false);
+
 	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
 
 	AutoRunCmdList  getAutoRunCommandList();
