@@ -7,12 +7,12 @@ class FluentMessageBox : public QObject
 {
 	Q_OBJECT
 public:
-	static void informationOk(QWidget* parent, const QString& title, const QString& text,QMessageBox::StandardButton buttons=QMessageBox::Ok)
+	static void informationOk(QWidget* parent, const QString& title, const QString& text, QMessageBox::StandardButton buttons = QMessageBox::Ok)
 	{
 		QString title_;
 		if (title.back() != '.' || title.back() != '!' || title.back() != '?')
 		{
-			title_ = title + ". ";
+			title_ = title + tr(". ");
 		}
 		else if (title.back() == ' ')
 		{
@@ -35,7 +35,7 @@ public:
 		QString title_;
 		if (title.back() != '.' || title.back() != '!' || title.back() != '?')
 		{
-			title_ = title + ". ";
+			title_ = title + tr(". ");
 		}
 		else if (title.back() == ' ')
 		{
@@ -59,7 +59,7 @@ public:
 		QString title_;
 		if (title.back() != '.' || title.back() != '!' || title.back() != '?')
 		{
-			title_ = title + ". ";
+			title_ = title + tr(". ");
 		}
 		else if (title.back() == ' ')
 		{

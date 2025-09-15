@@ -55,6 +55,7 @@ AboutPageCentralWidget::AboutPageCentralWidget(QWidget* parent)
 	InfoText += BuildDate.toString(Qt::ISODate) + "-";
 	InfoText += QString(BUILD_VERSION_COMMIT_HASH);
 	this->ui->VersionLabel->setText(InfoText);
+	this->ui->VersionLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 	QObject::connect(this->ui->QtButton, &QPushButton::clicked, qApp, &QApplication::aboutQt);
 	QObject::connect(this->ui->SoftwareLicenseButton, &QPushButton::clicked, this, []() {

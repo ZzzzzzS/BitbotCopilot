@@ -22,6 +22,7 @@
 #include "WinBase.h"
 #endif
 
+
 int main(int argc, char* argv[])
 {
     //    SetProcessDPIAware(); // call before the main event loop
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
 
     QTranslator translator;
     qDebug() << QLocale::system().language();
-    if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::Chinese) {
+    if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::English) {
         a.installTranslator(&translator);
         qDebug() << "Load zh_CN.qm";
     }

@@ -77,12 +77,12 @@ Version: </source>
         <translation type="vanished">您正在使用Beta通道，更新功能可能会不稳定</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="158"/>
+        <location filename="../../UI/AboutPage.cpp" line="159"/>
         <source>Upgrade failed</source>
         <translation>升级失败</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="158"/>
+        <location filename="../../UI/AboutPage.cpp" line="159"/>
         <source>Failed to launch upgrade program, try again later.</source>
         <translation>启动升级程序失败，请稍后再试。</translation>
     </message>
@@ -90,12 +90,12 @@ Version: </source>
 <context>
     <name>AboutPageLicenseWidget</name>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="202"/>
+        <location filename="../../UI/AboutPage.cpp" line="203"/>
         <source>Acknowledgment</source>
         <translation>致谢</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.cpp" line="272"/>
+        <location filename="../../UI/AboutPage.cpp" line="273"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -121,6 +121,24 @@ Version: </source>
         <location filename="../../ThirdParty/QSimpleUpdater/src/AuthenticateDialog.ui" line="48"/>
         <source>&amp;Password:</source>
         <translation>&amp;密码：</translation>
+    </message>
+</context>
+<context>
+    <name>AvatarNameEditor</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/AvatarNameEditor.cpp" line="13"/>
+        <source>Robot Profile</source>
+        <translation>机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/AvatarNameEditor.cpp" line="21"/>
+        <source>Robot Name</source>
+        <translation>机器人名称</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/AvatarNameEditor.cpp" line="32"/>
+        <source>Enter robot name</source>
+        <translation>请输入机器人名称</translation>
     </message>
 </context>
 <context>
@@ -593,6 +611,13 @@ Manager</source>
 <context>
     <name>FluentMessageBox</name>
     <message>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="15"/>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="38"/>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="62"/>
+        <source>. </source>
+        <translation>。</translation>
+    </message>
+    <message>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="25"/>
         <source>Infomation: </source>
         <translation>提示: </translation>
@@ -698,7 +723,7 @@ backend</source>
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="47"/>
+        <location filename="../../UI/MainWindow.cpp" line="48"/>
         <source>BETA VERSION! FOR EVALUATION PURPOSE ONLY!   BUILD VERSION: </source>
         <translation>测试版本! 仅供评估使用!    构建版本: </translation>
     </message>
@@ -707,76 +732,98 @@ backend</source>
         <translation type="vanished">北京理工大学仿人机器人团队</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="92"/>
+        <location filename="../../UI/MainWindow.cpp" line="93"/>
         <source>Home</source>
         <translation>主页</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="96"/>
+        <location filename="../../UI/MainWindow.cpp" line="97"/>
         <source>Nav Deck</source>
         <translation>导航台</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="99"/>
+        <location filename="../../UI/MainWindow.cpp" line="100"/>
         <source>Data Viewer</source>
         <translation>数据查看器</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="106"/>
-        <location filename="../../UI/MainWindow.cpp" line="271"/>
+        <location filename="../../UI/MainWindow.cpp" line="107"/>
+        <location filename="../../UI/MainWindow.cpp" line="286"/>
         <source>Virtual Trackpad</source>
         <translation>虚拟触控板</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="125"/>
+        <location filename="../../UI/MainWindow.cpp" line="126"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="143"/>
+        <location filename="../../UI/MainWindow.cpp" line="144"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="157"/>
-        <location filename="../../UI/MainWindow.cpp" line="172"/>
+        <location filename="../../UI/MainWindow.cpp" line="158"/>
+        <location filename="../../UI/MainWindow.cpp" line="173"/>
         <source>Failed to Attach Bitbot</source>
         <translation>附加到Bitbot实例失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="157"/>
-        <location filename="../../UI/MainWindow.cpp" line="172"/>
+        <location filename="../../UI/MainWindow.cpp" line="158"/>
+        <location filename="../../UI/MainWindow.cpp" line="173"/>
         <source>Failed to attach Bitbot backend, nav deck is already running, please disconnect it first</source>
         <translation>附加到Bitbot后端实例失败，导航台已经启动，请先断开连接</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="186"/>
+        <location filename="../../UI/MainWindow.cpp" line="187"/>
         <source>Failed to Auto Initialize Bitbot</source>
         <translation>自动初始化机器人失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="186"/>
+        <location filename="../../UI/MainWindow.cpp" line="187"/>
         <source>Failed to auto run new bitbot task, nav deck is already running or launch list is not configured.</source>
         <translation>新bitbot任务自动启动失败，导航台已经在运行，或者自动启动列表未配置。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="203"/>
-        <location filename="../../UI/MainWindow.cpp" line="210"/>
-        <source>Failed to switch robot profile.</source>
-        <translation>切换机器人配置失败。</translation>
+        <location filename="../../UI/MainWindow.cpp" line="209"/>
+        <source>New Profile Created</source>
+        <translation>新配置创建成功</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="203"/>
-        <source>robot profile dose not exist or contain error(s).</source>
+        <location filename="../../UI/MainWindow.cpp" line="209"/>
+        <source>Application will restart to switch to new profile.</source>
+        <translation>程序将要重启来切换到新配置。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="218"/>
+        <location filename="../../UI/MainWindow.cpp" line="225"/>
+        <source>Failed to switch robot profile</source>
+        <translation>切换机器人配置失败</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="218"/>
+        <source>Robot profile dose not exist or contain error(s).</source>
         <translation>机器人配置不存在或存在错误。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="210"/>
-        <source>launching failed.</source>
+        <location filename="../../UI/MainWindow.cpp" line="225"/>
+        <source>Launching failed.</source>
         <translation>启动失败。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="339"/>
+        <source>Failed to switch robot profile.</source>
+        <translation type="vanished">切换机器人配置失败。</translation>
+    </message>
+    <message>
+        <source>robot profile dose not exist or contain error(s).</source>
+        <translation type="vanished">机器人配置不存在或存在错误。</translation>
+    </message>
+    <message>
+        <source>launching failed.</source>
+        <translation type="vanished">启动失败。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/MainWindow.cpp" line="354"/>
         <source>Connection with Robot is Lost or Closed</source>
         <translation>机器人连接已断开或已关闭</translation>
     </message>
@@ -785,7 +832,7 @@ backend</source>
         <translation type="vanished">正在连接到机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="335"/>
+        <location filename="../../UI/MainWindow.cpp" line="350"/>
         <source>Connection with Robot is Established</source>
         <translation>已连接到机器人</translation>
     </message>
@@ -794,7 +841,7 @@ backend</source>
         <translation type="vanished">与机器人的连接已丢失</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="346"/>
+        <location filename="../../UI/MainWindow.cpp" line="361"/>
         <source>Error Occured: </source>
         <translation>错误： </translation>
     </message>
@@ -802,22 +849,22 @@ backend</source>
 <context>
     <name>PilotPage</name>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="159"/>
+        <location filename="../../UI/PilotPage.cpp" line="149"/>
         <source>Frontend Manager</source>
         <translation>前端管理器</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="214"/>
+        <location filename="../../UI/PilotPage.cpp" line="161"/>
         <source>IP:</source>
         <translation>IP地址:</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="238"/>
+        <location filename="../../UI/PilotPage.cpp" line="185"/>
         <source>Port:</source>
         <translation>端口：</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="264"/>
+        <location filename="../../UI/PilotPage.cpp" line="211"/>
         <source>connect</source>
         <translation>连接</translation>
     </message>
@@ -826,13 +873,13 @@ backend</source>
         <translation type="vanished">断开</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="97"/>
+        <location filename="../../UI/PilotPage.cpp" line="98"/>
         <source>Launching new Bitbot backend...</source>
         <translation>正在启动新Bitbot后端...</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="97"/>
-        <location filename="../../UI/PilotPage.cpp" line="107"/>
+        <location filename="../../UI/PilotPage.cpp" line="98"/>
+        <location filename="../../UI/PilotPage.cpp" line="108"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -841,131 +888,193 @@ backend</source>
         <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="36"/>
+        <location filename="../../UI/PilotPage.cpp" line="37"/>
         <source> Bitbot Nav Deck</source>
         <translation> Bitbot导航台</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="169"/>
+        <location filename="../../UI/PilotPage.cpp" line="149"/>
         <source>Instantly access your robot states from remote</source>
         <translation>即刻远程查看您的机器人的状态</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="416"/>
-        <location filename="../../UI/PilotPage.cpp" line="881"/>
+        <location filename="../../UI/PilotPage.cpp" line="363"/>
+        <location filename="../../UI/PilotPage.cpp" line="828"/>
         <source>Disconnect</source>
         <translation>断开连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="503"/>
+        <location filename="../../UI/PilotPage.cpp" line="450"/>
         <source>Graph Mode </source>
         <translation>曲线模式 </translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="696"/>
-        <location filename="../../UI/PilotPage.cpp" line="869"/>
+        <location filename="../../UI/PilotPage.cpp" line="643"/>
+        <location filename="../../UI/PilotPage.cpp" line="816"/>
         <source>Connect</source>
         <translation>连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="754"/>
-        <location filename="../../UI/PilotPage.cpp" line="873"/>
+        <location filename="../../UI/PilotPage.cpp" line="701"/>
+        <location filename="../../UI/PilotPage.cpp" line="820"/>
         <source>Connection Failed</source>
         <translation>连接失效</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="754"/>
-        <location filename="../../UI/PilotPage.cpp" line="873"/>
+        <location filename="../../UI/PilotPage.cpp" line="701"/>
+        <location filename="../../UI/PilotPage.cpp" line="820"/>
         <source>Failed to connected to BitBot, please check you network connection!</source>
         <translation>连接到Bitbot失败，请检查您的网络连接！</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="877"/>
-        <location filename="../../UI/PilotPage.cpp" line="888"/>
+        <location filename="../../UI/PilotPage.cpp" line="824"/>
+        <location filename="../../UI/PilotPage.cpp" line="835"/>
         <source>connecting</source>
         <translation>正在连接</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="885"/>
+        <location filename="../../UI/PilotPage.cpp" line="832"/>
         <source>Disconnect Failed</source>
         <translation>断开连接失败</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="885"/>
+        <location filename="../../UI/PilotPage.cpp" line="832"/>
         <source>Failed to disconnect to Bitbot, try again later</source>
         <translation>断开Bitbot后端失败，请稍后再试</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="890"/>
+        <location filename="../../UI/PilotPage.cpp" line="837"/>
         <source>System is Busy</source>
         <translation>系统忙</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="890"/>
-        <source>System is busy, connect/disconnect request will be ignored</source>
-        <translation>系统忙，连接/断开请求将会被忽略</translation>
+        <location filename="../../UI/PilotPage.cpp" line="837"/>
+        <source>Connect/disconnect request will be ignored</source>
+        <translation>连接/断开请求将会被忽略</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="894"/>
+        <source>System is busy, connect/disconnect request will be ignored</source>
+        <translation type="vanished">系统忙，连接/断开请求将会被忽略</translation>
+    </message>
+    <message>
+        <location filename="../../UI/PilotPage.cpp" line="841"/>
         <source>Catastrophic Failure</source>
         <translation>灾难性错误</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="894"/>
+        <location filename="../../UI/PilotPage.cpp" line="841"/>
         <source>Unknown Button Status</source>
         <translation>未知的按键状态</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="977"/>
+        <location filename="../../UI/PilotPage.cpp" line="924"/>
         <source>Failed to Auto Initialize Bitbot</source>
         <translation>自动初始化Bitbot失败</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="977"/>
+        <location filename="../../UI/PilotPage.cpp" line="924"/>
         <source>Failed to auto initialize Bitbot, check your connection and try again later.</source>
         <translation>自动初始化Bitbot失败，请检查您的连接并稍后再试。</translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="1000"/>
-        <location filename="../../UI/PilotPage.cpp" line="1028"/>
+        <location filename="../../UI/PilotPage.cpp" line="947"/>
+        <location filename="../../UI/PilotPage.cpp" line="975"/>
         <source>Processing Command: </source>
         <translation>正在处理指令: </translation>
     </message>
     <message>
-        <location filename="../../UI/PilotPage.cpp" line="1000"/>
-        <location filename="../../UI/PilotPage.cpp" line="1028"/>
+        <location filename="../../UI/PilotPage.cpp" line="947"/>
+        <location filename="../../UI/PilotPage.cpp" line="975"/>
         <source>...</source>
         <translation>...</translation>
     </message>
 </context>
 <context>
+    <name>PopupSettingsPage</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="15"/>
+        <source>Add new robot profile</source>
+        <translation>新增机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="80"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="85"/>
+        <source>Continue</source>
+        <translation>继续</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="129"/>
+        <source>Empty Profile Name</source>
+        <translation>配置名为空</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="129"/>
+        <source>Profile name cannot be empty.</source>
+        <translation>配置名称不能为空。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="136"/>
+        <source>Duplicate Profile Name</source>
+        <translation>配置名称重复</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="136"/>
+        <source>Profile name already exists, please choose another name.</source>
+        <translation>配置名已存在，请选择其它的名称。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="160"/>
+        <source>Save Profile Failed</source>
+        <translation>保存配置失败</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="160"/>
+        <source>Failed to save profile: %1</source>
+        <translation>保存配置%1失败</translation>
+    </message>
+</context>
+<context>
     <name>ProfileSelector</name>
     <message>
-        <location filename="../../UI/ProfileSelector.cpp" line="30"/>
+        <location filename="../../UI/ProfileSelector.cpp" line="44"/>
         <source>robot profiles</source>
         <translation>机器人配置</translation>
     </message>
     <message>
-        <location filename="../../UI/ProfileSelector.cpp" line="33"/>
+        <location filename="../../UI/ProfileSelector.cpp" line="47"/>
         <source>Select your robot profile</source>
         <translation>选择您的机器人配置</translation>
     </message>
     <message>
-        <location filename="../../UI/ProfileSelector.cpp" line="45"/>
+        <location filename="../../UI/ProfileSelector.cpp" line="60"/>
         <source>Use this profile</source>
         <translation>使用此配置</translation>
     </message>
     <message>
-        <location filename="../../UI/ProfileSelector.cpp" line="83"/>
+        <location filename="../../UI/ProfileSelector.cpp" line="121"/>
         <source>Continue</source>
         <translation>继续</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="156"/>
+        <source>Add new robot profile</source>
+        <translation>新增机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/ProfileSelector.cpp" line="156"/>
+        <source>Add remote robot or local robot</source>
+        <translation>添加远程或本地机器人</translation>
     </message>
     <message>
         <source>Use current profile</source>
         <translation type="vanished">使用此配置</translation>
     </message>
     <message>
-        <location filename="../../UI/ProfileSelector.cpp" line="55"/>
+        <location filename="../../UI/ProfileSelector.cpp" line="68"/>
         <source>Use a different profile</source>
         <translation>使用其他配置</translation>
     </message>
@@ -977,12 +1086,12 @@ backend</source>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../main.cpp" line="47"/>
+        <location filename="../../main.cpp" line="48"/>
         <source>Upgrade Failed</source>
         <translation>升级失败</translation>
     </message>
     <message>
-        <location filename="../../main.cpp" line="47"/>
+        <location filename="../../main.cpp" line="48"/>
         <source>Program upgrade failed, try again later or contact publisher for more information.</source>
         <translation>程序升级失败，请稍后再试或联系发行商获取更多信息。</translation>
     </message>
@@ -1222,11 +1331,218 @@ backend</source>
     </message>
 </context>
 <context>
+    <name>SettingsAutorunLauncher</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="12"/>
+        <source>Auto initialization robot</source>
+        <translation>自动初始化机器人</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="17"/>
+        <source>Config autorun commands</source>
+        <translation>配置自动初始化指令</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="17"/>
+        <source>add or update autorun commands during robot initialzation</source>
+        <translation>新增或更新机器人初始化时自动运行的指令</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsBackEndWidget</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="11"/>
+        <source>Backend manager</source>
+        <translation>后端管理器</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="103"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="195"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="266"/>
+        <source>ssh</source>
+        <translation>ssh</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="109"/>
+        <source>Backend connection</source>
+        <translation>后端连接</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="109"/>
+        <source>Setup backend ip address, port, and login information</source>
+        <translation>设置后端ip地址，端口和登录信息</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="116"/>
+        <source>Backend ip Address</source>
+        <translation>后端ip地址</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="130"/>
+        <source>Backend port</source>
+        <translation>后端端口</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="144"/>
+        <source>Remote user name</source>
+        <translation>远程用户名</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="158"/>
+        <source>Remote password</source>
+        <translation>远程用户密码</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="217"/>
+        <source>Backend executable</source>
+        <translation>后端可执行文件</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="217"/>
+        <source>Setup backend executable path and name</source>
+        <translation>设置后端可执行文件路径和文件名</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="224"/>
+        <source>Executable path</source>
+        <translation>可执行文件路径</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="239"/>
+        <source>Executable name</source>
+        <translation>可执行文件名称</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="261"/>
+        <source>Backend protocal</source>
+        <translation>后端协议</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="261"/>
+        <source>connect to remote robot via ssh or launch local robot</source>
+        <translation>启动本地机器人或使用ssh连接到远程机器人</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="265"/>
+        <source>local</source>
+        <translation>本机</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDatabaseWidget</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="14"/>
+        <source>Dataviewer &amp; database settings</source>
+        <translation>数据查看器和数据库设置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="19"/>
+        <source>Database settings</source>
+        <translation>数据库设置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="19"/>
+        <source>Setup remote database path and local cache</source>
+        <translation>设置远程数据库路径和本地缓存</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="26"/>
+        <source>Remote database</source>
+        <translation>远程数据库路径</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="40"/>
+        <source>Local cache path</source>
+        <translation>本地缓存路径</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="47"/>
+        <source>Select</source>
+        <translation>选择</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="61"/>
+        <source>Enable local cache</source>
+        <translation>允许本地缓存</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsDatabaseWidget.cpp" line="84"/>
+        <source>Select Local Cache Directory</source>
+        <translation>选择本地缓存文件夹</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsFrontEndWidget</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsFrontEndWidget.cpp" line="11"/>
+        <source>Frontend manager</source>
+        <translation>前端管理器</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsFrontEndWidget.cpp" line="16"/>
+        <source>Frontend address</source>
+        <translation>前端地址</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsFrontEndWidget.cpp" line="16"/>
+        <source>Setup frontend ip address and port</source>
+        <translation>设置前端ip地址和端口</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsFrontEndWidget.cpp" line="23"/>
+        <source>Frontend ip Address</source>
+        <translation>前端ip地址</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsFrontEndWidget.cpp" line="37"/>
+        <source>Frontend port</source>
+        <translation>前端端口</translation>
+    </message>
+</context>
+<context>
     <name>SettingsHandler</name>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="152"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="221"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="246"/>
         <source>local computer</source>
         <translation>本地计算机</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="292"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="338"/>
+        <source>Invalid profile name.</source>
+        <translation>配置名称无效。</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="298"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="352"/>
+        <source>Profile name is empty.</source>
+        <translation>配置名称为空。</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="346"/>
+        <source>Profile name contains invalid characters: \ / : * ? &quot; &lt; &gt; |</source>
+        <translation>配置名称含有无效字符： \ / : * ? &quot; &lt; &gt; |</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="358"/>
+        <source>Frontend IP address is empty, please indicate a valid IP address.</source>
+        <translation>前端ip地址为空，请指定一个有效的ip地址。</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="364"/>
+        <source>Frontend port is invalid, please indicate a valid port number (1-65535).</source>
+        <translation>前端端口号无效，请指定一个有效的端口号 (1-65535)。</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="372"/>
+        <source>Backend port is invalid, please indicate a valid port number (1-65535).</source>
+        <translation>后端端口号无效，请指定一个有效的端口号 (1-65535)。</translation>
+    </message>
+    <message>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="378"/>
+        <source>Backend address and port cannot be the same as Frontend.</source>
+        <translation>前后端ip地址和端口号不能完全一致。</translation>
     </message>
 </context>
 <context>

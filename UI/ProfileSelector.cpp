@@ -7,11 +7,12 @@
 #include "QHBoxLayout"
 #include "ElaTheme.h"
 #include "ElaScrollArea.h"
-#include "Utils/Settings/SettingsHandler.h"
 #include "QPainter"
 #include "ElaTheme.h"
+#include "Utils/Settings/SettingsHandler.h"
 
-QString ProfileSelector::Select()
+
+int ProfileSelector::Select(QString& profile_name)
 {
     ProfileSelector* selector = new ProfileSelector();
     selector->setAttribute(Qt::WA_DeleteOnClose);
@@ -20,15 +21,21 @@ QString ProfileSelector::Select()
     selector->setIsFixedSize(true);
     selector->show();
     QString selectedProfile;
+    int stateCode = 0;
 
     QEventLoop loop;
     QObject::connect(selector, &ProfileSelector::selected, [&loop, &selectedProfile](QString profileName) {
         selectedProfile = profileName;
         });
+    QObject::connect(selector, &ProfileSelector::StateCode, [&loop, &stateCode](int code) {
+        stateCode = code;
+        });
     QObject::connect(selector, &ProfileSelector::destroyed, &loop, &QEventLoop::quit);
     loop.exec();
     qDebug() << "Selected Profile:" << selectedProfile;
-    return selectedProfile;
+    qDebug() << "State Code:" << stateCode;
+    profile_name = selectedProfile;
+    return stateCode;
 }
 
 ProfileSelector::ProfileSelector(QWidget* parent)
@@ -63,6 +70,7 @@ ProfileSelector::ProfileSelector(QWidget* parent)
     others_sub_title->setTextPixelSize(16);
 
     this->InitAvailableProfiles(scrollAreaWidgetContents);
+    this->InitAddNewProfileButton(scrollAreaWidgetContents);
 
     //创建滚动区域布局
     QVBoxLayout* CentralScrollLay = new QVBoxLayout(scrollAreaWidgetContents);
@@ -75,6 +83,7 @@ ProfileSelector::ProfileSelector(QWidget* parent)
     {
         CentralScrollLay->addWidget(item);
     }
+    CentralScrollLay->addWidget(this->AddNewProfileCard);
 
     CentralScrollLay->addSpacerItem(new QSpacerItem(20, 20, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
@@ -96,7 +105,10 @@ ProfileSelector::ProfileSelector(QWidget* parent)
     lay->addLayout(SelectedButtonLayout);
     lay->addSpacerItem(new QSpacerItem(20, 10, QSizePolicy::Preferred, QSizePolicy::Fixed));
 
-
+    QObject::connect(this, &ElaWidget::closeButtonClicked, this, [this]() {
+        emit StateCode(1); // 1: cancel
+        qDebug() << "ProfileSelector closed";
+        });
 }
 
 ProfileSelector::~ProfileSelector()
@@ -127,7 +139,23 @@ void ProfileSelector::InitSelectButton()
 
     QObject::connect(this->SelectedButton, &ElaPushButton::clicked, this, [this]() {
         emit selected(this->CurrentSelectedCard->getProfileName());
+        if (this->CurrentSelectedCard == this->AddNewProfileCard)
+        {
+            emit StateCode(2);
+        }
+        else
+        {
+            emit StateCode(0); // 0: success
+        }
         this->close();
+        });
+}
+
+void ProfileSelector::InitAddNewProfileButton(QWidget* parent)
+{
+    this->AddNewProfileCard = new ProfileIDCard(parent, tr("Add new robot profile"), tr("Add remote robot or local robot"), ":UI/Image/addNewRobotProfile.png");
+    QObject::connect(this->AddNewProfileCard, &ProfileIDCard::clicked, this, [this]() {
+        this->SwitchSelectedCard(this->AddNewProfileCard);
         });
 }
 
@@ -135,7 +163,7 @@ void ProfileSelector::InitCurrentProfile(QWidget* parent)
 {
     auto [name, ip, avatar] = ZSet->getUserProfileInfo();
 
-    this->CurrentProfileCard = new ProfileIDCard(parent, name, ip, avatar);
+    this->CurrentProfileCard = new ProfileIDCard(parent, name, QString("ip: ") + ip, avatar);
     this->CurrentProfileCard->setSelected(true);
     this->CurrentSelectedCard = this->CurrentProfileCard;
     QObject::connect(this->CurrentProfileCard, &ProfileIDCard::clicked, this, [this]() {
@@ -150,20 +178,21 @@ void ProfileSelector::InitAvailableProfiles(QWidget* parent)
     for (int i = 0;i < profiles.size();i++)
     {
         auto [name, ip, avatar] = profiles[i];
-        ProfileIDCard* card = new ProfileIDCard(parent, name, ip, avatar);
+        ProfileIDCard* card = new ProfileIDCard(parent, name, QString("ip: ") + ip, avatar);
         QObject::connect(card, &ProfileIDCard::clicked, this, [this, card]() {
             qDebug() << card->getProfileName();
             this->SwitchSelectedCard(card);
             });
         this->AvailableProfileCards.append(card);
     }
-
 }
 
 void ProfileSelector::SwitchSelectedCard(ProfileIDCard* card)
 {
     this->CurrentProfileCard->setSelected(false);
+    this->AddNewProfileCard->setSelected(false);
     this->CurrentProfileCard->update();
+    this->AddNewProfileCard->update();
     for (auto card : this->AvailableProfileCards)
     {
         card->setSelected(false);
@@ -175,7 +204,6 @@ void ProfileSelector::SwitchSelectedCard(ProfileIDCard* card)
 }
 
 
-
 ProfileIDCard::ProfileIDCard(QWidget* parent, QString profileName, QString ipAddress, QString avatar)
     :ElaInteractiveCard(parent),
     m_selected(false)
@@ -183,7 +211,7 @@ ProfileIDCard::ProfileIDCard(QWidget* parent, QString profileName, QString ipAdd
     this->m_profileName = profileName;
     qDebug() << this->m_profileName;
     this->setTitle(profileName.split(".ini").first());
-    this->setSubTitle(QString("ip: ") + ipAddress);
+    this->setSubTitle(ipAddress);
     this->setCardPixmap(QPixmap(avatar));
 }
 
@@ -209,7 +237,6 @@ QString ProfileIDCard::getProfileName()
 
 void ProfileIDCard::paintEvent(QPaintEvent* event)
 {
-    ElaInteractiveCard::paintEvent(event);
     QPainter painter(this);
     painter.save();
     painter.setRenderHints(QPainter::SmoothPixmapTransform | QPainter::Antialiasing | QPainter::TextAntialiasing);
@@ -217,4 +244,5 @@ void ProfileIDCard::paintEvent(QPaintEvent* event)
     painter.setBrush(this->isSelected() ? ElaThemeColor(eTheme->getThemeMode(), BasicHoverAlpha) : Qt::transparent);
     painter.drawRoundedRect(rect(), this->getBorderRadius(), this->getBorderRadius());
     painter.restore();
+    ElaInteractiveCard::paintEvent(event);
 }

@@ -17,35 +17,69 @@ struct AutoRunCommand_t
 
 using AutoRunCmdList = QList<AutoRunCommand_t>;
 
+struct RobotConfig_t
+{
+	struct {
+		QString Avatar;
+	} Profile;
+
+	struct {
+		QString ip;
+		uint16_t port;
+	} Frontend;
+
+	struct {
+		QString ip;
+		uint16_t Port;
+		QString Username;
+		QString Passwd;
+		QString Path;
+		QString Exec;
+		QString DataPath;
+		bool isRemote;
+		bool CacheRemoteData;
+		QString DataViewerCachePath;
+	} Backend;
+
+	AutoRunCmdList AutoRunCommands;
+};
+
 class SettingsHandler : public QObject
 {
 	Q_OBJECT
 
 public:
 	static SettingsHandler* getInstance();
+	static QStringList getAvailableAvatars();
+	static QString getRandomAvatar();
 public:
 	SettingsHandler(QObject* parent = nullptr);
 	~SettingsHandler();
-	std::tuple<QString, uint16_t> getIPAndPort();
-	std::tuple<QString, QString> getBackendPathAndName();
-	std::tuple<QString, QString, QString, QString> getBackendConfig_ex();
-	QString getBackendDataRootPath();
-	QStringList getUserList(bool exclude_current_profile = false);
-	bool updateUserList(const QStringList& profilesPath);
-	bool updateCurrentUserProfile(const QString& profile);
+
+	std::tuple<QString, uint16_t> getIPAndPort(QSettings* domain = nullptr);
+	std::tuple<QString, QString> getBackendPathAndName(QSettings* domain = nullptr);
+	std::tuple<QString, uint16_t, QString, QString> getBackendConfig_ex(QSettings* domain = nullptr);
+	QString getBackendDataRootPath(QSettings* domain = nullptr);
 	bool isBackendRemote(QSettings* domain = nullptr);
-	bool isChachingRemoteData();
-	QString getUpdateChannel();
-	QString getLocalCachePath();
+	bool isChachingRemoteData(QSettings* domain = nullptr);
+	QString getLocalCachePath(QSettings* domain = nullptr);
+	QString getUserAvatarPath(QSettings* domain = nullptr);
+
+	AutoRunCmdList  getAutoRunCommandList(QSettings* domain = nullptr);
+
+	QStringList getUserList(bool exclude_current_profile = false);
 	std::tuple<QString, QString, QString> getUserProfileInfo();
 	QList<std::tuple<QString, QString, QString>> getUserProfileInfos(bool exclude_current_profile = false);
+	QString getUpdateChannel();
+	bool updateUserList(const QStringList& profilesPath);
+	bool updateCurrentUserProfile(const QString& profile);
+	bool setUpdateChannel(const QString& url);
 
-	std::tuple<QString, QString> getRemoteBackendUserNameAndIP();
-
-	AutoRunCmdList  getAutoRunCommandList();
+	bool GetAllConfig(RobotConfig_t& config, const QString& profilename, QString& error_msg);
+	bool SaveAllConfig(const RobotConfig_t& config, const QString& profilename, QString& error_msg);
+	QString getCurrentProfileName();
 
 private:
-	QVariant WRSettings(QString key, QVariant default_value);
 	QVariant WRSettings(QString key, QVariant default_value, QSettings* domain);
 	QSettings* settings__;
 	QSettings* UserListSettings__;

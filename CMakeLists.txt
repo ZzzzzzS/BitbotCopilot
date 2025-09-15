@@ -116,6 +116,10 @@ set(UI_WIDGETS
     UI/widget/FluentLoadingWidget.cpp
     UI/widget/FluentLoadingWidget.h
     UI/widget/FluentMessageBox.hpp
+    UI/widget/SettingsLineInfoWidget.cpp
+    UI/widget/SettingsLineInfoWidget.h
+    UI/widget/ClickableElaScrollPageArea.cpp
+    UI/widget/ClickableElaScrollPageArea.h
 )
 
 set(DATA_VIEWER_UI
@@ -134,6 +138,23 @@ set(VIRTUAL_TRACK_PAD_UI
     UI/VirtualTrackpad/VirtualTrackpad.ui
     UI/VirtualTrackpad/SimpleTrackpad.cpp
     UI/VirtualTrackpad/SimpleTrackpad.h
+)
+
+set(SETTING_PAGE_WIDGET
+    UI/SettingPageWidget/AvatarNameEditor.cpp
+    UI/SettingPageWidget/AvatarNameEditor.h
+    UI/SettingPageWidget/AvatarSelector.cpp
+    UI/SettingPageWidget/AvatarSelector.h
+    UI/SettingPageWidget/PopupSettingspage.cpp
+    UI/SettingPageWidget/PopupSettingspage.h
+    UI/SettingPageWidget/SettingsAutorunWidget.cpp
+    UI/SettingPageWidget/SettingsAutorunWidget.h
+    UI/SettingPageWidget/SettingsBackendWidget.cpp
+    UI/SettingPageWidget/SettingsBackendWidget.h
+    UI/SettingPageWidget/SettingsDatabaseWidget.cpp
+    UI/SettingPageWidget/SettingsDatabaseWidget.h
+    UI/SettingPageWidget/SettingsFrontEndWidget.cpp
+    UI/SettingPageWidget/SettingsFrontEndWidget.h
 )
 
 set(UI_FILES
@@ -159,6 +180,7 @@ set(UI_FILES
     ${UI_WIDGETS}
     ${DATA_VIEWER_UI}
     ${VIRTUAL_TRACK_PAD_UI}
+    ${SETTING_PAGE_WIDGET}
 )
 
 set(COM_FILES

@@ -23,6 +23,7 @@
 #include "UI/widget/FluentMessageBox.hpp"
 #include "ElaToggleSwitch.h"
 #include "ElaText.h"
+#include "UI/widget/SettingsLineInfoWidget.h"
 
 
 PilotPage::PilotPage(QWidget* parent)
@@ -35,7 +36,7 @@ PilotPage::PilotPage(QWidget* parent)
     this->CentralWidget__ = new QWidget(this);
     this->CentralWidget__->setWindowTitle(tr(" Bitbot Nav Deck"));
     this->setPageTitleSpacing(10);
-    this->addCentralWidget(this->CentralWidget__, true, false, 0);
+    this->addCentralWidget(this->CentralWidget__, true, true, 0); //enable grab
     this->InitConnectionWidget();
 
     this->ProcessDisconnetced();
@@ -137,70 +138,16 @@ void PilotPage::InitConnectionWidget()
     font.setPointSize(10);
 
     auto gridLayout = new QGridLayout(this->ConnectionAreaUI__);
-    gridLayout->setSpacing(6);
-    gridLayout->setContentsMargins(11, 11, 11, 11);
+    gridLayout->setSpacing(3);
+    gridLayout->setContentsMargins(11, 1, 11, 1);
     gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
     auto horizontalLayout_3 = new QHBoxLayout();
     horizontalLayout_3->setSpacing(6);
     horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
     auto horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-    ElaText* icon = new ElaText(this->ConnectionAreaUI__);
-    QFont iconFont = icon->font();
-    iconFont.setFamily("ElaAwesome");
-    iconFont.setPixelSize(28);
-    icon->setFixedSize(40, 40);
-    icon->setText(QChar(ElaIconType::Computer));
-    icon->setFont(iconFont);
-    icon->setAlignment(Qt::AlignCenter);
-    //icon->setPixmap(QPixmap(":/UI/Image/frontend_icon.png"));
-    //icon->setScaledContents(true);
-    ElaText* name = new ElaText(this->ConnectionAreaUI__);
-    name->setText(tr("Frontend Manager"));
-    QFont namefont;
-    namefont.setPixelSize(16);
-    name->setFont(namefont);
-    name->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-    ElaText* subname = new ElaText(this->ConnectionAreaUI__);
-    subname->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    subname->setWordWrap(false);
-    subname->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Preferred);
-    subname->setText(tr("Instantly access your robot states from remote"));
-    QFont subnamefont;
-    subnamefont.setPixelSize(10);
-    subname->setFont(subnamefont);
-
-    auto LamsetTheme = [subname](ElaThemeType::ThemeMode Mode) {
-        QPalette LabelPalette;
-        if (Mode == ElaThemeType::ThemeMode::Dark)
-        {
-            QBrush brush_subLabel(QColor(206, 206, 206, 255));
-            brush_subLabel.setStyle(Qt::SolidPattern);
-            LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
-            LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
-        }
-        else
-        {
-            QBrush brush_subLabel(QColor(55, 55, 55, 255));
-            brush_subLabel.setStyle(Qt::SolidPattern);
-            LabelPalette.setBrush(QPalette::Active, QPalette::WindowText, brush_subLabel);
-            LabelPalette.setBrush(QPalette::Inactive, QPalette::WindowText, brush_subLabel);
-        }
-        subname->setPalette(LabelPalette);
-        };
-    LamsetTheme(eTheme->getThemeMode());
-    QObject::connect(eTheme, &ElaTheme::themeModeChanged, this, LamsetTheme);
-
-    QVBoxLayout* iconLayout = new QVBoxLayout();
-    iconLayout->addWidget(name);
-    iconLayout->addWidget(subname);
-
-    horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
-    horizontalLayout_3->addWidget(icon);
-    horizontalLayout_3->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Minimum));
-    horizontalLayout_3->addLayout(iconLayout);
-
+    SettingsLineInfoWidget* TitleWidget = new SettingsLineInfoWidget(this->ConnectionAreaUI__, tr("Frontend Manager"), tr("Instantly access your robot states from remote"), QChar(ElaIconType::Computer));
+    horizontalLayout_3->addWidget(TitleWidget);
     horizontalLayout_3->addItem(horizontalSpacer_2);
 
     auto horizontalLayout_2 = new QHBoxLayout();
@@ -887,7 +834,7 @@ void PilotPage::ConnectionButtonClickedSlot()
     }
     else if (this->PushButton_Connect__->text() == tr("connecting"))
     {
-        FluentMessageBox::warningOk(this, tr("System is Busy"), tr("System is busy, connect/disconnect request will be ignored"));
+        FluentMessageBox::warningOk(this, tr("System is Busy"), tr("Connect/disconnect request will be ignored"));
     }
     else
     {

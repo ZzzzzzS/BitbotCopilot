@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QSet>
 #include <QRandomGenerator>
+#include <QRegularExpression>
 
 SettingsHandler* SettingsHandler::getInstance()
 {
@@ -18,6 +19,23 @@ SettingsHandler* SettingsHandler::getInstance()
         instance = new SettingsHandler();
     }
     return instance;
+}
+
+QStringList SettingsHandler::getAvailableAvatars()
+{
+    QStringList avatarPaths;
+    for (int i = 0; i < 10; i++)
+    {
+        avatarPaths.append(QString(":/avatar/robot_avatar/robot-%1.png").arg(i));
+    }
+    return avatarPaths;
+}
+
+QString SettingsHandler::getRandomAvatar()
+{
+    QStringList avatars = getAvailableAvatars();
+    int index = QRandomGenerator::global()->bounded(avatars.size());
+    return avatars.at(index);
 }
 
 
@@ -51,7 +69,7 @@ SettingsHandler::SettingsHandler(QObject* parent)
     }
 
     this->UserListSettings__ = new QSettings("./profile/common_settings.ini", QSettings::IniFormat, this);
-    QString UserProfileName = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+    QString UserProfileName = this->getCurrentProfileName();
     if (UserProfileName.contains("common_settings.ini")) //防止注入
         UserProfileName = "Unnamed_Robot.ini";
 
@@ -73,33 +91,51 @@ SettingsHandler::~SettingsHandler()
     this->UserListSettings__->sync();
 }
 
-std::tuple<QString, uint16_t> SettingsHandler::getIPAndPort()
+std::tuple<QString, uint16_t> SettingsHandler::getIPAndPort(QSettings* domain)
 {
-    QString IP = this->WRSettings("FRONTEND/IP", "127.0.0.1").toString();
-    uint16_t port = this->WRSettings("FRONTEND/PORT", 12888).toInt();
+    if (domain == nullptr)
+        domain = this->settings__;
+    QString IP = this->WRSettings("FRONTEND/IP", "127.0.0.1", domain).toString();
+    uint16_t port = this->WRSettings("FRONTEND/PORT", 12888, domain).toInt();
     return std::make_tuple(IP, port);
 }
 
-std::tuple<QString, QString> SettingsHandler::getBackendPathAndName()
+std::tuple<QString, QString> SettingsHandler::getBackendPathAndName(QSettings* domain)
 {
-    QString Path = this->WRSettings("BACKEND/PATH", "/").toString();
-    QString Exec = this->WRSettings("BACKEND/EXEC", "main_app").toString();
+    if (domain == nullptr)
+        domain = this->settings__;
+    QString Path = this->WRSettings("BACKEND/PATH", "/", domain).toString();
+    QString Exec = this->WRSettings("BACKEND/EXEC", "main_app", domain).toString();
     return std::make_tuple(Path, Exec);
 }
 
-std::tuple<QString, QString, QString, QString> SettingsHandler::getBackendConfig_ex()
+std::tuple<QString, uint16_t, QString, QString> SettingsHandler::getBackendConfig_ex(QSettings* domain)
 {
-    QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
-    QString Port = this->WRSettings("BACKEND/PORT", 22).toString();
-    QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot").toString();
-    QString UserPasswd = this->WRSettings("BACKEND/PASSWD", "bitbot").toString();
+    if (domain == nullptr)
+        domain = this->settings__;
+
+    if (!this->isBackendRemote(domain))
+    {
+        return std::make_tuple(QString(), uint16_t(), QString(), QString());
+    }
+
+    QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1", domain).toString();
+    uint16_t Port = this->WRSettings("BACKEND/PORT", 22, domain).toUInt();
+    QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot", domain).toString();
+    QString UserPasswd = this->WRSettings("BACKEND/PASSWD", "bitbot", domain).toString();
 
     return std::make_tuple(IP, Port, UserName, UserPasswd);
 }
 
-QString SettingsHandler::getBackendDataRootPath()
+QString SettingsHandler::getBackendDataRootPath(QSettings* domain)
 {
-    QString Path = this->WRSettings("BACKEND/DATAPATH", "/home").toString();
+    if (domain == nullptr)
+        domain = this->settings__;
+
+    if (!this->isBackendRemote(domain))
+        return QString();
+
+    QString Path = this->WRSettings("BACKEND/DATAPATH", "/home", domain).toString();
     return Path;
 }
 
@@ -107,7 +143,7 @@ bool SettingsHandler::isBackendRemote(QSettings* domain)
 {
     QString protocal;
     if (domain == nullptr)
-        protocal = this->WRSettings("BACKEND/PROTOCAL", "local").toString();
+        protocal = this->WRSettings("BACKEND/PROTOCAL", "local", this->settings__).toString();
     else
         protocal = this->WRSettings("BACKEND/PROTOCAL", "local", domain).toString();
     if (protocal == QString("ssh"))
@@ -124,9 +160,17 @@ bool SettingsHandler::isBackendRemote(QSettings* domain)
     }
 }
 
-bool SettingsHandler::isChachingRemoteData()
+bool SettingsHandler::isChachingRemoteData(QSettings* domain)
 {
-    bool is_chache = this->WRSettings("BACKEND/DATAVIEWERCACHE", true).toBool();
+    if (domain == nullptr)
+        domain = this->settings__;
+
+    if (!this->isBackendRemote(domain))
+    {
+        return false; //如果不是远程后端，则不需要缓存
+    }
+
+    bool is_chache = this->WRSettings("BACKEND/DATAVIEWERCACHE", true, domain).toBool();
     return is_chache;
 }
 
@@ -136,31 +180,48 @@ QString SettingsHandler::getUpdateChannel()
     return channel;
 }
 
-QString SettingsHandler::getLocalCachePath()
+QString SettingsHandler::getLocalCachePath(QSettings* domain)
 {
-    QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache").toString();
+    if (domain == nullptr)
+        domain = this->settings__;
+
+    if (!this->isBackendRemote())
+    {
+        return QString(); //如果不是远程后端，则不需要缓存路径
+    }
+
+    QString Path = this->WRSettings("BACKEND/DATAVIEWERCACHEPATH", "./cache", domain).toString();
     return Path;
+}
+
+QString SettingsHandler::getUserAvatarPath(QSettings* domain)
+{
+    if (domain == nullptr)
+    {
+        domain = this->settings__;
+    }
+
+    QString DefaultRandomAvatar = SettingsHandler::getRandomAvatar();
+
+    QString Avatar = this->WRSettings("PROFILE/AVATAR", DefaultRandomAvatar, domain).toString();
+    return Avatar;
 }
 
 //return Display_robotname, display_robot_ip, display_robot_avatar_path
 std::tuple<QString, QString, QString> SettingsHandler::getUserProfileInfo()
 {
-    QString UserName = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+    QString UserName = this->getCurrentProfileName();
     QString ip;
     if (this->isBackendRemote())
     {
-        ip = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
+        ip = this->WRSettings("BACKEND/IP", "127.0.0.1", this->settings__).toString();
     }
     else
     {
         ip = tr("local computer");
     }
 
-    // generate a random number from 1-11
-    int random_number = QRandomGenerator::global()->bounded(0, 10);
-    QString DefaultRandomAvatar = QString(":/avatar/robot_avatar/robot-%1.png").arg(random_number);
-
-    QString Avatar = this->WRSettings("PROFILE/AVATAR", DefaultRandomAvatar).toString();
+    QString Avatar = this->getUserAvatarPath();
 
     return std::make_tuple(UserName, ip, Avatar);
 }
@@ -185,10 +246,7 @@ QList<std::tuple<QString, QString, QString>> SettingsHandler::getUserProfileInfo
             ip = tr("local computer");
         }
 
-        int random_number = QRandomGenerator::global()->bounded(0, 10);
-        QString DefaultRandomAvatar = QString(":/avatar/robot_avatar/robot-%1.png").arg(random_number);
-
-        QString Avatar = this->WRSettings("PROFILE/AVATAR", DefaultRandomAvatar, &setting).toString();
+        QString Avatar = this->getUserAvatarPath(&setting);
 
         auto tuple = std::make_tuple(user, ip, Avatar);
         InfoList.append(tuple);
@@ -196,19 +254,17 @@ QList<std::tuple<QString, QString, QString>> SettingsHandler::getUserProfileInfo
     return InfoList;
 }
 
-std::tuple<QString, QString> SettingsHandler::getRemoteBackendUserNameAndIP()
-{
-    QString IP = this->WRSettings("BACKEND/IP", "127.0.0.1").toString();
-    QString UserName = this->WRSettings("BACKEND/USERNAME", "bitbot").toString();
-    return std::make_tuple(UserName, IP);
-}
 
-AutoRunCmdList SettingsHandler::getAutoRunCommandList()
+
+AutoRunCmdList SettingsHandler::getAutoRunCommandList(QSettings* domain)
 {
-    size_t cmd_num = this->settings__->beginReadArray("AUTORUNCOMMAND");
+    if (domain == nullptr)
+        domain = this->settings__;
+
+    size_t cmd_num = domain->beginReadArray("AUTORUNCOMMAND");
     if (cmd_num <= 0)
     {
-        this->settings__->endArray();
+        domain->endArray();
         return AutoRunCmdList();
     }
 
@@ -216,26 +272,179 @@ AutoRunCmdList SettingsHandler::getAutoRunCommandList()
     AutoRunCmdList cmd_list;
     for (size_t i = 0; i < cmd_num; i++)
     {
-        this->settings__->setArrayIndex(i);
+        domain->setArrayIndex(i);
         AutoRunCommand_t t;
-        t.KeyName = this->settings__->value("KEY_NAME", " ").toString();
-        t.WaitTime = this->settings__->value("DURATION", 30000).toInt();
-        t.WaitUntil = this->settings__->value("WAIT_UNTIL", "NAN").toString();
+        t.KeyName = domain->value("KEY_NAME", " ").toString();
+        t.WaitTime = domain->value("DURATION", 30000).toInt();
+        t.WaitUntil = domain->value("WAIT_UNTIL", "NAN").toString();
         cmd_list.push_back(t);
     }
-    this->settings__->endArray();
+    domain->endArray();
     cmd_list.back().WaitTime = 1000;
     return cmd_list;
 
 }
 
-QVariant SettingsHandler::WRSettings(QString key, QVariant default_value)
+bool SettingsHandler::GetAllConfig(RobotConfig_t& config, const QString& profilename, QString& error_msg)
 {
-    QVariant var = this->settings__->value(key, default_value);
-    this->settings__->setValue(key, var);
-    this->settings__->sync();
-    return var;
+    if (profilename.contains("common_settings")) //防止注入
+    {
+        error_msg = tr("Invalid profile name.");
+        return false;
+    }
+
+    if (profilename.isEmpty())
+    {
+        error_msg = tr("Profile name is empty.");
+        return false;
+    }
+
+    QString Current_Profile_Name = this->getCurrentProfileName();
+    QSettings* domain;
+    if (Current_Profile_Name == profilename)
+        domain = this->settings__;
+    else
+        domain = new QSettings(QString("./profile/") + profilename, QSettings::IniFormat, this);
+
+    config.Profile.Avatar = this->getUserAvatarPath(domain);
+    auto [ip, port] = this->getIPAndPort(domain);
+    config.Frontend.ip = ip;
+    config.Frontend.port = port;
+
+    auto [backend_path, backend_exec] = this->getBackendPathAndName(domain);
+    config.Backend.Path = backend_path;
+    config.Backend.Exec = backend_exec;
+    auto [backend_ip, backend_port, backend_user, backend_passwd] = this->getBackendConfig_ex(domain);
+    config.Backend.ip = backend_ip;
+    config.Backend.Port = backend_port;
+    config.Backend.Username = backend_user;
+    config.Backend.Passwd = backend_passwd;
+    config.Backend.DataPath = this->getBackendDataRootPath(domain);
+    config.Backend.isRemote = this->isBackendRemote(domain);
+    config.Backend.CacheRemoteData = this->isChachingRemoteData(domain);
+    config.Backend.DataViewerCachePath = this->getLocalCachePath(domain);
+    config.AutoRunCommands = this->getAutoRunCommandList(domain);
+    if (domain != this->settings__)
+    {
+        delete domain;
+    }
+    return true;
 }
+
+bool SettingsHandler::SaveAllConfig(const RobotConfig_t& config, const QString& profilename, QString& error_msg)
+{
+    if (profilename.contains("common_settings")) //防止注入
+    {
+        error_msg = tr("Invalid profile name.");
+        return false;
+    }
+
+    // check if profile name contains invalid characters for file names
+    QRegularExpression invalidChars("[\\\\/:*?\"<>|]");
+    if (profilename.contains(invalidChars))
+    {
+        error_msg = tr("Profile name contains invalid characters: \\ / : * ? \" < > |");
+        return false;
+    }
+
+    if (profilename.isEmpty())
+    {
+        error_msg = tr("Profile name is empty.");
+        return false;
+    }
+
+    if (config.Frontend.ip.isEmpty())
+    {
+        error_msg = tr("Frontend IP address is empty, please indicate a valid IP address.");
+        return false;
+    }
+
+    if (config.Frontend.port == 0)
+    {
+        error_msg = tr("Frontend port is invalid, please indicate a valid port number (1-65535).");
+        return false;
+    }
+
+    if (!config.Backend.ip.isEmpty())
+    {
+        if (config.Backend.Port == 0)
+        {
+            error_msg = tr("Backend port is invalid, please indicate a valid port number (1-65535).");
+            return false;
+        }
+
+        if (config.Backend.ip == config.Frontend.ip && config.Backend.Port == config.Frontend.port)
+        {
+            error_msg = tr("Backend address and port cannot be the same as Frontend.");
+            return false;
+        }
+    }
+
+    QString Current_Profile_Name = this->getCurrentProfileName();
+    QSettings* domain;
+    if (Current_Profile_Name == profilename)
+        domain = this->settings__;
+    else
+        domain = new QSettings(QString("./profile/") + profilename, QSettings::IniFormat, this);
+
+    domain->setValue("PROFILE/AVATAR", config.Profile.Avatar);
+
+    domain->setValue("FRONTEND/IP", config.Frontend.ip);
+    domain->setValue("FRONTEND/PORT", config.Frontend.port);
+
+    if (!config.Backend.Path.isEmpty())
+        domain->setValue("BACKEND/PATH", config.Backend.Path);
+    if (!config.Backend.Exec.isEmpty())
+        domain->setValue("BACKEND/EXEC", config.Backend.Exec);
+
+    if (config.Backend.isRemote)
+    {
+        domain->setValue("BACKEND/PROTOCAL", "ssh");
+        domain->setValue("BACKEND/IP", config.Backend.ip);
+        domain->setValue("BACKEND/PORT", config.Backend.Port);
+        domain->setValue("BACKEND/USERNAME", config.Backend.Username);
+        domain->setValue("BACKEND/PASSWD", config.Backend.Passwd);
+        domain->setValue("BACKEND/DATAPATH", config.Backend.DataPath);
+        domain->setValue("BACKEND/DATAVIEWERCACHEPATH", config.Backend.DataViewerCachePath);
+        domain->setValue("BACKEND/DATAVIEWERCACHE", config.Backend.CacheRemoteData);
+    }
+    else
+    {
+        domain->setValue("BACKEND/PROTOCAL", "local");
+    }
+
+
+
+    // AutoRun Commands
+    size_t cmd_num = config.AutoRunCommands.size();
+    if (cmd_num != 0)
+    {
+        domain->remove("AUTORUNCOMMAND");
+        domain->beginWriteArray("AUTORUNCOMMAND", cmd_num);
+        for (size_t i = 0; i < cmd_num; i++)
+        {
+            const AutoRunCommand_t& t = config.AutoRunCommands[i];
+            domain->setArrayIndex(i);
+            domain->setValue("KEY_NAME", t.KeyName);
+            domain->setValue("WAIT_UNTIL", t.WaitUntil);
+            domain->setValue("DURATION", t.WaitTime);
+        }
+        domain->endArray();
+    }
+
+    domain->sync();
+
+    if (domain != this->settings__)
+        delete domain;
+
+    return true;
+}
+
+QString SettingsHandler::getCurrentProfileName()
+{
+    return this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+}
+
 
 QVariant SettingsHandler::WRSettings(QString key, QVariant default_value, QSettings* domain)
 {
@@ -249,7 +458,7 @@ QVariant SettingsHandler::WRSettings(QString key, QVariant default_value, QSetti
 
 QStringList SettingsHandler::getUserList(bool exclude_current_profile)
 {
-    QString Current_Profile_Name = this->WRSettings("CURRENT_PROFILE/CURRENT_USER_PROFILE", "Unnamed_Robot.ini", this->UserListSettings__).toString();
+    QString Current_Profile_Name = this->getCurrentProfileName();
 
     size_t num = this->UserListSettings__->beginReadArray("USER_PROFILES");
     if (num <= 0)
@@ -308,6 +517,14 @@ bool SettingsHandler::updateCurrentUserProfile(const QString& profile)
     Profiles.append(profile);
     this->updateUserList(Profiles);
 
+    this->UserListSettings__->sync();
 
+    return true;
+}
+
+bool SettingsHandler::setUpdateChannel(const QString& url)
+{
+    this->UserListSettings__->setValue("COMMON/UPDATECHANNEL", url);
+    this->UserListSettings__->sync();
     return true;
 }

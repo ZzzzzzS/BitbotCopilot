@@ -13,6 +13,7 @@
 #include "UI/ProfileSelector.h"
 #include "UI/widget/FluentMessageBox.hpp"
 #include "QProcess"
+#include "UI/SettingPageWidget/PopupSettingsPage.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : ElaWindow(parent),
@@ -194,20 +195,34 @@ void MainWindow::InitSignalSlot()
         });
 
     QObject::connect(this, &MainWindow::userInfoCardClicked, this, [this]() {
-        QString profile = ProfileSelector::Select();
+        QString profile;
+        int state_code = ProfileSelector::Select(profile);
+        if (profile.isEmpty() && state_code != 2) // 2: new profile
+            return;
+
+        if (state_code == 2) // new profile
+        {
+            PopupSettingsPage* settingsPage = new PopupSettingsPage(nullptr);
+            profile = settingsPage->exec();
+            if (!profile.isEmpty())
+            {
+                FluentMessageBox::informationOk(this, tr("New Profile Created"), tr("Application will restart to switch to new profile."));
+            }
+        }
+
         if (profile.isEmpty())
             return;
 
         if (!ZSet->updateCurrentUserProfile(profile))
         {
-            FluentMessageBox::warningOk(this, tr("Failed to switch robot profile."), tr("robot profile dose not exist or contain error(s)."));
+            FluentMessageBox::warningOk(this, tr("Failed to switch robot profile"), tr("Robot profile dose not exist or contain error(s)."));
         }
         else
         {
             if (QProcess::startDetached(QCoreApplication::applicationFilePath(), QStringList() << "--no_splash", QCoreApplication::applicationDirPath()))
                 qApp->quit();
             else
-                FluentMessageBox::warningOk(this, tr("Failed to switch robot profile."), tr("launching failed."));
+                FluentMessageBox::warningOk(this, tr("Failed to switch robot profile"), tr("Launching failed."));
         }
         });
 
@@ -318,7 +333,7 @@ void MainWindow::InitSSHConnection()
     this->SessionManager__ = zzs::SessionManager::getInstance();
     auto serverinfo = ZSet->getBackendConfig_ex();
     this->SessionManager__->SetServerInfo(std::get<0>(serverinfo).toStdString(),
-        std::get<1>(serverinfo).toStdString(),
+        std::to_string(std::get<1>(serverinfo)),
         std::get<2>(serverinfo).toStdString(),
         std::get<3>(serverinfo).toStdString());
     //bool ok = this->SessionManager__->Connect();
