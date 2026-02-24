@@ -1,8 +1,10 @@
-#include "SettingsAutorunWidget.h"
+#include "SettingsAutorunLauncher.h"
 #include "UI/widget/SettingsLineInfoWidget.h"
 #include "UI/widget/ClickableElaScrollPageArea.h"
 #include "QHBoxLayout"
 #include "QVBoxLayout"
+#include "QDebug"
+#include "SettingsAutorunCfgWidget.h"
 
 SettingsAutorunLauncher::SettingsAutorunLauncher(QWidget* parent)
     :QWidget(parent)
@@ -34,6 +36,8 @@ SettingsAutorunLauncher::SettingsAutorunLauncher(QWidget* parent)
     QVBoxLayout* MainLayout = new QVBoxLayout(this);
     MainLayout->addWidget(this->title__);
     MainLayout->addWidget(AutoRunArea);
+
+    QObject::connect(AutoRunArea, &ClickableElaScrollPageArea::clicked, this, &SettingsAutorunLauncher::OpenSettingsSlot);
 }
 
 SettingsAutorunLauncher::~SettingsAutorunLauncher()
@@ -41,7 +45,20 @@ SettingsAutorunLauncher::~SettingsAutorunLauncher()
 
 }
 
+AutoRunCmdList SettingsAutorunLauncher::getCmdList()
+{
+    if (this->cmdList__.has_value())
+    {
+        return this->cmdList__.value();
+    }
+    else
+    {
+        return AutoRunCmdList();
+    }
+}
+
 void SettingsAutorunLauncher::OpenSettingsSlot()
 {
-
+    auto widget = new SettingsAutorunCfgWidget(nullptr);
+    this->cmdList__ = widget->exec();
 }

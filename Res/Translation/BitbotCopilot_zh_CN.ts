@@ -1333,17 +1333,17 @@ backend</source>
 <context>
     <name>SettingsAutorunLauncher</name>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="12"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="13"/>
         <source>Auto initialization robot</source>
         <translation>自动初始化机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="17"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="18"/>
         <source>Config autorun commands</source>
         <translation>配置自动初始化指令</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunWidget.cpp" line="17"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="18"/>
         <source>add or update autorun commands during robot initialzation</source>
         <translation>新增或更新机器人初始化时自动运行的指令</translation>
     </message>

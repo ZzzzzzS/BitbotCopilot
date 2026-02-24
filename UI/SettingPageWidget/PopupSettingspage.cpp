@@ -151,6 +151,7 @@ void PopupSettingsPage::onConfirmClicked()
     config.Backend.CacheRemoteData = this->DatabaseSettings__->getCacheData();
     config.Backend.DataViewerCachePath = this->DatabaseSettings__->getLocalCachePath();
     config.Backend.DataPath = this->DatabaseSettings__->getRemoteDataPath();
+    config.AutoRunCommands = this->AutorunLaucher__->getCmdList();
 
     //TODO: add autorun config
 

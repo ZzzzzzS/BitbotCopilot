@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
     QTranslator translator;
     qDebug() << QLocale::system().language();
-    if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::English) {
+    if (translator.load(":/i18n/Translation/BitbotCopilot_zh_CN.qm") && QLocale::system().language() == QLocale::Chinese) {
         a.installTranslator(&translator);
         qDebug() << "Load zh_CN.qm";
     }
@@ -76,7 +76,17 @@ int main(int argc, char* argv[])
     MainWindow w;
     if (!no_show_screen)
         screen->exec();
-    w.show();
+
+    if (ZCP.isMaximizeMode())
+        w.showMaximized();
+    else
+    {
+        QRect mRect = QGuiApplication::primaryScreen()->geometry();
+        if (mRect.width() < 1366 || mRect.height() < 768)
+            w.showMaximized();
+        else
+            w.show();
+    }
     //w.showMaximized();
     //screen->close();
     a.processEvents();

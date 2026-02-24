@@ -23,6 +23,7 @@ public:
     CmdParser()
         :m_UpdateMode("upgrade_mode", "for internal use ONLY, indication of software update"),
         m_NoSplash("no_splash", "Disable splash screen"),
+        m_MaximizeMode("maximize", "Enable maximize window mode"),
         m_UpdatePath("upgrade_from", "for internal use ONLY, indication of software update"),
         m_UpdatePath2("upgrade_to", "for internal use ONLY, indication of software update")
     {
@@ -48,6 +49,11 @@ public:
     bool isUpgradeMode() const
     {
         return m_parser.isSet("upgrade_mode") && !m_parser.value(m_UpdatePath).isEmpty() && !m_parser.value(m_UpdatePath2).isEmpty();
+    }
+
+    bool isMaximizeMode() const
+    {
+        return m_parser.isSet("maximize");
     }
 
     bool ProcessUpgradeLogic()
@@ -92,4 +98,5 @@ private:
     QCommandLineOption m_NoSplash;
     QCommandLineOption m_UpdatePath;
     QCommandLineOption m_UpdatePath2;
+    QCommandLineOption m_MaximizeMode;
 };

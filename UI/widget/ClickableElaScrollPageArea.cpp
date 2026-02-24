@@ -2,8 +2,8 @@
 #include "ElaTheme.h"
 #include "QPainter"
 
-ClickableElaScrollPageArea::ClickableElaScrollPageArea(QWidget* parent)
-    :ElaScrollPageArea(parent)
+ClickableElaScrollPageArea::ClickableElaScrollPageArea(QWidget* parent, int height)
+    :ElaScrollPageArea(parent, height)
 {
     setMouseTracking(true);
 }

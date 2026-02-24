@@ -20,7 +20,7 @@ class MainWindow : public ElaWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 
@@ -49,9 +49,11 @@ private:
     zzs::BITBOT_TCP_PROTOCAL_V1* CommHandle__;
 
 
-	QTimer* CheckSSHConnectionTimer__;
-	zzs::SessionManager* SessionManager__;
-	bool Connected__;
-	bool Errored__;
+    QTimer* CheckSSHConnectionTimer__;
+    zzs::SessionManager* SessionManager__;
+    bool Connected__;
+    bool Errored__;
+
+    bool isSmallScreen__;
 };
 #endif // MAINWINDOW_H

@@ -5,7 +5,7 @@
 #include "SettingsFrontEndWidget.h"
 #include "SettingsBackendWidget.h"
 #include "SettingsDatabaseWidget.h"
-#include "SettingsAutorunWidget.h"
+#include "SettingsAutorunLauncher.h"
 #include "ElaPushButton.h"
 #include "AvatarNameEditor.h"
 

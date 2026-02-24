@@ -147,8 +147,10 @@ set(SETTING_PAGE_WIDGET
     UI/SettingPageWidget/AvatarSelector.h
     UI/SettingPageWidget/PopupSettingspage.cpp
     UI/SettingPageWidget/PopupSettingspage.h
-    UI/SettingPageWidget/SettingsAutorunWidget.cpp
-    UI/SettingPageWidget/SettingsAutorunWidget.h
+    UI/SettingPageWidget/SettingsAutorunLauncher.cpp
+    UI/SettingPageWidget/SettingsAutorunLauncher.h
+    UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp
+    UI/SettingPageWidget/SettingsAutorunCfgWidget.h
     UI/SettingPageWidget/SettingsBackendWidget.cpp
     UI/SettingPageWidget/SettingsBackendWidget.h
     UI/SettingPageWidget/SettingsDatabaseWidget.cpp

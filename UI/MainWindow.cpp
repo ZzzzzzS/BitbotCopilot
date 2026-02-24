@@ -64,8 +64,19 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitWindow()
 {
-    this->resize(1366, 768);
-    this->setMinimumWidth(700);
+    QRect mRect = QGuiApplication::primaryScreen()->geometry();
+    if (mRect.width() < 1366 || mRect.height() < 768)
+    {
+        this->isSmallScreen__ = true;
+        this->resize(mRect.width() - 100, mRect.height() - 100);
+    }
+    else
+    {
+        this->isSmallScreen__ = false;
+        this->resize(1366, 768);
+        this->setMinimumWidth(700);
+    }
+
 
     auto [UserName, ip, Avatar] = ZSet->getUserProfileInfo();
 
@@ -114,8 +125,21 @@ void MainWindow::InitFooter()
             }
             else
             {
-                this->WindowBottomDocker__->setFloating(false);
+                if (this->isSmallScreen__)
+                {
+                    this->WindowBottomDocker__->setFloating(true);
+                    this->WindowBottomDocker__->resize(this->width(), this->WindowBottomDocker__->height());
+                    this->WindowBottomDocker__->move(this->x(), this->y() + this->height() - this->WindowBottomDocker__->height());
+                }
+                else
+                    this->WindowBottomDocker__->setFloating(false);
                 this->WindowBottomDocker__->show();
+                qApp->processEvents();
+                if (this->isSmallScreen__)
+                {
+                    this->WindowBottomDocker__->raise();
+                    this->WindowBottomDocker__->move(this->x(), this->y() + this->height() - this->WindowBottomDocker__->height());
+                }
             }
         }
         });
@@ -379,7 +403,7 @@ bool MainWindow::isDarkMode()
 
     const QPalette defaultPalette;
     return defaultPalette.color(QPalette::WindowText).lightness()
-         > defaultPalette.color(QPalette::Window).lightness();
+    > defaultPalette.color(QPalette::Window).lightness();
 }
 
 QString MainWindow::getMicaBackground()

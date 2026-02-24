@@ -7,7 +7,7 @@ class ClickableElaScrollPageArea : public ElaScrollPageArea
 {
     Q_OBJECT
 public:
-    ClickableElaScrollPageArea(QWidget* parent);
+    ClickableElaScrollPageArea(QWidget* parent, int height = 75);
     ~ClickableElaScrollPageArea();
 
 signals:
