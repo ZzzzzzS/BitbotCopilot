@@ -120,6 +120,8 @@ set(UI_WIDGETS
     UI/widget/SettingsLineInfoWidget.h
     UI/widget/ClickableElaScrollPageArea.cpp
     UI/widget/ClickableElaScrollPageArea.h
+    UI/widget/ProfileIDCard.cpp
+    UI/widget/ProfileIDCard.h
 )
 
 set(DATA_VIEWER_UI
@@ -147,6 +149,8 @@ set(SETTING_PAGE_WIDGET
     UI/SettingPageWidget/AvatarSelector.h
     UI/SettingPageWidget/PopupSettingspage.cpp
     UI/SettingPageWidget/PopupSettingspage.h
+    UI/SettingPageWidget/RobotConfigForm.cpp
+    UI/SettingPageWidget/RobotConfigForm.h
     UI/SettingPageWidget/SettingsAutorunLauncher.cpp
     UI/SettingPageWidget/SettingsAutorunLauncher.h
     UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp

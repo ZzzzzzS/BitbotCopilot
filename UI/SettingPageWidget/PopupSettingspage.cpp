@@ -4,9 +4,11 @@
 #include "ElaScrollArea.h"
 #include "ElaPushButton.h"
 #include "ElaTheme.h"
+#include "QPainter"
 #include "UI/widget/FluentMessageBox.hpp"
 #include "Utils/Settings/SettingsHandler.h"
 #include "QApplication"
+#include "UI/SettingPageWidget/RobotConfigForm.h"
 
 PopupSettingsPage::PopupSettingsPage(QWidget* parent)
     :ElaWidget(parent)
@@ -14,34 +16,16 @@ PopupSettingsPage::PopupSettingsPage(QWidget* parent)
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowTitle(tr("Add new robot profile"));
     this->resize(768, 600);
-    //this->setIsFixedSize(true);
     this->setWindowModality(Qt::WindowModality::ApplicationModal);
 
     ElaScrollArea* ScrollArea = new ElaScrollArea(this);
     ScrollArea->setIsGrabGesture(true, 0);
     ScrollArea->setWidgetResizable(true);
-    QWidget* ScrollWidget = new QWidget(ScrollArea);
-    ScrollWidget->setStyleSheet(R"(background-color:rgba(215, 101, 101, 0);)");
-    ScrollArea->setWidget(ScrollWidget);
-    QVBoxLayout* ScrollLayout = new QVBoxLayout(ScrollWidget);
-    this->AvatarNameEditor__ = new AvatarNameEditor(ScrollWidget);
-    this->FrontendSettings__ = new SettingsFrontEndWidget(ScrollWidget);
-    this->BackendSettings__ = new SettingsBackEndWidget(ScrollWidget);
-    this->DatabaseSettings__ = new SettingsDatabaseWidget(ScrollWidget);
-    this->AutorunLaucher__ = new SettingsAutorunLauncher(ScrollWidget);
-    ScrollLayout->addWidget(this->AvatarNameEditor__);
-    ScrollLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ScrollLayout->addWidget(this->FrontendSettings__);
-    ScrollLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ScrollLayout->addWidget(this->BackendSettings__);
-    ScrollLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ScrollLayout->addWidget(this->DatabaseSettings__);
-    ScrollLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
-    ScrollLayout->addWidget(this->AutorunLaucher__);
-    ScrollLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
+    this->configForm__ = new RobotConfigForm(ScrollArea);
+    ScrollArea->setWidget(this->configForm__);
 
     this->InitBottomButton();
-
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addSpacerItem(new QSpacerItem(10, 50, QSizePolicy::Expanding, QSizePolicy::Fixed));
@@ -102,8 +86,6 @@ void PopupSettingsPage::InitBottomButton()
     this->confirmButton__->setLightTextColor(ButtonLightTextColor);
 
     QObject::connect(this->confirmButton__, &ElaPushButton::clicked, this, &PopupSettingsPage::onConfirmClicked);
-
-
 }
 
 void PopupSettingsPage::paintEvent(QPaintEvent* event)
@@ -118,12 +100,11 @@ void PopupSettingsPage::paintEvent(QPaintEvent* event)
     painter.restore();
 
     QWidget::paintEvent(event);
-
 }
 
 void PopupSettingsPage::onConfirmClicked()
 {
-    QString ProfileName = this->AvatarNameEditor__->getUserName();
+    QString ProfileName = this->configForm__->profileName();
     if (ProfileName.isEmpty())
     {
         FluentMessageBox::warningOk(this, tr("Empty Profile Name"), tr("Profile name cannot be empty."));
@@ -138,22 +119,7 @@ void PopupSettingsPage::onConfirmClicked()
     }
 
     RobotConfig_t config;
-    config.Profile.Avatar = this->AvatarNameEditor__->getAvatarPath();
-    config.Frontend.ip = this->FrontendSettings__->getIP();
-    config.Frontend.port = this->FrontendSettings__->getPort();
-    config.Backend.ip = this->BackendSettings__->getIP();
-    config.Backend.Port = this->BackendSettings__->getPort();
-    config.Backend.Username = this->BackendSettings__->getUsername();
-    config.Backend.Passwd = this->BackendSettings__->getUserPasswd();
-    config.Backend.isRemote = this->BackendSettings__->isCurrentRemoteProtocal();
-    config.Backend.Path = this->BackendSettings__->getExecPath();
-    config.Backend.Exec = this->BackendSettings__->getExecName();
-    config.Backend.CacheRemoteData = this->DatabaseSettings__->getCacheData();
-    config.Backend.DataViewerCachePath = this->DatabaseSettings__->getLocalCachePath();
-    config.Backend.DataPath = this->DatabaseSettings__->getRemoteDataPath();
-    config.AutoRunCommands = this->AutorunLaucher__->getCmdList();
-
-    //TODO: add autorun config
+    this->configForm__->saveToConfig(config);
 
     QString error_msg;
     if (!ZSet->SaveAllConfig(config, ProfileName, error_msg))

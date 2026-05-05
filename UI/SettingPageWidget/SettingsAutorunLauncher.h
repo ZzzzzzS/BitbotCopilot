@@ -13,6 +13,7 @@ public:
     SettingsAutorunLauncher(QWidget* parent);
     ~SettingsAutorunLauncher();
     AutoRunCmdList getCmdList();
+    void setCmdList(const AutoRunCmdList& list);
 
 private:
     void OpenSettingsSlot();

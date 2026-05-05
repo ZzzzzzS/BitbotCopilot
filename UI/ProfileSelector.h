@@ -1,26 +1,9 @@
 #pragma once
 #include <QObject>
 #include <ElaWidget.h>
-#include "ElaInteractiveCard.h"
 #include "QList"
 #include "ElaPushButton.h"
-
-class ProfileIDCard : public ElaInteractiveCard
-{
-    Q_OBJECT
-public:
-    ProfileIDCard(QWidget* parent, QString profileName, QString ipAddress, QString avatar);
-    ~ProfileIDCard();
-
-    void setSelected(bool select);
-    bool isSelected();
-    QString getProfileName();
-
-protected:
-    void paintEvent(QPaintEvent* event) override;
-    bool m_selected;
-    QString m_profileName;
-};
+#include "UI/widget/ProfileIDCard.h"
 
 class ProfileSelector : public ElaWidget
 {

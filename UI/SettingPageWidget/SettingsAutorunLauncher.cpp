@@ -57,6 +57,11 @@ AutoRunCmdList SettingsAutorunLauncher::getCmdList()
     }
 }
 
+void SettingsAutorunLauncher::setCmdList(const AutoRunCmdList& list)
+{
+    this->cmdList__ = list;
+}
+
 void SettingsAutorunLauncher::OpenSettingsSlot()
 {
     auto widget = new SettingsAutorunCfgWidget(nullptr);

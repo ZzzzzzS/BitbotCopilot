@@ -63,6 +63,11 @@ void SettingsBackEndWidget::setRemoteProtocal(QString protocal)
     this->Protocal__->setCurrentText(protocal);
 }
 
+void SettingsBackEndWidget::setIsRemote(bool isRemote)
+{
+    this->Protocal__->setCurrentText(isRemote ? tr("ssh") : tr("local"));
+}
+
 QString SettingsBackEndWidget::getIP()
 {
     return this->ipAddress__->text();

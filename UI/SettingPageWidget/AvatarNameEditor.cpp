@@ -95,3 +95,8 @@ void AvatarNameEditor::setUserName(QString name)
     this->userName__->setText(name);
 }
 
+void AvatarNameEditor::setNameEditable(bool editable)
+{
+    this->userName__->setEnabled(editable);
+}
+

@@ -1,13 +1,9 @@
 #pragma once
 
 #include "ElaWidget.h"
-#include "ElaDrawerArea.h"
-#include "SettingsFrontEndWidget.h"
-#include "SettingsBackendWidget.h"
-#include "SettingsDatabaseWidget.h"
-#include "SettingsAutorunLauncher.h"
 #include "ElaPushButton.h"
-#include "AvatarNameEditor.h"
+
+class RobotConfigForm;
 
 class PopupSettingsPage : public ElaWidget
 {
@@ -25,15 +21,11 @@ private:
     void InitBottomButton();
     void paintEvent(QPaintEvent* event) override;
 
-private: //slots
+private:
     void onConfirmClicked();
 
 private:
-    AvatarNameEditor* AvatarNameEditor__;
-    SettingsFrontEndWidget* FrontendSettings__;
-    SettingsBackEndWidget* BackendSettings__;
-    SettingsDatabaseWidget* DatabaseSettings__;
-    SettingsAutorunLauncher* AutorunLaucher__;
+    RobotConfigForm* configForm__;
 
     ElaPushButton* confirmButton__;
     ElaPushButton* cancelButton__;

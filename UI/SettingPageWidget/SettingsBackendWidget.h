@@ -22,6 +22,7 @@ public:
     void setExecPath(QString path);
     void setExecName(QString name);
     void setRemoteProtocal(QString protocal);
+    void setIsRemote(bool isRemote);
 
     QString getIP();
     uint16_t getPort();

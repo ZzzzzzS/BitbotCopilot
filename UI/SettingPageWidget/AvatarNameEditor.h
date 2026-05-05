@@ -19,6 +19,8 @@ public:
     void setUserName(QString name);
     QString getUserName() const;
 
+    void setNameEditable(bool editable);
+
 protected:
     virtual void paintEvent(QPaintEvent* event) override;
 
