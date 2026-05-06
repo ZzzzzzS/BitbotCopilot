@@ -28,14 +28,14 @@ CustomSplashScreen::CustomSplashScreen(size_t waitTime, QWidget* parent)
     this->RefreshTimer = new QTimer(this);
     this->RefreshTimer->setInterval(30);
     this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
-    QObject::connect(this->RefreshTimer, &QTimer::timeout, this, [this,waitTime]() {
+    QObject::connect(this->RefreshTimer, &QTimer::timeout, this, [this, waitTime]() {
         this->loadingIdx = (this->LoadingAnimationCounter__ > this->END_CHARACTER_INDEX__) ? this->END_CHARACTER_INDEX__ : this->LoadingAnimationCounter__;
         this->LoadingAnimationCounter__++;
         if (this->LoadingAnimationCounter__ > this->END_CHARACTER_INDEX__ + this->END_SLEEP_OFFSET)
             this->LoadingAnimationCounter__ = this->BEGIN_CHARACTER_INDEX__;
         this->update();
         this->time_cnt++;
-        if(this->time_cnt>(waitTime/this->RefreshTimer->interval()))
+        if (this->time_cnt > (waitTime / this->RefreshTimer->interval()))
             this->close();
         });
     this->RefreshTimer->start();

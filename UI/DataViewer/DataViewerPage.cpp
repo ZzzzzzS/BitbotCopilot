@@ -13,6 +13,7 @@
 #include "ElaSuggestBox.h"
 #include "QTouchEvent"
 #include "QCursor"
+#include "QMessageBox"
 #include "UI/widget/FluentMessageBox.hpp"
 #include "UI/widget/FluentLoadingWidget.h"
 #include "UI/DataViewer/RemoteFileSelector.h"
@@ -42,7 +43,7 @@ DataViewerPage::DataViewerPage(QWidget* parent, bool RTMode)
     this->PlotHandle = this->ui->DataPlotWidget;
     this->PlotHandle->installEventFilter(this);
     this->PlotHandle->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    this->PlotHandle->setOpenGl(true, 128);
+    this->PlotHandle->setOpenGl(true, 4);
     this->PlotHandle->setPlottingHint(QCP::phCacheLabels, false);
     this->PlotHandle->setAttribute(Qt::WA_AcceptTouchEvents);
     QObject::connect(this->PlotHandle, &QCustomPlot::mouseWheel, this, &DataViewerPage::PlotHandleMouseWheelSlot);
@@ -68,6 +69,14 @@ DataViewerPage::DataViewerPage(QWidget* parent, bool RTMode)
     this->InitSquareZoom();
     this->InitShowDataPoint();
     this->ui->pushButton_help->setText("?");
+    QObject::connect(this->ui->pushButton_help, &ElaPushButton::clicked, this, [this]() {
+        QMessageBox::information(this, tr("Operation Tips"),
+            tr("Mouse wheel: Zoom in/out\n"
+                "Alt + Mouse wheel: Zoom horizontally (X axis only)\n"
+                "Mouse drag: Pan the view\n"
+                "Square zoom button: Drag to select an area to zoom in\n"
+                "Reset button: Restore default view range"));
+        });
 
     this->ui->pushButton_savePDF->setText(QChar((unsigned short)ElaIconType::FloppyDisk));
     QObject::connect(this->ui->pushButton_savePDF, &ElaPushButton::clicked, this, &DataViewerPage::SavePlotSlot);
@@ -497,6 +506,7 @@ bool DataViewerPage::eventFilter(QObject* watched, QEvent* event)
                 });
 
             this->PlotFlowIndcator__->SetLabelText(CurveNames, CurveColors);
+            this->PlotFlowIndcator__->UpdateXValue(CurX);
             this->PlotFlowIndcator__->UpdateValue(CurveValue);
             if (!CurveNames.empty())
                 this->PlotFlowIndcator__->show();
@@ -1419,6 +1429,7 @@ void DataViewerPage::PlotMouseMoveHandle(QMouseEvent* event)
     }
     else
     {
+        this->PlotFlowIndcator__->UpdateXValue(CurX);
         this->PlotFlowIndcator__->UpdateValue(CurveValue);
         this->PlotFlowIndcator__->move(MouseGlobalPos);
         this->PlotFlowIndcator__->show();

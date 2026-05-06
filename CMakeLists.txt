@@ -148,7 +148,7 @@ set(SETTING_PAGE_WIDGET
     UI/SettingPageWidget/AvatarSelector.cpp
     UI/SettingPageWidget/AvatarSelector.h
     UI/SettingPageWidget/PopupSettingspage.cpp
-    UI/SettingPageWidget/PopupSettingspage.h
+    UI/SettingPageWidget/PopupSettingsPage.h
     UI/SettingPageWidget/RobotConfigForm.cpp
     UI/SettingPageWidget/RobotConfigForm.h
     UI/SettingPageWidget/SettingsAutorunLauncher.cpp

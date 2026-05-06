@@ -1,6 +1,6 @@
 #pragma once
 #include <QApplication>
-#include "parser.h"
+//#include "parser.h"
 #include "QCommandLineParser"
 #include "QCommandLineOption"
 #include "QProcess"

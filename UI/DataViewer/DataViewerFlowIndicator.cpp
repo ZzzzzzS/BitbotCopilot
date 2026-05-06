@@ -19,6 +19,20 @@ DataViewerFlowIndicator::DataViewerFlowIndicator(QWidget* Parent)
     this->setAttribute(Qt::WA_TranslucentBackground);
     this->VLay__ = new QVBoxLayout(this);
 
+    this->XAxisName__ = new ElaText(this);
+    this->XAxisValue__ = new ElaText(this);
+    QFont xAxisFont = this->XAxisName__->font();
+    xAxisFont.setPointSize(10);
+    this->XAxisName__->setFont(xAxisFont);
+    this->XAxisValue__->setFont(xAxisFont);
+    this->XAxisName__->setText("X");
+    this->XAxisValue__->setText("0.00");
+
+    this->XAxisLayout__ = new QHBoxLayout();
+    this->XAxisLayout__->addWidget(this->XAxisName__);
+    this->XAxisLayout__->addWidget(this->XAxisValue__);
+    this->VLay__->addLayout(this->XAxisLayout__);
+
     this->_themeMode = eTheme->getThemeMode();
     connect(eTheme, &ElaTheme::themeModeChanged, this, [=](ElaThemeType::ThemeMode themeMode) {
         this->_themeMode = themeMode;
@@ -52,6 +66,11 @@ void DataViewerFlowIndicator::UpdateValue(const QList<double>& value)
         QString val = QString::number(value[i], 'f', 2);
         this->CurveValueList__[i]->setText(val);
     }
+}
+
+void DataViewerFlowIndicator::UpdateXValue(double value)
+{
+    this->XAxisValue__->setText(QString::number(value, 'f', 2));
 }
 
 void DataViewerFlowIndicator::SetLabelText(const QList<QString>& text, const QList<QColor>& Colors)

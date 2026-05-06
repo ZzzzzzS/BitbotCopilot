@@ -176,8 +176,9 @@ bool SettingsHandler::isChachingRemoteData(QSettings* domain)
 
 QString SettingsHandler::getUpdateChannel()
 {
-    QString channel = this->WRSettings("COMMON/UPDATECHANNEL", UPDATE_CHANNEL, this->UserListSettings__).toString();
-    return channel;
+    // QString channel = this->WRSettings("COMMON/UPDATECHANNEL", UPDATE_CHANNEL, this->UserListSettings__).toString();
+    // return channel;
+    return QString(); //暂时不启用更新功能
 }
 
 QString SettingsHandler::getLocalCachePath(QSettings* domain)
@@ -427,7 +428,7 @@ bool SettingsHandler::SaveAllConfig(const RobotConfig_t& config, const QString& 
             domain->setArrayIndex(i);
             domain->setValue("KEY_NAME", t.KeyName);
             domain->setValue("WAIT_UNTIL", t.WaitUntil);
-            domain->setValue("DURATION", t.WaitTime);
+            domain->setValue("DURATION", static_cast<int>(t.WaitTime));
         }
         domain->endArray();
     }

@@ -15,6 +15,7 @@ public:
 	~DataViewerFlowIndicator();
 
 	void UpdateValue(const QList<double>& value);
+	void UpdateXValue(double value);
 	void SetLabelText(const QList<QString>& text, const QList<QColor>& Colors);
 	void UpdateColor(const QList<QColor>& Colors);
 
@@ -36,4 +37,7 @@ private:
 	QList<QHBoxLayout*> CurveLayout__;
 	QList<QColor> ColorPairList__;
 	QVBoxLayout* VLay__;
+	QHBoxLayout* XAxisLayout__;
+	ElaText* XAxisName__;
+	ElaText* XAxisValue__;
 };

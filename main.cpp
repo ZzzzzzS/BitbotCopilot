@@ -81,11 +81,7 @@ int main(int argc, char* argv[])
         w.showMaximized();
     else
     {
-        QRect mRect = QGuiApplication::primaryScreen()->geometry();
-        if (mRect.width() < 1366 || mRect.height() < 768)
-            w.showMaximized();
-        else
-            w.show();
+        w.show();
     }
     //w.showMaximized();
     //screen->close();

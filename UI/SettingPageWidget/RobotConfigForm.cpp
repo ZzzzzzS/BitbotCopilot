@@ -31,7 +31,7 @@ RobotConfigForm::RobotConfigForm(QWidget* parent)
     mainLayout->addWidget(this->databaseSettings__);
     mainLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
     mainLayout->addWidget(this->autorunLauncher__);
-    mainLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Expanding));
+    mainLayout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Fixed, QSizePolicy::Fixed));
 }
 
 void RobotConfigForm::loadFromConfig(const RobotConfig_t& config)
