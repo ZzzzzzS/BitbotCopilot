@@ -30,41 +30,47 @@ Version: </source>
 版本: </translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="197"/>
         <source>Powered by Zishun.Zhou Copyright©2025
 BIT Humanoid Group
 Version: </source>
-        <translation>由@ZZS提供技术支持 版权所有©2024
+        <translation type="vanished">由@ZZS提供技术支持 版权所有©2024
 北京理工大学仿人机器人团队
 版本: </translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="371"/>
+        <location filename="../../UI/AboutPage.ui" line="197"/>
+        <source>Powered by Zishun.Zhou Copyright©2026
+Version: </source>
+        <translation>由@ZZS提供技术支持 版权所有©2026
+版本: </translation>
+    </message>
+    <message>
+        <location filename="../../UI/AboutPage.ui" line="370"/>
         <source>BitBot Copilot Software License Terms</source>
         <translation>Bitbot Copilot 软件许可条款</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="541"/>
+        <location filename="../../UI/AboutPage.ui" line="540"/>
         <source>BitBot Kernel Support</source>
         <translation>Bitbot 内核支持</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="711"/>
+        <location filename="../../UI/AboutPage.ui" line="710"/>
         <source>The Qt Software Acknowledgment</source>
         <translation>Qt致谢声明</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="887"/>
+        <location filename="../../UI/AboutPage.ui" line="886"/>
         <source>Third-Party Software Acknowledgment</source>
         <translation>第三方组件致谢声明</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="954"/>
+        <location filename="../../UI/AboutPage.ui" line="953"/>
         <source>Check Updates</source>
         <translation>检查更新</translation>
     </message>
     <message>
-        <location filename="../../UI/AboutPage.ui" line="1024"/>
+        <location filename="../../UI/AboutPage.ui" line="1023"/>
         <source>  Send feedback  </source>
         <translation>  发送反馈  </translation>
     </message>
@@ -234,13 +240,13 @@ Manager</source>
     </message>
     <message>
         <location filename="../../UI/DataViewer/DataViewerPage.ui" line="149"/>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1192"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1202"/>
         <source>Load Local File</source>
         <translation>从本地加载</translation>
     </message>
     <message>
         <location filename="../../UI/DataViewer/DataViewerPage.ui" line="168"/>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1198"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1208"/>
         <source>Load from Robot</source>
         <translation>从机器人加载</translation>
     </message>
@@ -274,115 +280,133 @@ Manager</source>
         <translation type="vanished">新数据查看器</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="40"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="41"/>
         <source>Experiment Data</source>
         <translation>实验数据</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="65"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="66"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="104"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="113"/>
         <source>Real-Time Data</source>
         <translation>实时数据</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1029"/>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1038"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1039"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1048"/>
         <source>Open File</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="31"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="32"/>
         <source>Data Viewer</source>
         <translation>数据查看器</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1048"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="73"/>
+        <source>Operation Tips</source>
+        <translation>使用帮助</translation>
+    </message>
+    <message>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="74"/>
+        <source>Mouse wheel: Zoom in/out
+Alt + Mouse wheel: Zoom horizontally (X axis only)
+Mouse drag: Pan the view
+Square zoom button: Drag to select an area to zoom in
+Reset button: Restore default view range</source>
+        <translation>鼠标滚轮：放大 / 缩小  
+Alt + 鼠标滚轮：水平缩放（仅 X 轴）  
+鼠标拖拽：平移视图  
+框选缩放按钮：拖拽选取区域以放大  
+重置按钮：恢复默认视图范围</translation>
+    </message>
+    <message>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1058"/>
         <source>Downloading data...</source>
         <translation>正在下载...</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1048"/>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1132"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1058"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1142"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1080"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1090"/>
         <source>Failed to download file.</source>
         <translation>下载文件失败。</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1126"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1136"/>
         <source>Unsupported File Type</source>
         <translation>不支持的文件格式</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1126"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1136"/>
         <source>Unsupported path or file type, only .csv file type is supported!</source>
         <translation>不支持的路径或文件格式，仅支持 .csv 格式!</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1132"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1142"/>
         <source>Loading data...</source>
         <translation>正在加载数据...</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1152"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1162"/>
         <source>Failed to Open File</source>
         <translation>打开文件失败</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1152"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1162"/>
         <source>Failed to open this file, try again later.</source>
         <translation>打开文件失败，请稍后再试。</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1270"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1280"/>
         <source>Save the Figure</source>
         <translation>保存图片</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1321"/>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1335"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1331"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1345"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1321"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1331"/>
         <source>Unknown File Format</source>
         <translation>未知文件格式</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1335"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1345"/>
         <source>Failed to save file, try again later.</source>
         <translation>保存文件失败，请稍后再试。</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1337"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1347"/>
         <source>Saved</source>
         <translation>已保存</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1337"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1347"/>
         <source>Save success!</source>
         <translation>保存成功!</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1693"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1704"/>
         <source>Clean</source>
         <translation>清除</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1704"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1715"/>
         <source>Collapse</source>
         <translation>折叠</translation>
     </message>
     <message>
-        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1704"/>
+        <location filename="../../UI/DataViewer/DataViewerPage.cpp" line="1715"/>
         <source>Expand</source>
         <translation>展开</translation>
     </message>
@@ -614,6 +638,7 @@ Manager</source>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="15"/>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="38"/>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="62"/>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="86"/>
         <source>. </source>
         <translation>。</translation>
     </message>
@@ -626,6 +651,7 @@ Manager</source>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="28"/>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="52"/>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="76"/>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="101"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
@@ -639,6 +665,18 @@ Manager</source>
         <location filename="../../UI/widget/FluentMessageBox.hpp" line="73"/>
         <source>Critical: </source>
         <translation>灾难性错误: </translation>
+    </message>
+    <message>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="97"/>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="98"/>
+        <source>Question: </source>
+        <translation>提问： </translation>
+    </message>
+    <message>
+        <location filename="../../UI/widget/FluentMessageBox.hpp" line="100"/>
+        <source>Cancel</source>
+        <translatorcomment>取消</translatorcomment>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -732,81 +770,81 @@ backend</source>
         <translation type="vanished">北京理工大学仿人机器人团队</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="93"/>
+        <location filename="../../UI/MainWindow.cpp" line="104"/>
         <source>Home</source>
         <translation>主页</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="97"/>
+        <location filename="../../UI/MainWindow.cpp" line="108"/>
         <source>Nav Deck</source>
         <translation>导航台</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="100"/>
+        <location filename="../../UI/MainWindow.cpp" line="111"/>
         <source>Data Viewer</source>
         <translation>数据查看器</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="107"/>
-        <location filename="../../UI/MainWindow.cpp" line="286"/>
+        <location filename="../../UI/MainWindow.cpp" line="118"/>
+        <location filename="../../UI/MainWindow.cpp" line="310"/>
         <source>Virtual Trackpad</source>
         <translation>虚拟触控板</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="126"/>
+        <location filename="../../UI/MainWindow.cpp" line="150"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="144"/>
+        <location filename="../../UI/MainWindow.cpp" line="168"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="158"/>
-        <location filename="../../UI/MainWindow.cpp" line="173"/>
+        <location filename="../../UI/MainWindow.cpp" line="182"/>
+        <location filename="../../UI/MainWindow.cpp" line="197"/>
         <source>Failed to Attach Bitbot</source>
         <translation>附加到Bitbot实例失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="158"/>
-        <location filename="../../UI/MainWindow.cpp" line="173"/>
+        <location filename="../../UI/MainWindow.cpp" line="182"/>
+        <location filename="../../UI/MainWindow.cpp" line="197"/>
         <source>Failed to attach Bitbot backend, nav deck is already running, please disconnect it first</source>
         <translation>附加到Bitbot后端实例失败，导航台已经启动，请先断开连接</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="187"/>
+        <location filename="../../UI/MainWindow.cpp" line="211"/>
         <source>Failed to Auto Initialize Bitbot</source>
         <translation>自动初始化机器人失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="187"/>
+        <location filename="../../UI/MainWindow.cpp" line="211"/>
         <source>Failed to auto run new bitbot task, nav deck is already running or launch list is not configured.</source>
         <translation>新bitbot任务自动启动失败，导航台已经在运行，或者自动启动列表未配置。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="209"/>
+        <location filename="../../UI/MainWindow.cpp" line="233"/>
         <source>New Profile Created</source>
         <translation>新配置创建成功</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="209"/>
+        <location filename="../../UI/MainWindow.cpp" line="233"/>
         <source>Application will restart to switch to new profile.</source>
         <translation>程序将要重启来切换到新配置。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="218"/>
-        <location filename="../../UI/MainWindow.cpp" line="225"/>
+        <location filename="../../UI/MainWindow.cpp" line="242"/>
+        <location filename="../../UI/MainWindow.cpp" line="249"/>
         <source>Failed to switch robot profile</source>
         <translation>切换机器人配置失败</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="218"/>
+        <location filename="../../UI/MainWindow.cpp" line="242"/>
         <source>Robot profile dose not exist or contain error(s).</source>
         <translation>机器人配置不存在或存在错误。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="225"/>
+        <location filename="../../UI/MainWindow.cpp" line="249"/>
         <source>Launching failed.</source>
         <translation>启动失败。</translation>
     </message>
@@ -823,7 +861,7 @@ backend</source>
         <translation type="vanished">启动失败。</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="354"/>
+        <location filename="../../UI/MainWindow.cpp" line="378"/>
         <source>Connection with Robot is Lost or Closed</source>
         <translation>机器人连接已断开或已关闭</translation>
     </message>
@@ -832,7 +870,7 @@ backend</source>
         <translation type="vanished">正在连接到机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="350"/>
+        <location filename="../../UI/MainWindow.cpp" line="374"/>
         <source>Connection with Robot is Established</source>
         <translation>已连接到机器人</translation>
     </message>
@@ -841,7 +879,7 @@ backend</source>
         <translation type="vanished">与机器人的连接已丢失</translation>
     </message>
     <message>
-        <location filename="../../UI/MainWindow.cpp" line="361"/>
+        <location filename="../../UI/MainWindow.cpp" line="385"/>
         <source>Error Occured: </source>
         <translation>错误： </translation>
     </message>
@@ -992,47 +1030,47 @@ backend</source>
 <context>
     <name>PopupSettingsPage</name>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="15"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="17"/>
         <source>Add new robot profile</source>
         <translation>新增机器人配置</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="80"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="64"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="85"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="69"/>
         <source>Continue</source>
         <translation>继续</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="129"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="110"/>
         <source>Empty Profile Name</source>
         <translation>配置名为空</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="129"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="110"/>
         <source>Profile name cannot be empty.</source>
         <translation>配置名称不能为空。</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="136"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="117"/>
         <source>Duplicate Profile Name</source>
         <translation>配置名称重复</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="136"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="117"/>
         <source>Profile name already exists, please choose another name.</source>
         <translation>配置名已存在，请选择其它的名称。</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="160"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="127"/>
         <source>Save Profile Failed</source>
         <translation>保存配置失败</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="160"/>
+        <location filename="../../UI/SettingPageWidget/PopupSettingspage.cpp" line="127"/>
         <source>Failed to save profile: %1</source>
         <translation>保存配置%1失败</translation>
     </message>
@@ -1331,19 +1369,47 @@ backend</source>
     </message>
 </context>
 <context>
+    <name>SettingsAutorunCfgWidget</name>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp" line="47"/>
+        <source>No commands are added</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp" line="47"/>
+        <source>please add autorun commands or click cancel button to cancel action.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp" line="72"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp" line="77"/>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunCfgWidget.cpp" line="97"/>
+        <source>add the commands you want to execute automaticlly during robot startup, and configure their order, execution interval or conditions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SettingsAutorunLauncher</name>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="13"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="14"/>
         <source>Auto initialization robot</source>
         <translation>自动初始化机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="18"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="19"/>
         <source>Config autorun commands</source>
         <translation>配置自动初始化指令</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="18"/>
+        <location filename="../../UI/SettingPageWidget/SettingsAutorunLauncher.cpp" line="19"/>
         <source>add or update autorun commands during robot initialzation</source>
         <translation>新增或更新机器人初始化时自动运行的指令</translation>
     </message>
@@ -1356,74 +1422,76 @@ backend</source>
         <translation>后端管理器</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="103"/>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="195"/>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="266"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="68"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="108"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="200"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="271"/>
         <source>ssh</source>
         <translation>ssh</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="109"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="114"/>
         <source>Backend connection</source>
         <translation>后端连接</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="109"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="114"/>
         <source>Setup backend ip address, port, and login information</source>
         <translation>设置后端ip地址，端口和登录信息</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="116"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="121"/>
         <source>Backend ip Address</source>
         <translation>后端ip地址</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="130"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="135"/>
         <source>Backend port</source>
         <translation>后端端口</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="144"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="149"/>
         <source>Remote user name</source>
         <translation>远程用户名</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="158"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="163"/>
         <source>Remote password</source>
         <translation>远程用户密码</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="217"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="222"/>
         <source>Backend executable</source>
         <translation>后端可执行文件</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="217"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="222"/>
         <source>Setup backend executable path and name</source>
         <translation>设置后端可执行文件路径和文件名</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="224"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="229"/>
         <source>Executable path</source>
         <translation>可执行文件路径</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="239"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="244"/>
         <source>Executable name</source>
         <translation>可执行文件名称</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="261"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="266"/>
         <source>Backend protocal</source>
         <translation>后端协议</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="261"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="266"/>
         <source>connect to remote robot via ssh or launch local robot</source>
         <translation>启动本地机器人或使用ssh连接到远程机器人</translation>
     </message>
     <message>
-        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="265"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="68"/>
+        <location filename="../../UI/SettingPageWidget/SettingsBackendWidget.cpp" line="270"/>
         <source>local</source>
         <translation>本机</translation>
     </message>
@@ -1502,45 +1570,45 @@ backend</source>
 <context>
     <name>SettingsHandler</name>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="221"/>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="246"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="222"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="247"/>
         <source>local computer</source>
         <translation>本地计算机</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="292"/>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="338"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="293"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="339"/>
         <source>Invalid profile name.</source>
         <translation>配置名称无效。</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="298"/>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="352"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="299"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="353"/>
         <source>Profile name is empty.</source>
         <translation>配置名称为空。</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="346"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="347"/>
         <source>Profile name contains invalid characters: \ / : * ? &quot; &lt; &gt; |</source>
         <translation>配置名称含有无效字符： \ / : * ? &quot; &lt; &gt; |</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="358"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="359"/>
         <source>Frontend IP address is empty, please indicate a valid IP address.</source>
         <translation>前端ip地址为空，请指定一个有效的ip地址。</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="364"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="365"/>
         <source>Frontend port is invalid, please indicate a valid port number (1-65535).</source>
         <translation>前端端口号无效，请指定一个有效的端口号 (1-65535)。</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="372"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="373"/>
         <source>Backend port is invalid, please indicate a valid port number (1-65535).</source>
         <translation>后端端口号无效，请指定一个有效的端口号 (1-65535)。</translation>
     </message>
     <message>
-        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="378"/>
+        <location filename="../../Utils/Settings/SettingsHandler.cpp" line="379"/>
         <source>Backend address and port cannot be the same as Frontend.</source>
         <translation>前后端ip地址和端口号不能完全一致。</translation>
     </message>
@@ -1548,9 +1616,147 @@ backend</source>
 <context>
     <name>SettingsPage</name>
     <message>
-        <location filename="../../UI/SettingsPage.cpp" line="7"/>
         <source>Settings</source>
-        <translation>设置</translation>
+        <translation type="vanished">设置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="31"/>
+        <location filename="../../UI/SettingsPage.cpp" line="33"/>
+        <location filename="../../UI/SettingsPage.cpp" line="57"/>
+        <location filename="../../UI/SettingsPage.cpp" line="178"/>
+        <location filename="../../UI/SettingsPage.cpp" line="202"/>
+        <source>Robot Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="105"/>
+        <source>Current Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="117"/>
+        <source>Other Profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="133"/>
+        <source>Add new robot profile</source>
+        <translation type="unfinished">新增机器人配置</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="133"/>
+        <source>Add remote robot or local robot</source>
+        <translation type="unfinished">添加远程或本地机器人</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="178"/>
+        <source>Add New Robot Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="192"/>
+        <source>Load Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="192"/>
+        <source>Failed to load profile: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="202"/>
+        <source>Edit Profile: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="232"/>
+        <location filename="../../UI/SettingsPage.cpp" line="388"/>
+        <source>Delete Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="254"/>
+        <source>Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="303"/>
+        <source>Empty Profile Name</source>
+        <translation type="unfinished">配置名为空</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="303"/>
+        <source>Profile name cannot be empty.</source>
+        <translation type="unfinished">配置名称不能为空。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="311"/>
+        <source>Duplicate Profile Name</source>
+        <translation type="unfinished">配置名称重复</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="311"/>
+        <source>Profile name already exists, please choose another name.</source>
+        <translation type="unfinished">配置名已存在，请选择其它的名称。</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="321"/>
+        <location filename="../../UI/SettingsPage.cpp" line="347"/>
+        <source>Save Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="321"/>
+        <location filename="../../UI/SettingsPage.cpp" line="347"/>
+        <source>Failed to save profile: %1</source>
+        <translation type="unfinished">保存配置%1失败</translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="329"/>
+        <location filename="../../UI/SettingsPage.cpp" line="355"/>
+        <location filename="../../UI/SettingsPage.cpp" line="365"/>
+        <source>Save Successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="329"/>
+        <source>New profile &quot;%1&quot; has been created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="356"/>
+        <source>Configuration saved. Application will restart to apply changes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="366"/>
+        <source>Configuration saved successfully.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="384"/>
+        <source>Cannot Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="384"/>
+        <source>Cannot delete the currently active profile.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="389"/>
+        <source>Are you sure you want to delete profile &quot;%1&quot;? This action cannot be undone.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="407"/>
+        <source>Deleted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UI/SettingsPage.cpp" line="407"/>
+        <source>Profile &quot;%1&quot; has been deleted.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

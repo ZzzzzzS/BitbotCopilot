@@ -19,7 +19,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .exe / .dl
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .dll（共享库）
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin) # .lib / .a
 
-add_definitions(-DPRERELEASE_BUILD)
+#add_definitions(-DPRERELEASE_BUILD)
 # add update url from a file
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/update_url.txt")
     file(READ "${CMAKE_CURRENT_SOURCE_DIR}/update_url.txt" UPDATE_URL)

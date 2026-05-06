@@ -105,7 +105,7 @@ void CustomSplashScreen::paintEvent(QPaintEvent* event)
     painter.setFont(QFont("Segoe UI", 8, QFont::Weight::Bold));
     painter.setPen(QPen(QBrush(QColor(127, 127, 127, 255)), 1, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
     painter.drawPixmap((this->FixedWindowWidth - 100) / 2 + 4, (this->FixedWindowHeight - 15) / 2 + 50, 16, 16, *this->OrgLogo);
-    painter.drawText((this->FixedWindowWidth - 100) / 2 + 8, (this->FixedWindowHeight - 15) / 2 + 50, 100, 15, Qt::AlignCenter, "BHR Group");
+    painter.drawText((this->FixedWindowWidth - 100) / 2 + 8, (this->FixedWindowHeight - 15) / 2 + 50, 100, 15, Qt::AlignCenter, "X-Humanoid");
     painter.restore();
 
     painter.save();
