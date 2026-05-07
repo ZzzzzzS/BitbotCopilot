@@ -1,6 +1,6 @@
 # Bitbot Copilot
 
-Bitbot Copilot是一个[Bitbot](https://bitbot.lmy.name/)机器人控制框架的图形化前端程序。该程序支持使用键盘，手柄或触摸板来实时控制使用Bitbot后端的机器人，并支持实时数据绘制，历史数据查看等功能，以及远端机器人数据管理，自动初始化等高级功能。
+Bitbot Copilot是一个[Bitbot](https://bitbot.lmy.name/)机器人控制框架的图形化前端程序。支持实时数据绘制，历史数据查看等功能，以及远端机器人数据管理，自动初始化等高级功能。
 
 ![Bitbot Copilot Main Page](./doc/MainPage.png)
 
